@@ -1,3 +1,11 @@
+<script lang="ts">
+import {defineComponent} from "vue";
+
+export default defineComponent({
+  name: "FooterComponent",
+});
+</script>
+
 <template>
   <footer>
     <h2>Contact</h2>
@@ -22,14 +30,6 @@
     </nav>
   </footer>
 </template>
-
-<script lang="ts">
-import {defineComponent} from "vue";
-
-export default defineComponent({
-  name: "FooterComponent",
-});
-</script>
 
 <style scoped>
 footer {

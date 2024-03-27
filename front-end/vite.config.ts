@@ -88,14 +88,14 @@ export default defineConfig({
             target: "_blank",
             rel: "noopener",
           },
-        });
+        })
         md.use(await Shiki({
           defaultColor: false,
           themes: {
             light: "vitesse-light",
             dark: "vitesse-dark",
           },
-        }));
+        }))
       },
     }),
 
@@ -165,4 +165,4 @@ export default defineConfig({
     // TODO: workaround until they support native ESM
     noExternal: ["workbox-window", /vue-i18n/],
   },
-});
+})

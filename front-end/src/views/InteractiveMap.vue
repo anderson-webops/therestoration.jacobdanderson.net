@@ -1,3 +1,23 @@
+<script lang="ts">
+import {computed, defineComponent} from "vue";
+import {useStore} from "~/store";
+
+import MapComponent from "@/components/MapComponent.vue";
+
+export default defineComponent({
+  name: "InteractiveMap",
+  components: {
+    MapComponent,
+  },
+  setup() {
+    const store = useStore();
+    const map = computed(() => store.map);
+
+    return {map};
+  },
+});
+</script>
+
 <template>
   <div class="page">
     <div class="item">
@@ -7,26 +27,6 @@
   </div>
   <MapComponent class="item"/>
 </template>
-
-<script lang="ts">
-import {computed} from "vue";
-import {useStore} from "vuex";
-
-import MapComponent from "@/components/MapComponent.vue"; // Adjust the path based on your project structure
-
-export default {
-  name: "InteractiveMap",
-  components: {
-    MapComponent
-  },
-  setup() {
-    const store = useStore();
-    const map = computed(() => store.state.map);
-
-    return {map};
-  }
-};
-</script>
 
 <style scoped>
 

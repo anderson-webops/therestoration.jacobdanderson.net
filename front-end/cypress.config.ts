@@ -7,8 +7,8 @@ export default defineConfig({
     chromeWebSecurity: false,
     specPattern: "cypress/e2e/**/*.spec.*",
     supportFile: false,
-    setupNodeEvents(on) {
+    setupNodeEvents(on: Cypress.PluginEvents): void {
       on("file:preprocessor", vitePreprocessor());
     },
   },
-});
+})

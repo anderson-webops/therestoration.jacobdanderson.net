@@ -6,7 +6,7 @@ const {t} = useI18n();
 
 watchEffect(() => {
   user.setNewName(route.params.name);
-});
+})
 </script>
 
 <template>

@@ -1,3 +1,18 @@
+<script lang="ts">
+import {computed, defineComponent} from "vue";
+import {useStore} from "~/store";
+
+export default defineComponent({
+  name: "KeyEvents",
+  setup() {
+    const mainStore = useStore();
+    const events = computed(() => mainStore.events);
+
+    return {events};
+  },
+});
+</script>
+
 <template>
   <div class="page">
     <div class="item">
@@ -10,22 +25,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import {computed, defineComponent} from "vue";
-import {useStore} from "vuex";
-
-export default defineComponent({
-  name: "KeyEvents",
-  components: {},
-  setup() {
-    const store = useStore();
-    const events = computed(() => store.state.events);
-
-    return {events};
-  }
-});
-</script>
 
 <style scoped>
 h1 {

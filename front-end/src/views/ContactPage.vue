@@ -1,3 +1,32 @@
+<script lang="ts">
+import {defineComponent, ref} from "vue";
+
+export default defineComponent({
+  name: "ContactPage",
+  setup() {
+    const form = ref({
+      name: "",
+      email: "",
+      message: "",
+    });
+
+    const handleSubmit = () => {
+      // console.log('Form submitted:', form.value)
+      // alert('Message sent! We\'ll get back to you soon.')
+      // Reset form
+      form.value.name = "";
+      form.value.email = "";
+      form.value.message = "";
+    };
+
+    return {
+      form,
+      handleSubmit,
+    };
+  },
+});
+</script>
+
 <template>
   <div class="page">
     <h1>Contact Me</h1>
@@ -17,43 +46,16 @@
 
         <div class="form-group">
           <label for="message">Message:</label>
-          <textarea id="message" v-model="form.message" required rows="4"></textarea>
+          <textarea id="message" v-model="form.message" required rows="4"/>
         </div>
 
-        <button type="submit">Send Message</button>
+        <button type="submit">
+          Send Message
+        </button>
       </form>
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import {defineComponent, ref} from "vue";
-
-export default defineComponent({
-  name: "ContactPage",
-  setup() {
-    const form = ref({
-      name: "",
-      email: "",
-      message: ""
-    });
-
-    const handleSubmit = () => {
-      console.log("Form submitted:", form.value);
-      alert("Message sent! We'll get back to you soon.");
-      // Reset form
-      form.value.name = "";
-      form.value.email = "";
-      form.value.message = "";
-    };
-
-    return {
-      form,
-      handleSubmit
-    };
-  }
-});
-</script>
 
 <style scoped>
 .form-group {
@@ -65,8 +67,8 @@ export default defineComponent({
   margin-bottom: 5px;
 }
 
-.form-group input[type="text"],
-.form-group input[type="email"],
+.form-group input[type='text'],
+.form-group input[type='email'],
 .form-group textarea {
   width: 100%;
   padding: 8px;
@@ -74,8 +76,8 @@ export default defineComponent({
   border-radius: 4px;
 }
 
-button[type="submit"] {
-  background-color: #4CAF50;
+button[type='submit'] {
+  background-color: #4caf50;
   color: white;
   padding: 10px 20px;
   border: none;
@@ -83,7 +85,7 @@ button[type="submit"] {
   cursor: pointer;
 }
 
-button[type="submit"]:hover {
+button[type='submit']:hover {
   background-color: #45a049;
 }
 </style>

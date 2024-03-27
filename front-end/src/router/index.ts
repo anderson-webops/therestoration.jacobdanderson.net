@@ -1,4 +1,5 @@
-import {createRouter, createWebHistory, Router} from "vue-router";
+import type {Router} from "vue-router";
+import {createRouter, createWebHistory} from "vue-router";
 import HomePage from "../views/HomePage.vue";
 import AboutPage from "../views/AboutPage.vue";
 import InteractiveMap from "../views/InteractiveMap.vue";
@@ -37,11 +38,11 @@ const routes = [
     name: "Contact",
     component: ContactPage,
   },
-];
+]
 
 const router: Router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
-});
+})
 
 export default router;

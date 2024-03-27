@@ -1,3 +1,18 @@
+<script lang="ts">
+import {computed, defineComponent} from "vue";
+import {useStore} from "~/store";
+
+export default defineComponent({
+  name: "KeyFigures",
+  setup() {
+    const mainStore = useStore();
+    const figures = computed(() => mainStore.figures);
+
+    return {figures};
+  },
+});
+</script>
+
 <template>
   <div class="page">
     <div class="item">
@@ -10,22 +25,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import {computed, defineComponent} from "vue";
-import {useStore} from "vuex";
-
-export default defineComponent({
-  name: "KeyFigures",
-  components: {},
-  setup() {
-    const store = useStore();
-    const figures = computed(() => store.state.figures);
-
-    return {figures};
-  }
-});
-</script>
 
 <style scoped>
 

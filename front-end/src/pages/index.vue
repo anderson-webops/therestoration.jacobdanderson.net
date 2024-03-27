@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 defineOptions({
   name: "IndexPage",
-});
+})
 const user = useUserStore();
 const name = ref(user.savedName);
 
@@ -41,8 +41,8 @@ const {t} = useI18n();
 
     <div>
       <button
-        :disabled="!name" btn m-3
-        text-sm
+        :disabled="!name"
+        btn m-3 text-sm
         @click="go"
       >
         {{ t("button.go") }}

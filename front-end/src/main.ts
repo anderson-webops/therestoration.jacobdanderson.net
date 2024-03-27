@@ -1,22 +1,40 @@
-import "../public/assets/stylesheets/defaultStyles.css";
-import "../public/assets/stylesheets/tailwind.css";
-
-import {createApp} from "vue";
-import App from "./App.vue";
-import store from "./store";
-import router from "./router";
-
+import {ViteSSG} from "vite-ssg";
+import {setupLayouts} from "virtual:generated-layouts";
+import generatedRoutes from "vue-router/auto-routes";
+import {createPinia} from "pinia";
 import {library} from "@fortawesome/fontawesome-svg-core";
 import {faFacebook, faGithub, faInstagram} from "@fortawesome/free-brands-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import App from "./App.vue";
 
-const app = createApp(App);
+// Assuming you have styles defined in these files
+import "@unocss/reset/tailwind.css";
+import "./styles/main.css";
+import "uno.css";
+import "../public/assets/stylesheets/defaultStyles.css";
+import "../public/assets/stylesheets/tailwind.css";
+import type {UserModule} from "~/types.ts";
 
+// FontAwesome library setup
 library.add(faFacebook, faGithub, faInstagram);
 
-app.component("font-awesome-icon", FontAwesomeIcon);
+export const createApp = ViteSSG(
+  App,
+  {
+    routes: setupLayouts(generatedRoutes),
+    base: import.meta.env.BASE_URL,
+  },
+  (ctx) => {
+    // ctx is the context where you can add global components or plugins
+    ctx.app.component("font-awesome-icon", FontAwesomeIcon);
+    ctx.app.use(createPinia()); // Using Pinia for state management
 
-app.use(store);
-app.use(router);
+    // Auto-import and install all modules under `modules/`, if any
+    // install all modules under `modules/`
+    Object.values(import.meta.glob<{ install: UserModule }>("./modules/*.ts", {eager: true}))
+      .forEach(i => i.install?.(ctx));
+    // ctx.app.use(Previewer)
 
-app.mount("#app");
+    // If you had specific plugins like a global error handler, i18n, etc., initialize them here
+  },
+)

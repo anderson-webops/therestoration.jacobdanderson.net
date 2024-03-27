@@ -24,5 +24,5 @@ describe("component TheCounter.vue", () => {
     await wrapper.get(".dec").trigger("click");
 
     expect(wrapper.text()).toContain("0");
-  });
-});
+  })
+})

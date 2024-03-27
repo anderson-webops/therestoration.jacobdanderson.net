@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 const props = defineProps<{
   initial: number
-}>();
+}>()
 
 const {count, inc, dec} = useCounter(props.initial);
 </script>

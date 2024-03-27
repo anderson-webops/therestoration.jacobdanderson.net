@@ -1,3 +1,18 @@
+<script lang="ts">
+import {computed, defineComponent} from "vue";
+import {useStore} from "~/store"; // Assuming this points to your configured Pinia store
+
+export default defineComponent({
+  name: "AboutPage",
+  setup() {
+    const store = useStore();
+    const about = computed(() => store.about); // Accessing 'about' directly from the Pinia store
+
+    return {about};
+  },
+});
+</script>
+
 <template>
   <div class="page">
     <div class="item">
@@ -12,24 +27,9 @@
   </div>
 </template>
 
-<script lang="ts">
-import {computed, defineComponent} from "vue";
-import {useStore} from "vuex";
-
-export default defineComponent({
-  name: "AboutPage",
-  components: {},
-  setup() {
-    const store = useStore();
-    const about = computed(() => store.state.about);
-
-    return {about};
-  }
-});
-</script>
-
 <style scoped>
-h1, h2 {
+h1,
+h2 {
   font-weight: bold;
   text-align: center;
   padding-bottom: 5px;

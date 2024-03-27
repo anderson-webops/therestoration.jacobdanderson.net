@@ -40,7 +40,7 @@
     "leaflet": "^1.9.4"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^2.10.1",
+    "@antfu/eslint-config": "^2.11.0",
     "@iconify-json/carbon": "^1.1.31",
     "@intlify/unplugin-vue-i18n": "^4.0.0",
     "@shikijs/markdown-it": "^1.2.1",

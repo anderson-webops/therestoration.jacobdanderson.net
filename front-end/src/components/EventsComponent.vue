@@ -1,3 +1,17 @@
+<script>
+import {useStore} from "vuex";
+
+export default {
+  name: "EventsComponent",
+  computed: {
+    events() {
+      const store = useStore();
+      return store.getters.events;
+    },
+  },
+};
+</script>
+
 <template>
   <div>
     <h2>Key Events</h2>
@@ -8,20 +22,6 @@
     </ul>
   </div>
 </template>
-
-<script>
-import {useStore} from "vuex";
-
-export default {
-  name: "EventsComponent",
-  computed: {
-    events() {
-      const store = useStore();
-      return store.getters.events;
-    }
-  }
-};
-</script>
 
 <style scoped>
 h2 {
