@@ -24,7 +24,7 @@ const store = createStore({
 					},
 					{
 						title: "Explore Multimedia Content",
-						description: "Watch videos, view images, and read stories that bring the Restoration to life.",
+						description: "Travel the map, view images, and read stories that bring the Restoration to life.",
 						image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Golden_plates_and_other_artifacts.jpg/360px-Golden_plates_and_other_artifacts.jpg",
 						imgAlt: "Translation of the Book of Mormon",
 					},
@@ -133,7 +133,7 @@ const store = createStore({
 				body: [
 					{
 						name: "Joseph Smith",
-						description: "Joseph Smith, the founder of the Latter-day Saint movement, was a pivotal figure in religious history. At the age of fourteen, following a profound personal spiritual experience known as the First Vision, Smith embarked on a journey that would lead to the establishment of a modern faith. His translation of the Book of Mormon, which he claimed was from golden plates provided by an angel, has been a cornerstone of Latter-day Saint faith. Smith's life was marked by visions, revelations, and the establishment of doctrines and practices that continue to influence millions worldwide. His leadership, amidst intense persecution and challenges, laid the groundwork for the Church's growth and the spread of its teachings globally.",
+						description: "Joseph Smith, the first prophet of this latter-day dispensation, was a pivotal figure in religious history. At the age of fourteen, following a profound personal spiritual experience known as the First Vision, Smith embarked on a journey that would lead to the establishment of a modern faith. His translation of the Book of Mormon, which he claimed was from golden plates provided by an angel, has been a cornerstone of Latter-day Saint faith. Smith's life was marked by visions, revelations, and the establishment of doctrines and practices that continue to influence millions worldwide. His leadership, amidst intense persecution and challenges, laid the groundwork for the Church's growth and the spread of its teachings globally.",
 						image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Joseph_Smith%2C_Jr._portrait_owned_by_Joseph_Smith_III.jpg/440px-Joseph_Smith%2C_Jr._portrait_owned_by_Joseph_Smith_III.jpg",
 						imgAlt: "Joseph Smith",
 						quote: "The Standard of Truth has been erected; no unhallowed hand can stop the work from progressing; persecutions may rage, mobs may combine, armies may assemble, calumny may defame, but the truth of God will go forth boldly, nobly, and independent, till it has penetrated every continent, visited every clime, swept every country, and sounded in every ear, till the purposes of God shall be accomplished, and the Great Jehovah shall say the work is done.",
@@ -154,10 +154,9 @@ const store = createStore({
 						description: "Brigham Young, Joseph Smith's successor, was a formidable leader and colonizer who played a critical role in the westward expansion of the United States. As the second president of The Church of Jesus Christ of Latter-day Saints, Young led the Mormon pioneers to the Salt Lake Valley, establishing a stronghold for the faith in what would become Utah. His vision, leadership, and practicality helped not only to preserve the church during turbulent times but also to expand its reach and influence. Young's legacy includes not only the settlement of the American West but also the promotion of a self-sufficient, communal society based on the principles taught by Joseph Smith.",
 						image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Brigham_Young_by_Charles_William_Carter.jpg/440px-Brigham_Young_by_Charles_William_Carter.jpg",
 						imgAlt: "Brigham Young",
-						quote: "I am not afraid to die; I am afraid to sin. I get down on my knees and pray to my Father in the name of Jesus to keep me from sin and in the path of duty. I am not afraid of death. I am afraid of sin.",
-						quoteSource: "Brigham Young, Journal of Discourses, 1:123",
+						quote: "True independence and freedom can only exist in doing what's right.",
+						quoteSource: "Brigham Young",
 						sources: [] // ["Teachings of Presidents of the Church: Brigham Young"]
-
 					},
 					{
 						name: "Oliver Cowdery",
@@ -165,8 +164,8 @@ const store = createStore({
 						image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Olivercowdery-sm.jpg/440px-Olivercowdery-sm.jpg",
 						imgAlt: "Oliver Cowdery",
 						quote: "I wrote with my own pen the entire Book of Mormon (save a few pages) as it fell from the lips of the Prophet Joseph Smith, as he translated it by the gift and power of God, by the means of the Urim and Thummim, or, as it is called by that book, Holy Interpreters.",
-						quoteSource: "Oliver Cowdery, Messenger and Advocate, 1:14",
-						sources: [] // ["Joseph Smith—History 1:68–71"]
+						quoteSource: "Oliver Cowdery",
+						sources: ["Testimonies of Oliver Cowdery and Martin Harris, Millennial Star"]
 					},
 					{
 						name: "Parley P. Pratt",
@@ -174,7 +173,7 @@ const store = createStore({
 						image: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Parley_P_Pratt.gif",
 						imgAlt: "Parley P. Pratt",
 						quote: "It was at this time that I received from him the first idea of eternal family organization... and the eternal union of the sexes in those spheres which are prepared for the righteous.",
-						quoteSource: "Autobiography of Parley P. Pratt",
+						quoteSource: "Parley P. Pratt",
 						sources: ["Autobiography of Parley P. Pratt"]
 					},
 					{
@@ -184,104 +183,71 @@ const store = createStore({
 						imgAlt: "Eliza R. Snow",
 						quote: "Truth is reason; truth eternal tells me I've a mother there.",
 						quoteSource: "'O My Father', Hymns of The Church of Jesus Christ of Latter-day Saints",
-						sources: ["Teachings of Presidents of the Church: Joseph Smith"]
+						sources: ["Hymns of The Church of Jesus Christ of Latter-day Saints"]
 					}
 				]
 			},
 			multimedia: [], // To store multimedia content data
 			map: {
-				header: {
-					title: "Interactive Map of the Restoration",
-					description: "Explore key locations of the Restoration journey through our interactive map. Click on markers to learn more about each event and figure.",
+				"header": {
+					"title": "Interactive Map of the Restoration",
+					"description": "Explore key locations of the Restoration journey through our interactive map. Click on markers to learn more about each event and figure."
 				},
-				body: {
-					coordinates: [
+				"body": {
+					"coordinates": [
 						{
 							name: "Palmyra, New York",
 							latitude: 43.0631,
 							longitude: -77.2332,
-							events: [
-								"The First Vision",
-								"Translation of the Book of Mormon",
-								"Organization of the Church"
-							],
-							figures: [
-								"Joseph Smith",
-								"Emma Smith",
-								"Oliver Cowdery"
-							],
-							imageUrl: "https://assets.churchofjesuschrist.org/fe/5d/fe5db8da0174bc36aff99e6ae7b55e337d9eb965/the_first_vision.jpeg"
+							events: ["The First Vision", "Translation of the Book of Mormon", "Organization of the Church"],
+							figures: ["Joseph Smith", "Emma Smith", "Oliver Cowdery"],
+							imageUrl: "https://assets.churchofjesuschrist.org/fe/5d/fe5db8da0174bc36aff99e6ae7b55e337d9eb965/the_first_vision.jpeg",
+							imgAlt: "The First Vision"
 						},
 						{
 							name: "Fayette, New York",
 							latitude: 42.9136,
 							longitude: -76.9659,
-							events: [
-								"Organization of the Church"
-							],
-							figures: [
-								"Joseph Smith",
-								"Emma Smith",
-								"Oliver Cowdery"
-							],
-							imageUrl: "https://assets.ldscdn.org/80/8d/808d16962faa59e48f50bd936e55bdb23526c46a/barrett_mormon_lds_prophet_church.jpeg"
+							events: ["Organization of the Church"],
+							figures: ["Joseph Smith", "Oliver Cowdery", "David Whitmer", "Martin Harris"],
+							imageUrl: "https://assets.ldscdn.org/80/8d/808d16962faa59e48f50bd936e55bdb23526c46a/barrett_mormon_lds_prophet_church.jpeg",
+							imgAtl: "Organization of the Church"
 						},
 						{
 							name: "Kirtland, Ohio",
 							latitude: 41.5247,
 							longitude: -81.3615,
-							events: [
-								"Revelation on the Degrees of Glory",
-								"Liberty Jail Teachings"
-							],
-							figures: [
-								"Joseph Smith",
-								"Emma Smith",
-								"Parley P. Pratt"
-							],
-							imageUrl: "https://upload.wikimedia.org/wikipedia/commons/9/90/KirtlandTemple_Ohio_USA.jpg"
+							events: ["Revelation on the Degrees of Glory"],
+							figures: ["Joseph Smith", "Sidney Rigdon", "Parley P. Pratt"],
+							imageUrl: "https://upload.wikimedia.org/wikipedia/commons/9/90/KirtlandTemple_Ohio_USA.jpg",
+							imgAlt: "Kirtland Temple"
 						},
 						{
 							name: "Liberty, Missouri",
 							latitude: 39.2461,
 							longitude: -94.4191,
-							events: [
-								"Liberty Jail Teachings"
-							],
-							figures: [
-								"Joseph Smith",
-								"Emma Smith",
-								"Parley P. Pratt"
-							],
-							imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Liberty_Jail.jpg/350px-Liberty_Jail.jpg"
+							events: ["Liberty Jail Teachings"],
+							figures: ["Joseph Smith", "Hyrum Smith", "Sidney Rigdon"],
+							imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Liberty_Jail.jpg/350px-Liberty_Jail.jpg",
+							imgAlt: "Liberty Jail"
 						},
 						{
 							name: "Nauvoo, Illinois",
 							latitude: 40.5509,
 							longitude: -91.4634,
-							events: [
-								"Revelation on the Degrees of Glory",
-								"Liberty Jail Teachings"
-							],
-							figures: [
-								"Joseph Smith",
-								"Emma Smith",
-								"Parley P. Pratt"
-							],
-							imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/New_Nauvoo_Temple.JPG/500px-New_Nauvoo_Temple.JPG"
+							events: ["Revelation on the Degrees of Glory"],
+							figures: ["Joseph Smith", "Hyrum Smith", "Brigham Young", "John Taylor"],
+							imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/New_Nauvoo_Temple.JPG/500px-New_Nauvoo_Temple.JPG",
+							imgAlt: "Nauvoo Temple"
 						},
 						{
 							name: "Salt Lake City, Utah",
 							latitude: 40.7608,
 							longitude: -111.8910,
-							events: [
-								"Organization of the Church"
-							],
-							figures: [
-								"Brigham Young",
-								"Parley P. Pratt"
-							],
-							imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Salt_Lake_Temple%2C_Utah_-_Sept_2004-2.jpg/440px-Salt_Lake_Temple%2C_Utah_-_Sept_2004-2.jpg"
+							events: ["Arrival of the Saints in the Salt Lake Valley", "Construction of the Salt Lake Temple"],
+							figures: ["Brigham Young", "Wilford Woodruff", "John Taylor"],
+							imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Salt_Lake_Temple%2C_Utah_-_Sept_2004-2.jpg/440px-Salt_Lake_Temple%2C_Utah_-_Sept_2004-2.jpg",
+							imgAlt: "Salt Lake Temple"
 						}
 					]
 				}

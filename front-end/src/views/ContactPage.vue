@@ -69,6 +69,7 @@ export default defineComponent({
 .form-group input[type="email"],
 .form-group textarea {
   width: 100%;
+  min-width: 600px; /* Ensure input boxes are not narrower than this */
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -85,5 +86,17 @@ button[type="submit"] {
 
 button[type="submit"]:hover {
   background-color: #45a049;
+}
+
+@media (max-width: 800px) {
+  .item {
+    max-width: 100%;
+  }
+
+  .form-group input[type="text"],
+  .form-group input[type="email"],
+  .form-group textarea {
+    min-width: auto; /* Resets min-width for small screens */
+  }
 }
 </style>

@@ -106,6 +106,10 @@ h3 {
   font-size: 150%;
 }
 
+h4 {
+  font-size: 110%;
+}
+
 .page {
   background-color: #f5f5f5;
 }
