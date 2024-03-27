@@ -1,16 +1,9 @@
-<script lang="ts">
-import {computed, defineComponent} from "vue";
-import {useStore} from "~/store"; // Assuming this points to your configured Pinia store
+<script lang="ts" setup>
+import { computed } from 'vue'
+import { useStore } from '~/store' // Ensure this points to your configured Pinia store
 
-export default defineComponent({
-  name: "AboutPage",
-  setup() {
-    const store = useStore();
-    const about = computed(() => store.about); // Accessing 'about' directly from the Pinia store
-
-    return {about};
-  },
-});
+const store = useStore()
+const about = computed(() => store.about) // Accessing 'about' directly from the Pinia store
 </script>
 
 <template>

@@ -1,24 +1,24 @@
 <script lang="ts" setup>
-const router = useRouter();
-const route = useRoute("/hi/[name]");
-const user = useUserStore();
-const {t} = useI18n();
+const router = useRouter()
+const route = useRoute('/hi/[name]')
+const user = useUserStore()
+const { t } = useI18n()
 
 watchEffect(() => {
-  user.setNewName(route.params.name);
+  user.setNewName(route.params.name)
 })
 </script>
 
 <template>
   <div>
     <div text-4xl>
-      <div i-carbon-pedestrian inline-block/>
+      <div i-carbon-pedestrian inline-block />
     </div>
     <p>
-      {{ t("intro.hi", {name: user.savedName}) }}
+      {{ t("intro.hi", { name: user.savedName }) }}
     </p>
 
-    <p opacity-75 text-sm>
+    <p text-sm opacity-75>
       <em>{{ t("intro.dynamic-route") }}</em>
     </p>
 
@@ -37,7 +37,7 @@ watchEffect(() => {
 
     <div>
       <button
-        btn m="3 t6" text-sm
+        m="3 t6" text-sm btn
         @click="router.back()"
       >
         {{ t("button.back") }}

@@ -1,9 +1,5 @@
-<script lang="ts">
-import {defineComponent} from "vue";
-
-export default defineComponent({
-  name: "FooterComponent",
-});
+<script lang="ts" setup>
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 </script>
 
 <template>
@@ -13,17 +9,17 @@ export default defineComponent({
       <ul>
         <li>
           <a href="https://www.facebook.com/jacoba1100254352" target="_blank">
-            <font-awesome-icon :icon="['fab', 'facebook']" size="2x"/>
+            <FontAwesomeIcon :icon="['fab', 'facebook']" size="2x" />
           </a>
         </li>
         <li>
           <a href="https://www.github.com/Jacoba1100254352" target="_blank">
-            <font-awesome-icon :icon="['fab', 'github']" size="2x"/>
+            <FontAwesomeIcon :icon="['fab', 'github']" size="2x" />
           </a>
         </li>
         <li>
           <a href="https://www.instagram.com/jacoba1100254352" target="_blank">
-            <font-awesome-icon :icon="['fab', 'instagram']" size="2x"/>
+            <FontAwesomeIcon :icon="['fab', 'instagram']" size="2x" />
           </a>
         </li>
       </ul>

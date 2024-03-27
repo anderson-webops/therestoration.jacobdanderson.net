@@ -1,15 +1,8 @@
-<script>
-import {useStore} from "vuex";
+<script setup>
+import { useStore } from '~/store'
 
-export default {
-  name: "EventsComponent",
-  computed: {
-    events() {
-      const store = useStore();
-      return store.getters.events;
-    },
-  },
-};
+const eventsStore = useStore()
+const events = computed(() => eventsStore.events)
 </script>
 
 <template>

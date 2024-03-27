@@ -1,24 +1,24 @@
 <script lang="ts" setup>
 defineOptions({
-  name: "IndexPage",
+  name: 'IndexPage',
 })
-const user = useUserStore();
-const name = ref(user.savedName);
+const user = useUserStore()
+const name = ref(user.savedName)
 
-const router = useRouter();
+const router = useRouter()
 
 function go() {
   if (name.value)
-    router.push(`/hi/${encodeURIComponent(name.value)}`);
+    router.push(`/hi/${encodeURIComponent(name.value)}`)
 }
 
-const {t} = useI18n();
+const { t } = useI18n()
 </script>
 
 <template>
   <div>
     <div text-4xl>
-      <div i-carbon-campsite inline-block/>
+      <div i-carbon-campsite inline-block />
     </div>
     <p>
       <a href="https://github.com/antfu/vitesse" rel="noreferrer" target="_blank">
@@ -26,10 +26,10 @@ const {t} = useI18n();
       </a>
     </p>
     <p>
-      <em opacity-75 text-sm>{{ t("intro.desc") }}</em>
+      <em text-sm opacity-75>{{ t("intro.desc") }}</em>
     </p>
 
-    <div py-4/>
+    <div py-4 />
 
     <TheInput
       v-model="name"
@@ -42,7 +42,7 @@ const {t} = useI18n();
     <div>
       <button
         :disabled="!name"
-        btn m-3 text-sm
+        m-3 text-sm btn
         @click="go"
       >
         {{ t("button.go") }}

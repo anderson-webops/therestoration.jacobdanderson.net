@@ -1,16 +1,9 @@
-<script lang="ts">
-import {computed, defineComponent} from "vue";
-import {useStore} from "~/store";
+<script lang="ts" setup>
+import { computed } from 'vue'
+import { useStore } from '~/store'
 
-export default defineComponent({
-  name: "KeyEvents",
-  setup() {
-    const mainStore = useStore();
-    const events = computed(() => mainStore.events);
-
-    return {events};
-  },
-});
+const mainStore = useStore()
+const events = computed(() => mainStore.events)
 </script>
 
 <template>

@@ -1,16 +1,16 @@
 <script lang="ts" setup>
-const router = useRouter();
-const {t} = useI18n();
+const router = useRouter()
+const { t } = useI18n()
 </script>
 
 <template>
   <main p="x4 y10" text="center teal-700 dark:gray-200">
     <div text-4xl>
-      <div i-carbon-warning inline-block/>
+      <div i-carbon-warning inline-block />
     </div>
-    <RouterView/>
+    <RouterView />
     <div>
-      <button btn m="3 t8" text-sm @click="router.back()">
+      <button m="3 t8" text-sm btn @click="router.back()">
         {{ t("button.back") }}
       </button>
     </div>

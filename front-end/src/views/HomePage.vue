@@ -1,16 +1,9 @@
-<script lang="ts">
-import {computed, defineComponent} from "vue";
-import {useStore} from "~/store";
+<script lang="ts" setup>
+import { computed } from 'vue'
+import { useStore } from '~/store' // Ensure this points to your configured Pinia store
 
-export default defineComponent({
-  name: "HomePage",
-  setup() {
-    const store = useStore();
-    const home = computed(() => store.home);
-
-    return {home};
-  },
-});
+const store = useStore()
+const home = computed(() => store.home)
 </script>
 
 <template>

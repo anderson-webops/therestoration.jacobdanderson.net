@@ -1,49 +1,49 @@
 <script lang="ts" setup>
-import {useHead} from "@vueuse/head";
-import {ref} from "vue";
-import {useRoute} from "vue-router";
-import FooterComponent from "./components/FooterComponent.vue";
+import { useHead } from '@vueuse/head'
+import { ref } from 'vue'
+import { useRoute } from 'vue-router'
+import FooterComponent from './components/FooterComponent.vue'
 
-const isDark = ref(false); // Simplified dark mode toggle for demonstration
+const isDark = ref(false) // Simplified dark mode toggle for demonstration
 useHead({
-  title: "The Restoration",
+  title: 'The Restoration',
   meta: [
     {
-      name: "description",
-      content: "Your App Description",
+      name: 'description',
+      content: 'Your App Description',
     },
     {
-      name: "theme-color",
-      content: () => isDark.value ? "#00aba9" : "#ffffff",
+      name: 'theme-color',
+      content: () => isDark.value ? '#00aba9' : '#ffffff',
     },
   ],
   link: [
     {
-      rel: "icon",
-      type: "image/svg+xml",
-      href: () => isDark.value ? "/favicon-dark.svg" : "/favicon.svg",
+      rel: 'icon',
+      type: 'image/svg+xml',
+      href: () => isDark.value ? '/favicon-dark.svg' : '/favicon.svg',
     },
   ],
-});
+})
 
-const route = useRoute();
-const isExpanded = ref(false);
+const route = useRoute()
+const isExpanded = ref(false)
 const links = ref([
-  {name: "Map", path: "/map"},
-  {name: "Events", path: "/events"},
-  {name: "Figures", path: "/figures"},
-  {name: "About", path: "/about"},
-  {name: "Contact", path: "/contact"},
-]);
+  { name: 'Map', path: '/map' },
+  { name: 'Events', path: '/events' },
+  { name: 'Figures', path: '/figures' },
+  { name: 'About', path: '/about' },
+  { name: 'Contact', path: '/contact' },
+])
 
 function toggleMenu() {
-  isExpanded.value = !isExpanded.value;
+  isExpanded.value = !isExpanded.value
 }
 
-const activeLink = ref("Home"); // Default active link is 'Home'
+const activeLink = ref('Home') // Default active link is 'Home'
 function setActiveLink(linkName: string, event: Event) {
-  event.preventDefault();
-  activeLink.value = linkName;
+  event.preventDefault()
+  activeLink.value = linkName
 }
 </script>
 
@@ -68,9 +68,9 @@ function setActiveLink(linkName: string, event: Event) {
     </nav>
 
     <div class="content">
-      <router-view/>
-      <router-view v-if="route.path === '/'" name="contact"/>
-      <FooterComponent/>
+      <router-view />
+      <router-view v-if="route.path === '/'" name="contact" />
+      <FooterComponent />
     </div>
   </div>
 </template>
