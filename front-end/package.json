@@ -105,7 +105,8 @@
       "eslint:recommended",
       "plugin:@typescript-eslint/recommended",
       "plugin:vue/vue3-essential",
-      "@vue/typescript"
+      "@vue/typescript",
+      "plugin:react-hooks/recommended"
     ],
     "parserOptions": {
       "ecmaVersion": "latest",
@@ -128,6 +129,12 @@
       "semi": [
         "error",
         "always"
+      ],
+      "react-refresh/only-export-components": [
+        "warn",
+        {
+          "allowConstantExport": true
+        }
       ]
     },
     "overrides": [
@@ -142,6 +149,13 @@
           "sourceType": "script"
         }
       }
+    ],
+    "ignorePatterns": [
+      "dist",
+      ".eslintrc.cjs"
+    ],
+    "plugins": [
+      "react-refresh"
     ]
   },
   "browserslist": [
