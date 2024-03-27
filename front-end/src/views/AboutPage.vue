@@ -5,9 +5,11 @@
       <p>{{ about.header.description }}</p>
     </div>
 
-    <div v-for="(item, index) in about.body" :key="index" class="item body">
-      <h3>{{ item.title }}</h3>
-      <p>{{ item.description }}</p>
+    <div class="body-container">
+      <div v-for="(item, index) in about.body" :key="index" class="item body">
+        <h3>{{ item.title }}</h3>
+        <p>{{ item.description }}</p>
+      </div>
     </div>
   </div>
 </template>
@@ -29,24 +31,20 @@ export default defineComponent({
 </script>
 
 <style scoped>
-h1, h2 {
-  font-weight: bold;
-  text-align: center;
-  padding-bottom: 5px;
-  margin: 0;
-  color: #2a6496;
-}
-
-h1 {
-  font-size: 200%;
-}
-
-h2 {
-  font-size: 150%;
-}
-
 .page {
   background-color: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.body-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* Centers the child elements */
+  gap: 20px; /* Adjust the gap between the elements */
+  width: 100%;
+  max-width: 1200px; /* Adjust based on your preference */
 }
 
 .item {
@@ -56,7 +54,6 @@ h2 {
   border: 1px solid #ccc;
   border-radius: 5px;
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
-
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -68,7 +65,7 @@ h2 {
 }
 
 .body {
-  display: inline-block;
-  width: 45%;
+  flex: 1 1 300px; /* Adjust the basis to control the minimum width */
+  height: 100%; /* Ensures equal height */
 }
 </style>

@@ -1,0 +1,16 @@
+{
+  "name": "the-restoration",
+  "version": "1.0.0",
+  "description": "",
+  "author": "Jacob Anderson",
+  "keywords": [],
+  "license": "ISC",
+  "type": "module",
+  "workspaces": [
+    "front-end",
+    "back-end"
+  ],
+  "scripts": {
+    "lint-staged": ""
+  }
+}

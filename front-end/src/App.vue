@@ -95,15 +95,15 @@ h1, h2, h3 {
 }
 
 h1 {
-  font-size: 200%;
+  font-size: 250%;
 }
 
 h2 {
-  font-size: 150%;
+  font-size: 200%;
 }
 
 h3 {
-  font-size: 100%;
+  font-size: 150%;
 }
 
 .page {
@@ -126,6 +126,14 @@ h3 {
 
 .item p {
   margin-top: 10px;
+}
+
+.item img {
+  width: 100%;
+  max-width: 320px; /* Maximum width reduced to half */
+  height: auto; /* Maintain aspect ratio */
+  object-fit: cover; /* Adjust how the image fits in the container */
+  border-radius: 8px; /* Optional: adds rounded corners */
 }
 
 

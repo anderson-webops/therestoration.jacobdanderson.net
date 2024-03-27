@@ -6,7 +6,15 @@
 
     <div v-for="(item, index) in events.body" :key="index" class="item">
       <h3>{{ item.name }}</h3>
+      <img :src="item.image" :alt="item.imgAlt">
       <p>{{ item.description }}</p>
+      <i>{{ item.quote }} - {{ item.quoteSource }}</i>
+      <br>
+      <br>
+
+      <i v-for="(source, index) in item.sources" :key="index">
+        {{ source }}
+      </i>
     </div>
   </div>
 </template>
@@ -28,9 +36,5 @@ export default defineComponent({
 </script>
 
 <style scoped>
-h1 {
-  text-align: center;
-  color: #2a6496;
-  font-size: 2.5em;
-}
+
 </style>
