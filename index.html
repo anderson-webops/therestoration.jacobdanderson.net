@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <link href="/pwa-192x192.png" rel="apple-touch-icon"/>
+  <link color="#00aba9" href="/safari-pinned-tab.svg" rel="mask-icon"/>
+  <meta content="#00aba9" name="msapplication-TileColor"/>
+  <script>
+    ;(function () {
+      const prefersDark =
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const setting = localStorage.getItem("vueuse-color-scheme") || "auto";
+      if (setting === "dark" || (prefersDark && setting !== "light"))
+        document.documentElement.classList.toggle("dark", true);
+    })();
+  </script>
+</head>
+<body class="font-sans">
+<div id="app"></div>
+<script src="/src/main.ts" type="module"></script>
+<noscript>
+  This website requires JavaScript to function properly. Please enable
+  JavaScript to continue.
+</noscript>
+</body>
+</html>
