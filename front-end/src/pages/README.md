@@ -10,11 +10,11 @@ Check out [`unplugin-vue-router`](https://github.com/posva/unplugin-vue-router) 
 For example, instead of having
 
 ```ts
-import { isDark } from '../../../../composables'
+import {isDark} from '../../../../composables'
 ```
 
 now, you can use
 
 ```ts
-import { isDark } from '~/composables'
+import {isDark} from '~/composables'
 ```

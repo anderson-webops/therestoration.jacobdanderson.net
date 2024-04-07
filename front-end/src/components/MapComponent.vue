@@ -1,28 +1,64 @@
-<script setup>
-import { onMounted, ref } from 'vue'
-import L from 'leaflet'
-import 'leaflet/dist/leaflet.css'
+<script lang="ts" setup>
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
-const map = ref(null)
+interface Location {
+	latitude: number;
+	longitude: number;
+	name: string;
+	events: string[];
+	figures: string[];
+	imageUrl: string;
+}
 
-onMounted(() => {
-  map.value = L.map('map').setView([40.2338, -111.6585], 13) // Use a default location, e.g., Provo, Utah
+const props = defineProps({
+	coordinates: {
+		type: Array as () => Location[],
+		default: () => [],
+	},
+});
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-  }).addTo(map.value)
+const map = ref<L.Map | null>(null);
+const mapContainer = ref<HTMLElement | null>(null);
 
-  // Example of adding a marker
-  L.marker([40.2338, -111.6585]).addTo(map.value)
-    .bindPopup('A significant event location')
-    .openPopup()
-})
+onMounted(async () => {
+	await nextTick();
+	if (mapContainer.value) {
+		map.value = L.map(mapContainer.value).setView([40.2338, -111.6585], 5);
+
+		L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+			attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
+		}).addTo(map.value as L.Map);
+
+		watch(props.coordinates, (newCoordinates: Location[]) => {
+			newCoordinates.forEach((location: Location) => {
+				const marker = L.marker([location.latitude, location.longitude]).addTo(map.value as L.Map);
+				const popupContent = `
+        <b>${location.name}</b><br>
+        ${location.events.join(", ")}<br>
+        ${location.figures.join(", ")}<br>
+        <img src="${location.imageUrl}" alt="${location.name}" style="width:100%;max-width:300px;">
+      `;
+				marker.bindPopup(popupContent);
+			});
+		}, { immediate: true });
+	}
+});
+
+onBeforeUnmount(() => {
+	if (map.value instanceof L.Map)
+		map.value.remove();
+});
 </script>
 
 <template>
-  <div id="map" style="height: 400px;" />
+	<div id="map" ref="mapContainer" />
 </template>
 
 <style scoped>
-
+#map {
+	height: 54vh;
+	width: 100%;
+}
 </style>
