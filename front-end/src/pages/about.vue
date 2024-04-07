@@ -12,7 +12,7 @@ const about = computed(() => store.about);
 			<h1>{{ about.header.title }}</h1>
 			<p>{{ about.header.description }}</p>
 		</div>
-
+		
 		<div class="body-container">
 			<div v-for="(item, index) in about.body" :key="index" class="item body">
 				<h3>{{ item.title }}</h3>

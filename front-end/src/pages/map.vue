@@ -4,6 +4,7 @@ import { useMainStore } from "~/stores";
 
 import MapComponent from "~/components/MapComponent.vue";
 
+
 const store = useMainStore();
 const map = computed(() => store.map);
 </script>

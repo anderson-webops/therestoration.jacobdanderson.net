@@ -25,13 +25,14 @@ export const createApp = ViteSSG(
 	(ctx) => {
 		// ctx is the context where you can add global components or plugins
 		ctx.app.component("font-awesome-icon", FontAwesomeIcon);
-
+		
 		// Auto-import and install all modules under `modules/`, if any
 		// install all modules under `modules/`
-		Object.values(import.meta.glob<{ install: UserModule }>("./modules/*.ts", { eager: true }))
-			.forEach(i => i.install?.(ctx));
+		Object.values(import.meta.glob<{
+			install: UserModule;
+		}>("./modules/*.ts", { eager: true })).forEach(i => i.install?.(ctx));
 		// ctx.app.use(Previewer)
-
+		
 		// If you had specific plugins like a global error handler, i18n, etc., initialize them here
 	},
 );

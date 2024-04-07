@@ -17,11 +17,11 @@ watchEffect(() => {
 		<p>
 			{{ t("intro.hi", { name: user.savedName }) }}
 		</p>
-
+		
 		<p opacity-75 text-sm>
 			<em>{{ t("intro.dynamic-route") }}</em>
 		</p>
-
+		
 		<template v-if="user.otherNames.length">
 			<p mt-4 text-sm>
 				<span opacity-75>{{ t("intro.aka") }}:</span>
@@ -34,7 +34,7 @@ watchEffect(() => {
 				</ul>
 			</p>
 		</template>
-
+		
 		<div>
 			<button
 				btn m="3 t6" text-sm

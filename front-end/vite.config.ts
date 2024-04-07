@@ -18,13 +18,14 @@ import VueRouter from "unplugin-vue-router/vite";
 import { VueRouterAutoImports } from "unplugin-vue-router";
 import Pages from "vite-plugin-pages";
 
+
 export default defineConfig({
 	resolve: {
 		alias: {
 			"~/": `${path.resolve(__dirname, "src")}/`,
 		},
 	},
-
+	
 	plugins: [
 		VueMacros({
 			plugins: {
@@ -33,16 +34,16 @@ export default defineConfig({
 				}),
 			},
 		}),
-
+		
 		// https://github.com/posva/unplugin-vue-router
 		VueRouter({
 			extensions: [".vue", ".md"],
 			dts: "src/typed-router.d.ts",
 		}),
-
+		
 		// https://github.com/JohnCampionJr/vite-plugin-vue-layouts
 		Layouts(),
-
+		
 		// https://github.com/antfu/unplugin-auto-import
 		AutoImport({
 			imports: [
@@ -63,7 +64,7 @@ export default defineConfig({
 			],
 			vueTemplate: true,
 		}),
-
+		
 		// https://github.com/antfu/unplugin-vue-components
 		Components({
 			// allow auto load markdown components under `./src/components/`
@@ -72,11 +73,11 @@ export default defineConfig({
 			include: [/\.vue$/, /\.vue\?vue/, /\.md$/],
 			dts: "src/components.d.ts",
 		}),
-
+		
 		// https://github.com/antfu/unocss
 		// see uno.config.ts for config
 		Unocss(),
-
+		
 		// https://github.com/unplugin/unplugin-vue-markdown
 		// Don't need this? Try vitesse-lite: https://github.com/antfu/vitesse-lite
 		Markdown({
@@ -99,11 +100,11 @@ export default defineConfig({
 				}));
 			},
 		}),
-
+		
 		Pages({
 			// Plugin options
 		}),
-
+		
 		// https://github.com/antfu/vite-plugin-pwa
 		VitePWA({
 			registerType: "autoUpdate",
@@ -132,7 +133,7 @@ export default defineConfig({
 				],
 			},
 		}),
-
+		
 		// https://github.com/intlify/bundle-tools/tree/main/packages/unplugin-vue-i18n
 		VueI18n({
 			runtimeOnly: true,
@@ -140,20 +141,20 @@ export default defineConfig({
 			fullInstall: true,
 			include: [path.resolve(__dirname, "locales/**")],
 		}),
-
+		
 		// https://github.com/feat-agency/vite-plugin-webfont-dl
 		WebfontDownload(),
-
+		
 		// https://github.com/webfansplz/vite-plugin-vue-devtools
 		VueDevTools(),
 	],
-
+	
 	// https://github.com/vitest-dev/vitest
 	test: {
 		include: ["test/**/*.test.ts"],
 		environment: "jsdom",
 	},
-
+	
 	// https://github.com/antfu/vite-ssg
 	ssgOptions: {
 		script: "async",
@@ -165,7 +166,7 @@ export default defineConfig({
 			generateSitemap();
 		},
 	},
-
+	
 	ssr: {
 		// TODO: workaround until they support native ESM
 		noExternal: ["workbox-window", /vue-i18n/],

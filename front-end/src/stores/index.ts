@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 
+
 export const useMainStore = defineStore("main", {
 	state: () => ({
 		home: {
@@ -279,7 +280,7 @@ export const useMainStore = defineStore("main", {
       this.events.body = eventsData
     }, */
 	},
-
+	
 	// Define getters to compute derived state or access specific parts of the state
 	getters: {
 		// Example getter for getting all event names

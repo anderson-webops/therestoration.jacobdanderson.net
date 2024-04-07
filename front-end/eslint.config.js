@@ -1,5 +1,6 @@
 import antfu from "@antfu/eslint-config";
 
+
 export default antfu({
 	root: true,
 	env: {
@@ -21,6 +22,11 @@ export default antfu({
 		ecmaFeatures: {
 			jsx: true,
 		},
+	},
+	rules: {
+		"style/no-multiple-empty-lines": "off",
+		"style/no-trailing-spaces": "off",
+		// "style/object-curly-spacing": "off",
 	},
 	stylistic: {
 		indent: "tab",
@@ -44,6 +50,7 @@ export default antfu({
 	ignores: [
 		"node_modules",
 		"dist",
+		"package-lock.json",
 	],
 	// Additional configurations and customizations
 	formatters: {

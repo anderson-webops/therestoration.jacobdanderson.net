@@ -2,6 +2,7 @@
 import { computed } from "vue";
 import { useMainStore } from "~/stores";
 
+
 const store = useMainStore();
 const events = computed(() => store.events);
 </script>
@@ -11,7 +12,7 @@ const events = computed(() => store.events);
 		<div class="item">
 			<h1>{{ events.header.title }}</h1>
 		</div>
-
+		
 		<div class="items-container">
 			<div v-for="(item, index) in events.body" :key="index" class="item">
 				<h3>{{ item.name }}</h3>

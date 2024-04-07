@@ -2,6 +2,7 @@
 import { computed } from "vue";
 import { useMainStore } from "~/stores";
 
+
 const store = useMainStore();
 const figures = computed(() => store.figures);
 </script>
@@ -11,7 +12,7 @@ const figures = computed(() => store.figures);
 		<div class="item">
 			<h1>{{ figures.header.title }}</h1>
 		</div>
-
+		
 		<div class="items-container">
 			<div v-for="(item, index) in figures.body" :key="index" class="item">
 				<h3>{{ item.name }}</h3>

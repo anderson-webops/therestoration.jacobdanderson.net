@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 
+
 const form = ref({
 	name: "",
 	email: "",
@@ -12,7 +13,7 @@ function handleSubmit() {
 	console.log("Form submitted:", form.value);
 	// eslint-disable-next-line no-alert
 	alert("Message sent! We'll get back to you soon.");
-
+	
 	// Reset form after submission
 	form.value.name = "";
 	form.value.email = "";
@@ -25,23 +26,23 @@ function handleSubmit() {
 		<h1>Contact Me</h1>
 		<div class="item">
 			<p>If you have any questions or feedback, please feel free to reach out to us through the form below.</p>
-
+			
 			<form @submit.prevent="handleSubmit">
 				<div class="form-group">
 					<label for="name">Name:</label>
 					<input id="name" v-model="form.name" required type="text">
 				</div>
-
+				
 				<div class="form-group">
 					<label for="email">Email:</label>
 					<input id="email" v-model="form.email" required type="email">
 				</div>
-
+				
 				<div class="form-group">
 					<label for="message">Message:</label>
 					<textarea id="message" v-model="form.message" required rows="4" />
 				</div>
-
+				
 				<button type="submit">
 					Send Message
 				</button>
