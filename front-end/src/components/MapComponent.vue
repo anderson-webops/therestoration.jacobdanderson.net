@@ -1,50 +1,64 @@
-<template>
-  <div id="map" ref="mapContainer" style="height: 400px;"></div>
-</template>
-
-<script setup>
-import { onMounted, onBeforeUnmount, ref, watch } from "vue";
+<script lang="ts" setup>
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
+interface Location {
+	latitude: number;
+	longitude: number;
+	name: string;
+	events: string[];
+	figures: string[];
+	imageUrl: string;
+}
+
 const props = defineProps({
-	coordinates: Array,
+	coordinates: {
+		type: Array as () => Location[],
+		default: () => [],
+	},
 });
 
-const map = ref(null);
-const mapContainer = ref(null);
+const map = ref<L.Map | null>(null);
+const mapContainer = ref<HTMLElement | null>(null);
 
-onMounted(() => {
-	// Initialize the map only when the DOM is fully ready
-	map.value = L.map(mapContainer.value).setView([40.2338, -111.6585], 5);
+onMounted(async () => {
+	await nextTick();
+	if (mapContainer.value) {
+		map.value = L.map(mapContainer.value).setView([40.2338, -111.6585], 5);
 
-	L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-		attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
-	}).addTo(map.value);
+		L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+			attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
+		}).addTo(map.value as L.Map);
 
-	// Dynamically add markers when coordinates prop changes
-	watch(props.coordinates, (newCoordinates) => {
-		newCoordinates.forEach((location) => {
-			const marker = L.marker([location.latitude, location.longitude]).addTo(map.value);
-			const popupContent = `
-      <b>${location.name}</b><br>
-      ${location.events.join(", ")}<br>
-      ${location.figures.join(", ")}<br>
-      <img src="${location.imageUrl}" alt="${location.name}" style="width:100%;max-width:300px;">
-    `;
-			marker.bindPopup(popupContent);
-		});
-	}, { immediate: true });
-
+		watch(props.coordinates, (newCoordinates: Location[]) => {
+			newCoordinates.forEach((location: Location) => {
+				const marker = L.marker([location.latitude, location.longitude]).addTo(map.value as L.Map);
+				const popupContent = `
+        <b>${location.name}</b><br>
+        ${location.events.join(", ")}<br>
+        ${location.figures.join(", ")}<br>
+        <img src="${location.imageUrl}" alt="${location.name}" style="width:100%;max-width:300px;">
+      `;
+				marker.bindPopup(popupContent);
+			});
+		}, { immediate: true });
+	}
 });
 
 onBeforeUnmount(() => {
-	if (map.value) {
-		map.value.remove(); // Ensure map instance is cleaned up
-	}
+	if (map.value instanceof L.Map)
+		map.value.remove();
 });
 </script>
 
+<template>
+	<div id="map" ref="mapContainer" />
+</template>
+
 <style scoped>
-/* Your styles here (if any) */
+#map {
+	height: 54vh;
+	width: 100%;
+}
 </style>

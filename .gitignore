@@ -4,6 +4,13 @@
 **/package-lock.json
 **/dist
 
+.vite-ssg-dist
+.vite-ssg-temp
+*.local
+dist-ssr
+.idea/
+*.log
+cypress/downloads
 
 # local env files
 .env.local
