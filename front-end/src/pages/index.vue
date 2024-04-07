@@ -33,14 +33,6 @@ const home = computed(() => store.home);
 			<p>{{ home.testimony.description }}</p>
 		</div>
 
-		<!--    <div class="video-container">
-          <video width="100%" height="480" controls>
-            <source src="../../public/assets/video/presentation.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-          </video>
-        </div>
-        <br> -->
-
 		<div class="items-container">
 			<div v-for="(item, index) in home.body" :key="index" class="item">
 				<h3>{{ item.title }}</h3>
@@ -93,14 +85,6 @@ const home = computed(() => store.home);
 	.item {
 		flex-basis: 100%;
 	}
-}
-
-.video-container {
-	display: flex;
-	justify-content: center;
-	width: 100%;
-	max-width: 800px;
-	margin: 0 auto;
 }
 
 .featured-links {
