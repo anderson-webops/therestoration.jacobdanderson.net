@@ -65,7 +65,7 @@ function handleSubmit() {
 .form-group input[type="email"],
 .form-group textarea {
 	width: 100%;
-	min-width: 600px; /* Ensure input boxes are not narrower than this */
+	min-width: 600px;
 	padding: 8px;
 	border: 1px solid #ccc;
 	border-radius: 4px;
