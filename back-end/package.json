@@ -1,93 +1,58 @@
 {
 	"name": "back-end",
-	"version": "2.0.0",
+	"version": "1.0.0",
+	"private": true,
 	"description": "",
 	"type": "module",
 	"main": "dist/server.js",
 	"scripts": {
+		"server": "tsx watch -r dotenv/config src/server.ts",
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"start": "node dist/server.js",
-		"build": "tsc",
+		"build": "tsc -p tsconfig.json",
 		"watch": "tsc -w",
-		"dev": "nodemon --exec ts-node src/server.ts",
-		"lint": "eslint src/**/*.ts",
-		"lint-fix": "eslint src/**/*.ts --fix"
+		"dev": "tsx watch -r dotenv/config src/server.ts",
+		"up": "taze major -I",
+		"lint": "eslint \"src/**/*.{js,ts}\"",
+		"lint-fix": "eslint \"src/**/*.{js,ts}\" --fix",
+		"create-admin": "node dist/create-admin-user.js",
+		"create-admin-ts": "tsx -r dotenv/config src/create-admin-user.ts"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
-		"@types/cookie-parser": "^1.4.7",
-		"@types/cookie-session": "^2.0.49",
-		"@types/readline-sync": "^1.4.8",
-		"argon2": "^0.40.3",
-		"body-parser": "^1.20.2",
-		"cookie-parser": "^1.4.6",
-		"cookie-session": "^2.1.0",
-		"express": "^4.19.2",
-		"express-session": "^1.18.0",
-		"mongoose": "^8.5.4",
-		"readline-sync": "^1.4.10"
+		"argon2": "^0.44.0",
+		"body-parser": "^2.2.1",
+		"cookie-session": "^2.1.1",
+		"dotenv": "^17.2.3",
+		"esbuild": "^0.27.0",
+		"express": "^5.2.1",
+		"express-rate-limit": "^8.2.1",
+		"express-validator": "^7.3.1",
+		"helmet": "^8.1.0",
+		"marked": "^17.0.1",
+		"moment": "^2.30.1",
+		"mongoose": "^9.0.0",
+		"multer": "^2.0.2",
+		"nodemailer": "^7.0.11",
+		"readline-sync": "^1.4.10",
+		"zod": "^4.1.13"
 	},
 	"devDependencies": {
-		"@types/body-parser": "^1.19.5",
-		"@types/express": "^4.17.21",
-		"@types/express-session": "^1.18.0",
-		"@types/node": "^22.5.0",
-		"@typescript-eslint/eslint-plugin": "^8.2.0",
-		"@typescript-eslint/parser": "^8.2.0",
-		"eslint": "^9.9.1",
-		"nodemon": "^3.1.4",
+		"@eslint/compat": "^2.0.0",
+		"@types/body-parser": "^1.19.6",
+		"@types/cookie-session": "^2.0.49",
+		"@types/express": "^5.0.6",
+		"@types/express-session": "^1.18.2",
+		"@types/node": "^24.10.1",
+		"@types/nodemailer": "^7.0.4",
+		"@types/readline-sync": "^1.4.8",
+		"eslint-plugin-import": "^2.32.0",
+		"nodemon": "^3.1.11",
 		"ts-node": "^10.9.2",
-		"typescript": "^5.5.4"
-	},
-	"eslintConfig": {
-		"env": {
-			"es2021": true,
-			"node": true
-		},
-		"extends": [
-			"eslint:recommended",
-			"plugin:@typescript-eslint/recommended"
-		],
-		"overrides": [
-			{
-				"env": {
-					"node": true
-				},
-				"files": [
-					".eslintrc.{js,cjs}"
-				],
-				"parserOptions": {
-					"sourceType": "script"
-				}
-			}
-		],
-		"parserOptions": {
-			"ecmaVersion": "latest",
-			"parser": "@typescript-eslint/parser",
-			"sourceType": "module"
-		},
-		"plugins": [
-			"@typescript-eslint"
-		],
-		"rules": {
-			"indent": [
-				"error",
-				"tab"
-			],
-			"linebreak-style": [
-				"error",
-				"unix"
-			],
-			"quotes": [
-				"error",
-				"double"
-			],
-			"semi": [
-				"error",
-				"always"
-			]
-		}
+		"tsx": "^4.21.0",
+		"typescript": "^5.9.3",
+		"typescript-eslint": "^8.48.1"
 	}
 }

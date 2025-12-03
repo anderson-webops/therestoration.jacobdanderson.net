@@ -1,10 +1,7 @@
-<script lang="ts" setup>
-</script>
+<script lang="ts" setup></script>
 
 <template>
-	<main
-		text="center gray-700 dark:gray-200"
-	>
+	<main text="center gray-700 dark:gray-200">
 		<TheHeader />
 		<RouterView class="px-4 py-5" />
 		<TheFooter />

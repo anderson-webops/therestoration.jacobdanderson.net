@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 import { computed } from "vue";
-import { useMainStore } from "~/stores";
-
 import MapComponent from "~/components/MapComponent.vue";
 
+import { useMainStore } from "~/stores";
 
 const store = useMainStore();
 const map = computed(() => store.map);
@@ -19,9 +18,7 @@ const map = computed(() => store.map);
 	</div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
 
 <route lang="yaml">
 meta:

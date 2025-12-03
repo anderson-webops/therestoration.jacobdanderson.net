@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 
-
 const isExpanded = ref(false);
 const activeLink = ref("Home");
 
@@ -11,7 +10,7 @@ const links = ref([
 	{ name: "Events", path: "/events" },
 	{ name: "Figures", path: "/figures" },
 	{ name: "About", path: "/about" },
-	{ name: "Contact", path: "/contact" },
+	{ name: "Contact", path: "/contact" }
 ]);
 
 function toggleMenu() {
@@ -30,9 +29,10 @@ function setActiveLink(linkName: string) {
 			<div class="logo-container">
 				<RouterLink to="/">
 					<img
-						alt="" class="logo"
+						alt=""
+						class="logo"
 						src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Mormon-book.jpg/440px-Mormon-book.jpg"
-					>
+					/>
 				</RouterLink>
 				<span class="site-name">The Restoration</span>
 			</div>
@@ -43,7 +43,8 @@ function setActiveLink(linkName: string) {
 			</div>
 			<ul :class="{ expanded: isExpanded }" class="nav-links">
 				<li
-					v-for="link in links" :key="link.path"
+					v-for="link in links"
+					:key="link.path"
 					:class="{ active: activeLink === link.name }"
 					@click="setActiveLink(link.name)"
 				>
