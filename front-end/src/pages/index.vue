@@ -12,34 +12,28 @@ const home = computed(() => store.home);
 		<div class="item">
 			<h1>{{ home.header.title }}</h1>
 		</div>
-		
+
 		<nav class="featured-links">
 			<!--      <RouterLink icon-btn to="/map" :title="t('button.map')" data-test-id="map">Interactive Map</RouterLink> -->
-			<RouterLink to="/map">
-				Interactive Map
-			</RouterLink>
+			<RouterLink to="/map"> Interactive Map </RouterLink>
 			|
-			<RouterLink to="/events">
-				Key Events
-			</RouterLink>
+			<RouterLink to="/events"> Key Events </RouterLink>
 			|
-			<RouterLink to="/figures">
-				Key Figures
-			</RouterLink>
+			<RouterLink to="/figures"> Key Figures </RouterLink>
 		</nav>
-		
+
 		<div class="item">
 			<h2>{{ home.testimony.title }}</h2>
 			<p>{{ home.testimony.description }}</p>
 		</div>
-		
+
 		<div class="items-container">
 			<div v-for="(item, index) in home.body" :key="index" class="item">
 				<h3>{{ item.title }}</h3>
-				<br>
+				<br />
 				<h4>{{ item.description }}</h4>
-				<br>
-				<img :alt="item.imgAlt" :src="item.image">
+				<br />
+				<img :alt="item.imgAlt" :src="item.image" />
 			</div>
 		</div>
 	</div>

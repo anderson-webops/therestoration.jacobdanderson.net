@@ -5,11 +5,9 @@
 <template>
 	<div class="page">
 		<div class="item" />
-		
+
 		<div class="items-container" />
 	</div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -1,66 +1,58 @@
-import antfu from "@antfu/eslint-config";
+import ppFlat from "eslint-config-prettier/flat";
+import prettier from "eslint-plugin-prettier";
+import vuePlugin from "eslint-plugin-vue";
+import globals from "globals";
+import ts from "typescript-eslint";
+import vueParser from "vue-eslint-parser";
+// front-end/eslint.config.js
+import base from "../eslint.config.js"; // shared root config
+import auto from "./.eslintrc-auto-import.json" with { type: "json" };
 
+export default base
+	/* project-specific additions */
+	.append({
+		languageOptions: { globals: { ...globals.browser, ...auto.globals } },
+		plugins: { prettier },
+		rules: {
+			"prettier/prettier": "error",
+			"vue/multi-word-component-names": "off",
+			"ts/no-explicit-any": "off",
+			"no-undef": "off" // auto-imported globals
+		}
+	})
 
-export default antfu({
-	root: true,
-	env: {
-		browser: true,
-		es2021: true,
-		node: true,
-	},
-	extends: [
-		"eslint:recommended",
-		"plugin:@typescript-eslint/recommended",
-		"plugin:vue/vue3-essential",
-		"@vue/typescript",
-		"plugin:react-hooks/recommended",
-	],
-	parser: "@typescript-eslint/parser",
-	parserOptions: {
-		ecmaVersion: "latest",
-		sourceType: "module",
-		ecmaFeatures: {
-			jsx: true,
-		},
-	},
-	rules: {
-		"style/no-multiple-empty-lines": "off",
-		"style/no-trailing-spaces": "off",
-		// "style/object-curly-spacing": "off",
-	},
-	stylistic: {
-		indent: "tab",
-		quotes: "double",
-		semi: true,
-		linebreak: "unix",
-	},
-	overrides: [
+	/* overrides ---------------------------------------------------- */
+	.append(
+		// TypeScript
 		{
-			files: [
-				".eslintrc.{js,cjs}",
-			],
-			env: {
-				node: true,
-			},
-			parserOptions: {
-				sourceType: "script",
-			},
+			files: ["**/*.ts"],
+			languageOptions: {
+				parser: ts.parser,
+				parserOptions: { project: "./tsconfig.json" },
+				globals: { ...globals.node, ...auto.globals }
+			}
 		},
-	],
-	ignores: [
-		"node_modules",
-		"dist",
-		"package-lock.json",
-	],
-	// Additional configurations and customizations
-	formatters: {
-		css: true, // Enables formatting for CSS files
-		html: true, // Enables formatting for HTML files
-		markdown: "prettier", // Uses Prettier for formatting Markdown files
-	},
-	// Explicitly enabling TypeScript and Vue to ensure they are processed correctly
-	typescript: true,
-	vue: true,
-	yaml: true,
-	jsonc: false,
-});
+
+		// Vue SFCs
+		{
+			files: ["**/*.vue"],
+			plugins: { vue: vuePlugin },
+			languageOptions: {
+				parser: vueParser,
+				parserOptions: {
+					parser: ts.parser,
+					extraFileExtensions: [".vue"]
+				}
+			},
+			rules: { "vue/no-unused-vars": "off" }
+		},
+
+		// build / config scripts
+		{
+			files: ["**/*.{js,cjs,mjs}", "*.config.js", "vite.config.{js,ts}"],
+			languageOptions: { sourceType: "module" }
+		}
+	)
+
+	/* keep Prettier conflict-killer last */
+	.append(ppFlat);

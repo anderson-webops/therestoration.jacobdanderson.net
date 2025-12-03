@@ -1,7 +1,7 @@
-import type { Locale } from "vue-i18n";
-import { createI18n } from "vue-i18n";
 import type { App } from "vue-demi";
+import type { Locale } from "vue-i18n";
 import type { UserModule } from "~/types";
+import { createI18n } from "vue-i18n";
 
 // Import i18n resources
 // https://vitejs.dev/guide/features.html#glob-import
@@ -10,11 +10,13 @@ import type { UserModule } from "~/types";
 const i18n = createI18n({
 	legacy: false,
 	locale: "",
-	messages: {},
+	messages: {}
 });
 
 const localesMap = Object.fromEntries(
-	Object.entries(import.meta.glob("../../locales/*.yml")).map(([path, loadLocale]) => [path.match(/([\w-]*)\.yml$/)?.[1], loadLocale]),
+	Object.entries(import.meta.glob("../../locales/*.yml")).map(
+		([path, loadLocale]) => [path.match(/([\w-]*)\.yml$/)?.[1], loadLocale]
+	)
 ) as Record<Locale, () => Promise<{ default: Record<string, string> }>>;
 
 export const availableLocales: string[] = Object.keys(localesMap);
@@ -30,13 +32,11 @@ function setI18nLanguage(lang: Locale) {
 
 export async function loadLanguageAsync(lang: string): Promise<Locale> {
 	// If the same language
-	if (i18n.global.locale.value === lang)
-		return setI18nLanguage(lang);
-	
+	if (i18n.global.locale.value === lang) return setI18nLanguage(lang);
+
 	// If the language was already loaded
-	if (loadedLanguages.includes(lang))
-		return setI18nLanguage(lang);
-	
+	if (loadedLanguages.includes(lang)) return setI18nLanguage(lang);
+
 	// If the language hasn't been loaded yet
 	const messages = await localesMap[lang]();
 	i18n.global.setLocaleMessage(lang, messages.default);
