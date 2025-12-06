@@ -21,8 +21,7 @@
 - `npm run server` launches the API with live reload via `tsx watch -r dotenv/config` on port 3008.
 - `npm run build` produces optimized client + server bundles (`front-end/dist/`, `back-end/dist/`).
 - `npm run -w front-end test` / `test:unit` run Vitest suites; `npm run -w front-end test:e2e` opens Cypress.
-- `npm run lint` (or `lint-fix`) runs the shared ESLint configuration across both workspaces; pre-commit hooks run
-  `lint-staged` automatically.
+- `npm run lint` (or `lint-fix`) runs the shared ESLint configuration across both workspaces;
 
 ## Coding Style & Naming Conventions
 
