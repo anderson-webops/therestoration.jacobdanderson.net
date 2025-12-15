@@ -1,4 +1,7 @@
 <script lang="ts" setup>
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 
 defineOptions({ ssr: false });
@@ -26,6 +29,13 @@ onMounted(async () => {
 	// Import Leaflet only on client
 	const L = await import("leaflet");
 	await import("leaflet/dist/leaflet.css");
+
+	// Ensure marker icons resolve correctly in production builds
+	L.Icon.Default.mergeOptions({
+		iconRetinaUrl: markerIcon2x,
+		iconUrl: markerIcon,
+		shadowUrl: markerShadow
+	});
 
 	await nextTick();
 

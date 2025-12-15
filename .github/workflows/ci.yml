@@ -1,119 +1,127 @@
 name: CI
 
 on:
-    push:
-        branches: [main]
-    pull_request:
-        branches: [main]
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
-    lint:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-            - uses: actions/setup-node@v4
-              with:
-                  node-version: 20.x
-                  cache: npm
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: npm
 
-            # Make runner's npm match packageManager in package.json
-            - name: Pin npm version
-              run: |
-                  npm -v
-                  npm i -g npm@11.6.0
-                  npm -v
+      # Make runner's npm match packageManager in package.json
+      - name: Pin npm version
+        run: |
+          npm -v
+          npm i -g npm@11.7.0
+          npm -v
 
-            - name: Install deps
-              run: npm ci
+      - name: Install deps
+        run: npm ci
 
-            # Root "lint" runs front-end and back-end lint
-            - name: Lint
-              run: npm run lint
+      # Root "lint" runs front-end and back-end lint
+      - name: Lint
+        run: npm run lint
 
-    typecheck:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-            - uses: actions/setup-node@v4
-              with:
-                  node-version: 20.x
-                  cache: npm
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: npm
 
-            - name: Pin npm version
-              run: |
-                  npm i -g npm@11.6.0
-                  npm -v
+      - name: Pin npm version
+        run: |
+          npm i -g npm@11.7.0
+          npm -v
 
-            - name: Install deps
-              run: npm ci
+      - name: Install deps
+        run: npm ci
 
-            # Only the front-end defines typecheck; call it directly
-            - name: Typecheck (front-end)
-              run: npm run -w front-end typecheck
+      # Only the front-end defines typecheck; call it directly
+      - name: Typecheck (front-end)
+        run: npm run -w front-end typecheck
 
-    test:
-        runs-on: ${{ matrix.os }}
-        strategy:
-            matrix:
-                node-version: [18.x, 20.x]
-                os: [ubuntu-latest]
-            fail-fast: false
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x]         # drop 18.x if incompatible
+        os: [ubuntu-latest]
+      fail-fast: false
 
-        steps:
-            - uses: actions/checkout@v4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix['node-version'] }}
+          cache: npm
+          registry-url: https://registry.npmjs.org/
 
-            - uses: actions/setup-node@v4
-              with:
-                  node-version: ${{ matrix['node-version'] }}
-                  cache: npm
-                  registry-url: https://registry.npmjs.org/
+      # Only pin npm if compatible
+      - name: Pin npm version (if supported)
+        run: |
+          # optional guard:
+          if [ $(node -v | cut -d. -f1 | sed 's/v//') -ge 20 ]; then
+            npm i -g npm@11.7.0
+          fi
+          npm -v
 
-            - name: Pin npm version
-              run: |
-                  npm i -g npm@11.6.0
-                  npm -v
+      - name: Install deps
+        run: npm ci
 
-            - name: Install deps
-              run: npm ci
+      - name: Unit tests
+        env:
+          VITEST_WATCH: "false"
+        run: |
+          ulimit -n 4096 || true
+          npm run -w front-end test:unit
 
-            # Run your unit tests (front-end has vitest)
-            - name: Unit tests
-              run: npm run -w front-end test:unit
+  test-e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-    test-e2e:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: npm
+          registry-url: https://registry.npmjs.org/
 
-            - uses: actions/setup-node@v4
-              with:
-                  node-version: 20.x
-                  cache: npm
-                  registry-url: https://registry.npmjs.org/
+      - name: Pin npm version
+        run: |
+          npm i -g npm@11.7.0
+          npm -v
 
-            - name: Pin npm version
-              run: |
-                  npm i -g npm@11.6.0
-                  npm -v
+      - name: Install deps
+        run: npm ci
 
-            - name: Install deps
-              run: npm ci
+      # Cache Cypress binary
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 
-            # Cache Cypress binary
-            - uses: actions/cache@v4
-              with:
-                  path: ~/.cache/Cypress
-                  key: cypress-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      # Build site and run preview server for Cypress to hit
+      - name: Build (front-end)
+        run: npm run -w front-end build
 
-            # Build site and run preview server for Cypress to hit
-            - name: Build (front-end)
-              run: npm run -w front-end build
-
-            - name: Cypress
-              uses: cypress-io/github-action@v6
-              with:
-                  install: false # we already ran npm ci
-                  start: npm run -w front-end preview -- --port 3333
-                  wait-on: "http://localhost:3333"
+      - name: Cypress
+        uses: cypress-io/github-action@v6
+        with:
+          install: false # we already ran npm ci
+          working-directory: front-end
+          config-file: cypress.config.ts
+          start: npm run preview -- --port 3333
+          wait-on: "http://localhost:3333"
