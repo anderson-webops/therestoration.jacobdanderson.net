@@ -34,7 +34,9 @@ async function main() {
 		keys: [SESSION_SECRET],
 		maxAge: 24 * 60 * 60 * 1000,
 		sameSite: "lax", // default, safe for dev & same-origin
-		secure: false, // default in dev
+		// Use secure cookies unless in development/local mode.
+		// It is strongly recommended to run development with HTTPS and secure cookies as well.
+		secure: env.NODE_ENV !== "development",
 	};
 
 	// Adjust for production
