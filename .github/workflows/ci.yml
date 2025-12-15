@@ -121,7 +121,7 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           install: false # we already ran npm ci
-          working-directory: front-end
-          config-file: cypress.config.ts
-          start: npm run preview -- --port 3333
+          project: front-end
+          config-file: front-end/cypress.config.ts
+          start: npm run -w front-end preview -- --port 3333
           wait-on: "http://localhost:3333"
