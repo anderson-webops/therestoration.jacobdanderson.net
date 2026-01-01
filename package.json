@@ -27,8 +27,8 @@
 	},
 	"devDependencies": {
 		"@antfu/eslint-config": "^6.7.3",
-		"@typescript-eslint/eslint-plugin": "^8.50.0",
-		"@typescript-eslint/parser": "^8.50.0",
+		"@typescript-eslint/eslint-plugin": "^8.51.0",
+		"@typescript-eslint/parser": "^8.51.0",
 		"eslint": "^9.39.2",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-prettier": "^5.5.4",
@@ -37,6 +37,9 @@
 		"prettier": "^3.7.4",
 		"taze": "^19.9.2",
 		"typescript": "^5.9.3"
+	},
+	"overrides": {
+		"qs": "6.14.1"
 	},
 	"dependencies": {}
 }
