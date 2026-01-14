@@ -67,7 +67,7 @@
 		"rollup": "^4.55.1",
 		"shiki": "^3.21.0",
 		"simple-git-hooks": "^2.13.1",
-		"unocss": "^66.5.12",
+		"unocss": "^66.6.0",
 		"unplugin-auto-import": "^20.3.0",
 		"unplugin-vue-components": "^30.0.0",
 		"unplugin-vue-macros": "^2.14.5",
