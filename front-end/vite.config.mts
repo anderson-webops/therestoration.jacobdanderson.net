@@ -115,33 +115,33 @@ export default defineConfig({
 				display: "standalone",
 				icons: [
 					{
-						src: "https://jacobdanderson.s3.us-east-1.amazonaws.com/Favicons/favicons+Logo+Bo+Light/android-chrome-192x192.png",
+						src: "android-chrome-192x192.png",
 						sizes: "192x192",
 						type: "image/png"
 					},
 					{
-						src: "https://jacobdanderson.s3.us-east-1.amazonaws.com/Favicons/favicons+Logo+Bo+Light/android-chrome-512x512.png",
+						src: "android-chrome-512x512.png",
 						sizes: "512x512",
 						type: "image/png"
 					},
 					{
-						src: "https://jacobdanderson.s3.amazonaws.com/Favicons/favicons+Logo+Bo+Light/apple-touch-icon.png",
+						src: "apple-touch-icon.png",
 						sizes: "180x180",
 						type: "image/png",
 						purpose: "apple-touch-icon"
 					},
 					{
-						src: "https://jacobdanderson.s3.amazonaws.com/Favicons/favicons+Logo+Bo+Light/favicon-32x32.png",
+						src: "favicon-32x32.png",
 						sizes: "32x32",
 						type: "image/png"
 					},
 					{
-						src: "https://jacobdanderson.s3.amazonaws.com/Favicons/favicons+Logo+Bo+Light/favicon-16x16.png",
+						src: "favicon-16x16.png",
 						sizes: "16x16",
 						type: "image/png"
 					},
 					{
-						src: "https://jacobdanderson.s3.us-east-1.amazonaws.com/Favicons/favicons+Logo+Bo+Light/favicon.ico",
+						src: "favicon.ico",
 						sizes: "48x48",
 						type: "image/x-icon"
 					}
