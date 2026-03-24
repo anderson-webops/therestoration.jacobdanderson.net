@@ -31,7 +31,7 @@ function setActiveLink(linkName: string) {
 					<img
 						alt=""
 						class="logo"
-						src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Mormon-book.jpg/440px-Mormon-book.jpg"
+						src="/images/restoration/brand/mormon-book-440px.jpg"
 					/>
 				</RouterLink>
 				<span class="site-name">The Restoration</span>
