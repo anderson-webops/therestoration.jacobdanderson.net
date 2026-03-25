@@ -60,7 +60,7 @@
 		"@vue/test-utils": "^2.4.6",
 		"beasties": "^0.4.1",
 		"cross-env": "^10.1.0",
-		"cypress": "^15.12.0",
+		"cypress": "^15.13.0",
 		"cypress-vite": "^1.8.0",
 		"eslint-plugin-format": "^2.0.1",
 		"markdown-it-link-attributes": "^4.0.1",
@@ -80,7 +80,7 @@
 		"vite-plugin-vue-devtools": "^8.1.0",
 		"vite-ssg": "^28.3.0",
 		"vite-ssg-sitemap": "^0.10.0",
-		"vitest": "^4.1.0",
+		"vitest": "^4.1.1",
 		"vue-eslint-parser": "^10.4.0",
 		"vue-tsc": "^3.2.6"
 	},
