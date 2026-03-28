@@ -42,6 +42,7 @@
     "debouncedWatch": true,
     "defineAsyncComponent": true,
     "defineComponent": true,
+    "definePage": true,
     "eagerComputed": true,
     "effectScope": true,
     "extendRef": true,
