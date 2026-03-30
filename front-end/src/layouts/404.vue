@@ -1,6 +1,9 @@
 <script lang="ts" setup>
 const router = useRouter();
 const { t } = useI18n();
+useHead({
+	title: () => t("not-found")
+});
 </script>
 
 <template>
