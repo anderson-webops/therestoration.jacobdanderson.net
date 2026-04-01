@@ -58,7 +58,6 @@
 		"beasties": "^0.4.1",
 		"cross-env": "^10.1.0",
 		"cypress": "^15.13.0",
-		"cypress-vite": "^1.8.0",
 		"eslint-plugin-format": "^2.0.1",
 		"markdown-it-link-attributes": "^4.0.1",
 		"rollup": "^4.60.1",
