@@ -13,9 +13,11 @@ const i18n = createI18n({
 	messages: {}
 });
 
+const LOCALE_FILE_REGEX = /([\w-]*)\.json$/;
+
 const localesMap = Object.fromEntries(
 	Object.entries(import.meta.glob("../../locales/*.json")).map(
-		([path, loadLocale]) => [path.match(/([\w-]*)\.json$/)?.[1], loadLocale]
+		([path, loadLocale]) => [path.match(LOCALE_FILE_REGEX)?.[1], loadLocale]
 	)
 ) as Record<Locale, () => Promise<{ default: Record<string, string> }>>;
 
