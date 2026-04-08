@@ -38,5 +38,8 @@
 		"prettier": "^3.8.1",
 		"taze": "^19.11.0",
 		"typescript": "^5.9.3"
+	},
+	"overrides": {
+		"defu": "6.1.6"
 	}
 }
