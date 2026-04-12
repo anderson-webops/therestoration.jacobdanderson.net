@@ -41,6 +41,8 @@
 		"typescript": "^5.9.3"
 	},
 	"overrides": {
-		"defu": "6.1.6"
+		"defu": "6.1.6",
+		"vite": "^8.0.8",
+		"vue-router": "^5.0.4"
 	}
 }
