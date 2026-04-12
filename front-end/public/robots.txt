@@ -4,6 +4,9 @@ Disallow: /
 User-agent: ClaudeBot
 Disallow: /
 
+User-agent: Google-Extended
+Disallow: /
+
 User-agent: Googlebot
 Allow: /
 Disallow: /api
@@ -13,6 +16,10 @@ Allow: /
 Disallow: /api
 
 User-agent: OAI-SearchBot
+Allow: /
+Disallow: /api
+
+User-agent: Claude-SearchBot
 Allow: /
 Disallow: /api
 
