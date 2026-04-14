@@ -24,3 +24,4 @@ npm run up
 - The root `package-lock.json` is the authoritative lockfile for the repo. Keep it updated whenever dependencies change.
 - Use `npm run server` and `npm run serve` when you want the API and front-end started separately.
 - Use [`HEALTHCHECKS.md`](./HEALTHCHECKS.md) for deployment monitor targets instead of `/`.
+- The public contact form now submits through the backend. Set `CONTACT_FROM_EMAIL` and either `CONTACT_USE_SENDMAIL=true` or the `CONTACT_SMTP_*` settings. If `CONTACT_TO_EMAIL` is unset, submissions default to `contacts@jacobdanderson.net`; `CONTACT_BCC_EMAIL` stays optional so future alias-plus-BCC routing is a simple env change.

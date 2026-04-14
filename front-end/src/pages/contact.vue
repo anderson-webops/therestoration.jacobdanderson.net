@@ -4,18 +4,49 @@ import { ref } from "vue";
 const form = ref({
 	name: "",
 	email: "",
-	message: ""
+	message: "",
+	website: ""
 });
 
-function handleSubmit() {
-	console.log("Form submitted:", form.value);
-	// eslint-disable-next-line no-alert
-	alert("Message sent! We'll get back to you soon.");
+const isSubmitting = ref(false);
+const responseMessage = ref("");
+const responseTone = ref<"success" | "error">("success");
 
-	// Reset form after submission
-	form.value.name = "";
-	form.value.email = "";
-	form.value.message = "";
+async function handleSubmit() {
+	isSubmitting.value = true;
+	responseMessage.value = "";
+
+	try {
+		const response = await fetch("/api/contact", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify(form.value)
+		});
+		const payload = await response.json().catch(() => null);
+
+		if (!response.ok) {
+			responseTone.value = "error";
+			responseMessage.value = payload?.error || "The message could not be sent right now. Please try again later.";
+			return;
+		}
+
+		responseTone.value = "success";
+		responseMessage.value = "Message sent. We'll get back to you soon.";
+		form.value.name = "";
+		form.value.email = "";
+		form.value.message = "";
+		form.value.website = "";
+	}
+	catch (error) {
+		console.error("The Restoration contact form failed:", error);
+		responseTone.value = "error";
+		responseMessage.value = "The message could not be sent right now. Please try again later.";
+	}
+	finally {
+		isSubmitting.value = false;
+	}
 }
 </script>
 
@@ -28,9 +59,9 @@ function handleSubmit() {
 				out to us through the form below.
 			</p>
 
-			<form @submit.prevent="handleSubmit">
-				<div class="form-group">
-					<label for="name">Name:</label>
+				<form @submit.prevent="handleSubmit">
+					<div class="form-group">
+						<label for="name">Name:</label>
 					<input id="name" v-model="form.name" required type="text" />
 				</div>
 
@@ -46,18 +77,38 @@ function handleSubmit() {
 
 				<div class="form-group">
 					<label for="message">Message:</label>
-					<textarea
-						id="message"
-						v-model="form.message"
-						required
-						rows="4"
-					/>
-				</div>
+						<textarea
+							id="message"
+							v-model="form.message"
+							required
+							rows="4"
+						/>
+					</div>
 
-				<button type="submit">Send Message</button>
-			</form>
+					<input
+						v-model="form.website"
+						type="text"
+						name="website"
+						autocomplete="off"
+						tabindex="-1"
+						class="sr-only"
+						aria-hidden="true"
+					/>
+
+					<button type="submit" :disabled="isSubmitting">
+						{{ isSubmitting ? "Sending..." : "Send Message" }}
+					</button>
+
+					<p
+						v-if="responseMessage"
+						class="form-response"
+						:class="responseTone === 'error' ? 'form-response--error' : 'form-response--success'"
+					>
+						{{ responseMessage }}
+					</p>
+				</form>
+			</div>
 		</div>
-	</div>
 </template>
 
 <style scoped>
@@ -91,6 +142,18 @@ button[type="submit"] {
 
 button[type="submit"]:hover {
 	background-color: #45a049;
+}
+
+.form-response {
+	margin-top: 12px;
+}
+
+.form-response--success {
+	color: #256f3a;
+}
+
+.form-response--error {
+	color: #9f2d2d;
 }
 
 @media (max-width: 800px) {
