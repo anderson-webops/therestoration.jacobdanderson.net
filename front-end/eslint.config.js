@@ -40,7 +40,7 @@ export default base
 		},
 
 		{
-			files: ["vite.config.{js,ts,mts}", "cypress.config.{ts,mts}", "uno.config.ts"],
+			files: ["vite.config.{js,ts,mts}", "uno.config.ts"],
 			languageOptions: {
 				parser: ts.parser,
 				parserOptions: {

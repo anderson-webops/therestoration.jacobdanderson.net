@@ -1,5 +1,5 @@
 // src/server.ts
-import { env, exit } from "node:process";
+import process, { env, exit } from "node:process";
 import bodyParser from "body-parser";
 import cookieSession from "cookie-session";
 import express from "express";
@@ -107,43 +107,43 @@ async function main() {
 				}
 			});
 		}
-		});
+	});
 
-		app.post("/contact", contactRateLimiter, async (req, res) => {
-			const parsedBody = contactFormSchema.safeParse(req.body);
-			if (!parsedBody.success) {
-				return res.status(400).json({
-					ok: false,
-					error: "Please provide a valid name, email address, and message."
-				});
-			}
+	app.post("/contact", contactRateLimiter, async (req, res) => {
+		const parsedBody = contactFormSchema.safeParse(req.body);
+		if (!parsedBody.success) {
+			return res.status(400).json({
+				ok: false,
+				error: "Please provide a valid name, email address, and message."
+			});
+		}
 
-			if (parsedBody.data.website) {
-				return res.status(202).json({ ok: true });
-			}
+		if (parsedBody.data.website) {
+			return res.status(202).json({ ok: true });
+		}
 
-			if (!isContactMailConfigured()) {
-				return res.status(503).json({
-					ok: false,
-					error: "The contact form is not configured on the server yet."
-				});
-			}
+		if (!isContactMailConfigured()) {
+			return res.status(503).json({
+				ok: false,
+				error: "The contact form is not configured on the server yet."
+			});
+		}
 
-			try {
-				await sendContactMessage(parsedBody.data, req);
-				return res.status(202).json({ ok: true });
-			}
-			catch (error) {
-				console.error("Contact form email failed:", error);
-				return res.status(502).json({
-					ok: false,
-					error: "The message could not be sent right now. Please try again later."
-				});
-			}
-		});
+		try {
+			await sendContactMessage(parsedBody.data, req);
+			return res.status(202).json({ ok: true });
+		}
+		catch (error) {
+			console.error("Contact form email failed:", error);
+			return res.status(502).json({
+				ok: false,
+				error: "The message could not be sent right now. Please try again later."
+			});
+		}
+	});
 
-		// cache-control for auth endpoints
-		app.use((req, res, next) => {
+	// cache-control for auth endpoints
+	app.use((req, res, next) => {
 		if (req.path.startsWith("/accounts") || req.path.endsWith("/loggedin")) {
 			res.setHeader("Cache-Control", "no-store");
 		}

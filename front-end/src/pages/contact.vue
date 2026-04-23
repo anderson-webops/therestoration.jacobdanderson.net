@@ -28,7 +28,9 @@ async function handleSubmit() {
 
 		if (!response.ok) {
 			responseTone.value = "error";
-			responseMessage.value = payload?.error || "The message could not be sent right now. Please try again later.";
+			responseMessage.value =
+				payload?.error ||
+				"The message could not be sent right now. Please try again later.";
 			return;
 		}
 
@@ -38,13 +40,12 @@ async function handleSubmit() {
 		form.value.email = "";
 		form.value.message = "";
 		form.value.website = "";
-	}
-	catch (error) {
+	} catch (error) {
 		console.error("The Restoration contact form failed:", error);
 		responseTone.value = "error";
-		responseMessage.value = "The message could not be sent right now. Please try again later.";
-	}
-	finally {
+		responseMessage.value =
+			"The message could not be sent right now. Please try again later.";
+	} finally {
 		isSubmitting.value = false;
 	}
 }
@@ -59,9 +60,9 @@ async function handleSubmit() {
 				out to us through the form below.
 			</p>
 
-				<form @submit.prevent="handleSubmit">
-					<div class="form-group">
-						<label for="name">Name:</label>
+			<form @submit.prevent="handleSubmit">
+				<div class="form-group">
+					<label for="name">Name:</label>
 					<input id="name" v-model="form.name" required type="text" />
 				</div>
 
@@ -77,38 +78,42 @@ async function handleSubmit() {
 
 				<div class="form-group">
 					<label for="message">Message:</label>
-						<textarea
-							id="message"
-							v-model="form.message"
-							required
-							rows="4"
-						/>
-					</div>
-
-					<input
-						v-model="form.website"
-						type="text"
-						name="website"
-						autocomplete="off"
-						tabindex="-1"
-						class="sr-only"
-						aria-hidden="true"
+					<textarea
+						id="message"
+						v-model="form.message"
+						required
+						rows="4"
 					/>
+				</div>
 
-					<button type="submit" :disabled="isSubmitting">
-						{{ isSubmitting ? "Sending..." : "Send Message" }}
-					</button>
+				<input
+					v-model="form.website"
+					type="text"
+					name="website"
+					autocomplete="off"
+					tabindex="-1"
+					class="sr-only"
+					aria-hidden="true"
+				/>
 
-					<p
-						v-if="responseMessage"
-						class="form-response"
-						:class="responseTone === 'error' ? 'form-response--error' : 'form-response--success'"
-					>
-						{{ responseMessage }}
-					</p>
-				</form>
-			</div>
+				<button type="submit" :disabled="isSubmitting">
+					{{ isSubmitting ? "Sending..." : "Send Message" }}
+				</button>
+
+				<p
+					v-if="responseMessage"
+					class="form-response"
+					:class="
+						responseTone === 'error'
+							? 'form-response--error'
+							: 'form-response--success'
+					"
+				>
+					{{ responseMessage }}
+				</p>
+			</form>
 		</div>
+	</div>
 </template>
 
 <style scoped>
