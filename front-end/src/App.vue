@@ -35,6 +35,9 @@ useHead(
 	() =>
 		({
 			title: "The Restoration",
+			htmlAttrs: {
+				lang: "en"
+			},
 			meta: [
 				{
 					name: "description",

@@ -27,7 +27,7 @@ function setActiveLink(linkName: string) {
 	<header>
 		<nav class="flex-container">
 			<div class="logo-container">
-				<RouterLink to="/">
+				<RouterLink to="/" aria-label="The Restoration home">
 					<img
 						alt=""
 						class="logo"

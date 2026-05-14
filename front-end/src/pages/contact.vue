@@ -137,7 +137,7 @@ async function handleSubmit() {
 }
 
 button[type="submit"] {
-	background-color: #4caf50;
+	background-color: #2e7d32;
 	color: white;
 	padding: 10px 20px;
 	border: none;
@@ -146,7 +146,7 @@ button[type="submit"] {
 }
 
 button[type="submit"]:hover {
-	background-color: #45a049;
+	background-color: #1b5e20;
 }
 
 .form-response {

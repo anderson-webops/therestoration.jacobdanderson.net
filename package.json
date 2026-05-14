@@ -24,7 +24,8 @@
 		"lint-fix": "npm run -w front-end lint-fix && npm run -w back-end lint-fix",
 		"typecheck": "npm run -w front-end typecheck && npm run -w back-end typecheck",
 		"clean": "sudo rm -rf node_modules dist package-lock.json **/node_modules **/dist **/package-lock.json",
-		"up": "taze major -I && npm run -w front-end up && npm run -w back-end up"
+		"up": "taze major -I && npm run -w front-end up && npm run -w back-end up",
+		"a11y": "node scripts/a11y-smoke.mjs"
 	},
 	"devDependencies": {
 		"@antfu/eslint-config": "^8.2.0",
@@ -38,7 +39,9 @@
 		"globals": "^17.5.0",
 		"prettier": "^3.8.3",
 		"taze": "^19.11.0",
-		"typescript": "^6.0.3"
+		"typescript": "^6.0.3",
+		"axe-core": "^4.11.4",
+		"puppeteer": "^24.43.1"
 	},
 	"overrides": {
 		"defu": "6.1.6",

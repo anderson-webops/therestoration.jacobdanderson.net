@@ -10,6 +10,8 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 				<li>
 					<a
 						href="https://www.facebook.com/jacoba1100254352"
+						aria-label="Jacob Anderson on Facebook"
+						rel="noreferrer"
 						target="_blank"
 					>
 						<FontAwesomeIcon
@@ -21,6 +23,8 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 				<li>
 					<a
 						href="https://www.github.com/Jacoba1100254352"
+						aria-label="Jacob Anderson on GitHub"
+						rel="noreferrer"
 						target="_blank"
 					>
 						<FontAwesomeIcon :icon="['fab', 'github']" size="2x" />
@@ -29,6 +33,8 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 				<li>
 					<a
 						href="https://www.instagram.com/jacoba1100254352"
+						aria-label="Jacob Anderson on Instagram"
+						rel="noreferrer"
 						target="_blank"
 					>
 						<FontAwesomeIcon
