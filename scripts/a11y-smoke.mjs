@@ -146,6 +146,7 @@ function startFrontend() {
 			...process.env,
 			BROWSER: "none",
 			DISABLE_ANALYTICS: "true",
+			NUXT_DEVTOOLS_ENABLED: "false",
 			NUXT_TELEMETRY_DISABLED: "1",
 			NUXT_PUBLIC_APP_URL: baseUrl,
 			NUXT_PUBLIC_SITE_URL: baseUrl,
@@ -173,6 +174,7 @@ function startFrontend() {
 			VITE_PUBLIC_SITE_ORIGIN: baseUrl,
 			VITE_SHOW_AD_SLOTS: "false"
 		},
+		detached: process.platform !== "win32",
 		stdio: ["ignore", "pipe", "pipe"]
 	});
 	child.stdout.on("data", data => writeServerLine(isNuxt ? "nuxt" : "vite", data));
@@ -182,6 +184,49 @@ function startFrontend() {
 
 function closeServer(server) {
 	return new Promise(resolveClose => server.close(resolveClose));
+}
+
+function processIsRunning(child) {
+	return child.exitCode === null && child.signalCode === null;
+}
+
+function waitForProcessExit(child, timeoutMs) {
+	if (!processIsRunning(child)) return Promise.resolve(true);
+
+	return new Promise(resolveWait => {
+		const onExit = () => {
+			clearTimeout(timeout);
+			resolveWait(true);
+		};
+		const timeout = setTimeout(() => {
+			child.off("exit", onExit);
+			resolveWait(false);
+		}, timeoutMs);
+		child.once("exit", onExit);
+	});
+}
+
+async function stopProcessTree(child) {
+	if (!child.pid || !processIsRunning(child)) return;
+
+	const target = process.platform === "win32" ? child.pid : -child.pid;
+	try {
+		process.kill(target, "SIGTERM");
+	}
+	catch (error) {
+		if (error?.code !== "ESRCH") console.warn(`Could not stop frontend process: ${error.message}`);
+		return;
+	}
+
+	if (await waitForProcessExit(child, 5_000)) return;
+
+	try {
+		process.kill(target, "SIGKILL");
+	}
+	catch (error) {
+		if (error?.code !== "ESRCH") console.warn(`Could not force stop frontend process: ${error.message}`);
+	}
+	await waitForProcessExit(child, 2_000);
 }
 
 async function analyzePage(browser, route, scheme) {
@@ -254,6 +299,6 @@ try {
 }
 finally {
 	if (browser) await browser.close();
-	frontendProcess.kill("SIGTERM");
+	await stopProcessTree(frontendProcess);
 	await closeServer(apiServer);
 }
