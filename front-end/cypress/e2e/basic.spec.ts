@@ -59,16 +59,26 @@ context("Basic", () => {
 		cy.url().should("include", "/contact");
 		cy.contains("h1", "Contact Me").should("be.visible");
 
-		cy.window().then(win => {
-			cy.stub(win, "alert").as("alertStub");
-		});
+		cy.intercept("POST", "/api/contact", {
+			statusCode: 200,
+			body: { ok: true }
+		}).as("contactRequest");
 
 		cy.get("#name").type("Cypress User");
 		cy.get("#email").type("cypress@example.com");
 		cy.get("#message").type("Great site!");
 		cy.contains("button", "Send Message").click();
 
-		cy.get("@alertStub").should("have.been.calledWithMatch", "Message sent");
+		cy.wait("@contactRequest")
+			.its("request.body")
+			.should("include", {
+				name: "Cypress User",
+				email: "cypress@example.com",
+				message: "Great site!"
+			});
+		cy.get(".form-response")
+			.should("be.visible")
+			.and("contain", "Message sent");
 		cy.get("#name").should("have.value", "");
 		cy.get("#email").should("have.value", "");
 		cy.get("#message").should("have.value", "");
