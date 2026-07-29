@@ -34,6 +34,7 @@
 		"axios": "^1.15.2",
 		"bootstrap": "^5.3.8",
 		"dompurify": "^3.4.11",
+		"follow-redirects": "^1.16.0",
 		"leaflet": "^1.9.4",
 		"nprogress": "^0.2.0",
 		"pinia": "^3.0.4",
@@ -43,8 +44,7 @@
 		"vue": "^3.5.31",
 		"vue-demi": "^0.14.10",
 		"vue-i18n": "^11.3.0",
-		"vue-router": "^5.0.4",
-		"follow-redirects": "^1.16.0"
+		"vue-router": "^5.0.4"
 	},
 	"devDependencies": {
 		"@iconify-json/carbon": "^1.2.20",
@@ -89,5 +89,9 @@
 	"bugs": {
 		"url": "https://github.com/anderson-webops/therestauration.jacobdanderson.net/issues"
 	},
-	"homepage": "https://github.com/anderson-webops/therestauration.jacobdanderson.net#readme"
+	"homepage": "https://github.com/anderson-webops/therestauration.jacobdanderson.net#readme",
+	"optionalDependencies": {
+		"@oxc-parser/binding-linux-arm64-gnu": "^0.140.0",
+		"@rollup/rollup-linux-arm64-gnu": "^4.62.3"
+	}
 }
