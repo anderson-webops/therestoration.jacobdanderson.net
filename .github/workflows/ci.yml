@@ -14,14 +14,14 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 22.x
+          node-version: 24.18.0
           cache: npm
 
       # Make runner's npm match packageManager in package.json
       - name: Pin npm version
         run: |
           npm -v
-          npm i -g npm@11.7.0
+          npm i -g npm@11.16.0
           npm -v
 
       - name: Install deps
@@ -38,12 +38,12 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 22.x
+          node-version: 24.18.0
           cache: npm
 
       - name: Pin npm version
         run: |
-          npm i -g npm@11.12.0
+          npm i -g npm@11.16.0
           npm -v
 
       - name: Install deps
@@ -57,7 +57,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [22.x]
+        node-version: [24.18.0]
         os: [ubuntu-latest]
       fail-fast: false
 
@@ -74,7 +74,7 @@ jobs:
         run: |
           # optional guard:
           if [ $(node -v | cut -d. -f1 | sed 's/v//') -ge 20 ]; then
-            npm i -g npm@11.7.0
+            npm i -g npm@11.16.0
           fi
           npm -v
 
@@ -95,7 +95,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 22.x
+          node-version: 24.18.0
           cache: npm
           registry-url: https://registry.npmjs.org/
 
@@ -106,12 +106,12 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 22.x
+          node-version: 24.18.0
           cache: npm
 
       - name: Pin npm version
         run: |
-          npm i -g npm@11.12.0
+          npm i -g npm@11.16.0
           npm -v
 
       - name: Install deps
@@ -127,12 +127,12 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 22.x
+          node-version: 24.18.0
           cache: npm
 
       - name: Pin npm version
         run: |
-          npm i -g npm@11.12.0
+          npm i -g npm@11.16.0
           npm -v
 
       - name: Install deps
@@ -143,7 +143,7 @@ jobs:
 
       - name: Pin npm version
         run: |
-          npm i -g npm@11.12.0
+          npm i -g npm@11.16.0
           npm -v
 
       - name: Install deps
