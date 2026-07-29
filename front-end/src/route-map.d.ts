@@ -14,11 +14,15 @@ import type {
   ParamValueZeroOrMore,
   ParamValueZeroOrOne,
 } from 'vue-router'
+import type {
+  _ExtractParamParserType,
+} from 'vue-router/experimental'
 
 declare module 'vue-router' {
   interface TypesConfig {
-    ParamParsers:
-      | never
+    _ParamParsers: {}
+    RouteNamedMap: import('vue-router/auto-routes').RouteNamedMap
+    _RouteFileInfoMap: import('vue-router/auto-routes')._RouteFileInfoMap
   }
 }
 
@@ -101,17 +105,23 @@ declare module 'vue-router/auto-routes' {
         | '/'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/[...all].vue': {
       routes:
         | '/[...all]'
       views:
         | never
+      pathParamNames:
+        | 'all'
     }
     'src/pages/about.vue': {
       routes:
         | '/about'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/contact.vue': {
@@ -119,11 +129,15 @@ declare module 'vue-router/auto-routes' {
         | '/contact'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/events.vue': {
       routes:
         | '/events'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/figures.vue': {
@@ -131,17 +145,23 @@ declare module 'vue-router/auto-routes' {
         | '/figures'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/map.vue': {
       routes:
         | '/map'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/README.vue': {
       routes:
         | '/README'
       views:
+        | never
+      pathParamNames:
         | never
     }
   }

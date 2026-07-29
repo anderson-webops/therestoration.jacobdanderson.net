@@ -1,2 +1,11 @@
+.git
+.github
 node_modules
+**/node_modules
+front-end/dist
+back-end/dist
 dist
+.env
+.env.*
+!.env.example
+*.log

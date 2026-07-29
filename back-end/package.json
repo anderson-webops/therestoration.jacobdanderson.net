@@ -25,7 +25,7 @@
 	"license": "ISC",
 	"dependencies": {
 		"argon2": "^0.44.0",
-		"body-parser": "^2.2.2",
+		"body-parser": "^2.3.0",
 		"cookie-session": "^2.1.1",
 		"dotenv": "^17.4.2",
 		"esbuild": "^0.28.1",
@@ -55,5 +55,14 @@
 		"tsx": "^4.22.4",
 		"typescript": "^6.0.3",
 		"typescript-eslint": "^8.59.0"
+	},
+	"overrides": {
+		"body-parser": "$body-parser",
+		"brace-expansion": "5.0.8",
+		"esbuild": "$esbuild",
+		"js-yaml": "4.3.0",
+		"postcss": "8.5.24",
+		"qs": "6.15.3",
+		"vite": "8.1.5"
 	}
 }
