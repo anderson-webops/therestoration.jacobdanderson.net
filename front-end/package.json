@@ -1,12 +1,17 @@
 {
 	"name": "front-end",
-	"version": "2.0.0",
-	"description": "",
+	"version": "4.0.0",
+	"description": "Public history site for The Restoration",
 	"author": "Jacob Anderson",
 	"keywords": [],
 	"license": "ISC",
 	"type": "module",
 	"private": true,
+	"packageManager": "npm@12.0.2",
+	"engines": {
+		"node": ">=24.18.1 <25",
+		"npm": ">=12.0.2 <13"
+	},
 	"main": "dist/script.js",
 	"scripts": {
 		"build": "vite-ssg build",
@@ -15,11 +20,11 @@
 		"serve": "vite --port 3333 --open --host",
 		"preview": "vite preview",
 		"preview-https": "serve dist",
-		"test": "vitest",
-		"test:unit": "vitest",
+		"test": "vitest run",
+		"test:unit": "vitest run",
+		"test:watch": "vitest",
+		"test:e2e": "node ../scripts/run-e2e.mjs",
 		"typecheck": "vue-tsc --noEmit",
-		"up": "taze major -I",
-		"postinstall": "npx simple-git-hooks",
 		"lint": "eslint \"src/**/*.{js,ts,vue}\"",
 		"lint-fix": "eslint \"src/**/*.{js,ts,vue}\" --fix"
 	},
@@ -31,13 +36,10 @@
 		"@unhead/vue": "^3.0.2",
 		"@unocss/reset": "^66.6.7",
 		"@vueuse/core": "^14.2.1",
-		"axios": "^1.15.2",
 		"bootstrap": "^5.3.8",
-		"dompurify": "^3.4.11",
-		"follow-redirects": "^1.16.0",
 		"leaflet": "^1.9.4",
 		"nprogress": "^0.2.0",
-		"pinia": "^3.0.4",
+		"pinia": "^4.0.2",
 		"rolldown": "^1.2.1",
 		"vite-plugin-pages": "^0.33.3",
 		"vite-plugin-vue-layouts-next": "^2.1.0",
@@ -53,12 +55,9 @@
 		"@types/node": "^24.13.3",
 		"@types/nprogress": "^0.2.3",
 		"@vitejs/plugin-vue": "^6.0.6",
-		"beasties": "^0.3.5",
-		"cross-env": "^10.1.0",
+		"beasties": "^0.4.3",
 		"cypress": "^15.19.0",
-		"eslint-plugin-format": "^2.0.1",
-		"rollup": "^4.62.3",
-		"simple-git-hooks": "^2.13.1",
+		"rollup": "^4.62.4",
 		"unocss": "^66.6.7",
 		"unplugin-auto-import": "^21.0.0",
 		"unplugin-vue-components": "^32.0.0",
@@ -74,9 +73,6 @@
 		"vite": "^8.1.0",
 		"vue-router": "^5.0.4"
 	},
-	"simple-git-hooks": {
-		"pre-commit": ""
-	},
 	"browserslist": [
 		"> 1%",
 		"last 2 versions",
@@ -85,14 +81,18 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/anderson-webops/therestauration.jacobdanderson.net"
+		"url": "git+https://github.com/anderson-webops/therestoration.jacobdanderson.net"
 	},
 	"bugs": {
-		"url": "https://github.com/anderson-webops/therestauration.jacobdanderson.net/issues"
+		"url": "https://github.com/anderson-webops/therestoration.jacobdanderson.net/issues"
 	},
-	"homepage": "https://github.com/anderson-webops/therestauration.jacobdanderson.net#readme",
+	"homepage": "https://github.com/anderson-webops/therestoration.jacobdanderson.net#readme",
 	"optionalDependencies": {
-		"@oxc-parser/binding-linux-arm64-gnu": "^0.140.0",
-		"@rollup/rollup-linux-arm64-gnu": "^4.62.3"
+		"@oxc-parser/binding-linux-arm64-gnu": "0.140.0",
+		"@oxc-parser/binding-linux-arm64-musl": "0.140.0",
+		"@rolldown/binding-linux-arm64-gnu": "1.2.1",
+		"@rolldown/binding-linux-arm64-musl": "1.2.1",
+		"@rollup/rollup-linux-arm64-gnu": "4.62.4",
+		"@rollup/rollup-linux-arm64-musl": "4.62.4"
 	}
 }

@@ -1,27 +1,49 @@
 # therestoration.jacobdanderson.net
 
-Website and supporting API for `therestoration.jacobdanderson.net`.
+Public history site and contact service for `therestoration.jacobdanderson.net`.
 
-## Repo Layout
+## Production design
 
-- `front-end/` - Vite SSG application
-- `back-end/` - Express + MongoDB API
-- `HEALTHCHECKS.md` - monitor endpoints and expected `200`/`503` behavior
+The Vite application is generated into static files. One stateless Express process serves those files and the bounded
+`POST /api/contact` endpoint. The production image does not contain a database, Vault client, account/session state,
+role management, or package manager.
 
-## Common Commands
+This site is intentionally unauthenticated. There are no promotion or demotion operations and no administrative API.
+Adding any of those is a breaking security-boundary change, not an extension of the contact endpoint.
+
+## Repository layout
+
+- `front-end/` — Vite SSG application
+- `back-end/` — stateless Express contact API and production web server
+- `scripts/check-native-bindings.mjs` — Linux ARM64 lockfile reproducibility gate
+- `HEALTHCHECKS.md` — liveness and readiness contracts
+
+The root `package-lock.json` is the only lockfile and the source of truth for local, CI, and container installs.
+
+## Validation
+
+Use Node `24.18.1` and npm `12.0.2`:
 
 ```bash
-npm install
-npm run dev
-npm run server
-npm run serve
-npm run build
-npm run up
+npm ci
+npm run audit:all
+npm run audit:prod
+npm run validate
+npm run a11y
+npm run test:e2e
 ```
 
-## Operational Notes
+`npm run server` starts the development API on port 3007; `npm run dev` starts the front-end dev server on port 3333
+and proxies `/api` without rewriting the route.
 
-- The root `package-lock.json` is the authoritative lockfile for the repo. Keep it updated whenever dependencies change.
-- Use `npm run server` and `npm run serve` when you want the API and front-end started separately.
-- Use [`HEALTHCHECKS.md`](./HEALTHCHECKS.md) for deployment monitor targets instead of `/`.
-- The public contact form now submits through the backend. Set `CONTACT_FROM_EMAIL` and either `CONTACT_USE_SENDMAIL=true` or the `CONTACT_SMTP_*` settings. If `CONTACT_TO_EMAIL` is unset, submissions default to `contacts@jacobdanderson.net`; `CONTACT_BCC_EMAIL` stays optional so future alias-plus-BCC routing is a simple env change.
+## Contact delivery
+
+Copy `.env.example` to an ignored `.env` and provide unique SMTP credentials. SMTP must use implicit TLS or STARTTLS;
+sendmail and disabling TLS are rejected. `CONTACT_TO_EMAIL` defaults to `contacts@jacobdanderson.net`, and
+`CONTACT_BCC_EMAIL` is optional.
+
+The API accepts only strict JSON, bounds every field and request body, silently absorbs a honeypot, rate limits by the
+proxy-derived client address, escapes all mail HTML, and returns sanitized errors. The container publishes only
+`127.0.0.1:3007` and is intended to sit behind one trusted local reverse proxy.
+
+Use [`HEALTHCHECKS.md`](./HEALTHCHECKS.md) for deployment monitors.

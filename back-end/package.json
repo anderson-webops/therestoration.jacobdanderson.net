@@ -1,73 +1,49 @@
 {
 	"name": "back-end",
-	"version": "1.0.0",
+	"version": "4.0.0",
 	"private": true,
-	"packageManager": "npm@11.16.0",
+	"packageManager": "npm@12.0.2",
 	"engines": {
-		"node": ">=24.18.0 <25",
-		"npm": ">=11.16.0 <12"
+		"node": ">=24.18.1 <25",
+		"npm": ">=12.0.2 <13"
 	},
-	"description": "",
+	"description": "Stateless contact API and production web server for The Restoration",
 	"type": "module",
 	"main": "dist/server.js",
 	"scripts": {
 		"server": "tsx watch -r dotenv/config src/server.ts",
 		"server:once": "tsx -r dotenv/config src/server.ts",
-		"test": "echo \"Error: no test specified\" && exit 1",
+		"test": "vitest run",
+		"test:unit": "vitest run",
+		"test:watch": "vitest",
 		"start": "node dist/server.js",
 		"build": "tsc -p tsconfig.json",
 		"typecheck": "tsc -p tsconfig.json --noEmit",
 		"watch": "tsc -w",
 		"dev": "tsx watch -r dotenv/config src/server.ts",
-		"up": "taze major -I",
-		"lint": "eslint \"src/**/*.{js,ts}\"",
-		"lint-fix": "eslint \"src/**/*.{js,ts}\" --fix",
-		"create-admin": "node dist/create-admin-user.js",
-		"create-admin-ts": "tsx -r dotenv/config src/create-admin-user.ts"
+		"lint": "eslint \"src/**/*.{js,ts}\" \"test/**/*.ts\"",
+		"lint-fix": "eslint \"src/**/*.{js,ts}\" \"test/**/*.ts\" --fix"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
-		"argon2": "^0.44.0",
-		"body-parser": "^2.3.0",
-		"cookie-session": "^2.1.1",
 		"dotenv": "^17.4.2",
-		"esbuild": "^0.28.1",
 		"express": "^5.2.1",
 		"express-rate-limit": "^8.5.1",
-		"express-validator": "^7.3.2",
 		"helmet": "^8.1.0",
-		"marked": "^18.0.3",
-		"moment": "^2.30.1",
-		"mongoose": "^9.3.3",
-		"multer": "^2.2.0",
 		"nodemailer": "^9.0.1",
-		"readline-sync": "^1.4.10",
 		"zod": "^4.3.6"
 	},
 	"devDependencies": {
-		"@eslint/compat": "^2.0.3",
-		"@types/body-parser": "^1.19.6",
-		"@types/cookie-session": "^2.0.49",
 		"@types/express": "^5.0.6",
-		"@types/express-session": "^1.19.0",
 		"@types/node": "^24.13.3",
 		"@types/nodemailer": "^8.0.0",
-		"@types/readline-sync": "^1.4.8",
-		"nodemon": "^3.1.14",
-		"ts-node": "^10.9.2",
+		"@types/supertest": "^7.2.1",
+		"supertest": "^7.2.2",
 		"tsx": "^4.22.4",
 		"typescript": "^6.0.3",
-		"typescript-eslint": "^8.59.0"
-	},
-	"overrides": {
-		"body-parser": "$body-parser",
-		"brace-expansion": "5.0.8",
-		"esbuild": "$esbuild",
-		"js-yaml": "4.3.0",
-		"postcss": "8.5.24",
-		"qs": "6.15.3",
-		"vite": "8.1.5"
+		"typescript-eslint": "^8.59.0",
+		"vitest": "^4.1.5"
 	}
 }

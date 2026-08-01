@@ -7,20 +7,23 @@
   i18n copy sits under `locales/`.
 - Front-end unit specs reside in `front-end/test/*.spec.test.ts` (snapshots in `__snapshots__/`). End-to-end workflows
   live in `front-end/cypress/`.
-- `back-end/` contains the Express + Mongoose API. Keep request handling in `src/controllers/`, validation in
-  `src/middleware/`, schemas in `src/models/`, and route wiring under `src/routes/`.
+- `back-end/` contains the stateless Express contact API and production static-file server. `src/app.ts` owns HTTP
+  policy and routes, `src/contact.ts` owns validation and SMTP delivery, and `src/server.ts` owns startup and shutdown.
+- This site has no account, session, role, promotion/demotion, database, or administrative workflow. Do not add one
+  incidentally; any future authenticated capability requires a separate threat model and an intentional API design.
 - Monorepo-wide configuration (ESLint, TypeScript base config, workspace scripts) is defined at the repository root;
   update these when adjusting tooling for either project.
 
 ## Build, Test, and Development Commands
 
-- `npm install` (root) installs all workspace dependencies using the pinned `npm@11` toolchain. Avoid mixing package
-  managers.
+- `npm ci` (root) installs the authoritative lockfile using Node `24.18.1` and npm `12.0.2`. Avoid mixing package
+  managers or using a nested lockfile.
 - `npm run dev` starts the front-end dev server on port 3333; `npm run serve` runs the same build with `--host` enabled
   for LAN previews.
-- `npm run server` launches the API with live reload via `tsx watch -r dotenv/config` on port 3008.
+- `npm run server` launches the API with live reload via `tsx watch -r dotenv/config` on port 3007.
 - `npm run build` produces optimized client + server bundles (`front-end/dist/`, `back-end/dist/`).
-- `npm run -w front-end test` / `test:unit` run Vitest suites; `npm run -w front-end test:e2e` opens Cypress.
+- `npm run -w front-end test` / `test:unit` run Vitest suites; `npm run -w front-end test:e2e` runs Cypress.
+- `npm run -w back-end test` runs the Vitest + Supertest API security and behavior regression suite.
 - `npm run lint` (or `lint-fix`) runs the shared ESLint configuration across both workspaces;
 
 ## Coding Style & Naming Conventions
@@ -40,8 +43,8 @@
   in `__snapshots__/` and should be reviewed line-by-line.
 - Cypress specs should stub network calls against the Express test server; store fixtures under
   `front-end/cypress/fixtures/`.
-- Back-end tests are not yet wired up—when adding them, place suites under a new `back-end/test/` tree and update
-  `npm run -w back-end test` to execute them (prefer Vitest + Supertest for HTTP coverage).
+- Back-end tests live under `back-end/test/`; cover request bounds, security headers, rate limits, sanitized failures,
+  readiness behavior, and the deliberate absence of account/admin/database routes.
 - Aim to cover new endpoints, Pinia stores, and critical user flows before requesting review; document any intentionally
   skipped scenarios in the PR.
 
@@ -56,21 +59,21 @@
 
 ## Security & Configuration Tips
 
-- The API expects secrets via environment variables: `SESSION_SECRET`, Mongo credentials (`MONGODB_URI` or Vault via
-  `VAULT_ROLE_ID`/`VAULT_SECRET_ID`), and optional `CROSS_SITE` to adjust cookie policy. Load them through `.env` files
-  excluded from version control.
-- `npm run server` already loads `dotenv/config` and will attempt Vault retrieval via `src/vaultClient.ts`; validate
-  both code paths when changing auth or persistence.
-- Never commit real credentials or production endpoints. Scrub logs before sharing, and verify rate limiting when
-  exposing new routes under `/admin-mail` or other sensitive prefixes.
-
+- The only secret-bearing runtime integration is TLS-protected SMTP for the public contact form. Keep credentials in
+  an ignored `.env`, require STARTTLS or implicit TLS, and never enable sendmail or certificate bypasses.
+- The container binds to host loopback and trusts exactly the documented reverse-proxy hop count. Do not broaden the
+  published port or proxy trust boundary without reviewing rate-limit identity and the external routing topology.
+- Never commit real credentials. Logs and HTTP responses must contain only bounded error names/codes, not SMTP
+  response bodies, credentials, submitted messages, or other visitor data.
 
 ## Agent Delivery Workflow
+
 - Do not leave completed work uncommitted. After each coherent, validated change set, create a commit and push it in the same session.
 - Use multiple commits and pushes when that keeps unrelated changes, partial validations, or follow-up fixes clearly separated. Prefer small, logically grouped commits over one mixed commit.
 - Keep `package-lock.json` synchronized before every commit or push.
 - Use lowercase annotated semver tags only. Do not invent ad-hoc labels such as `V1`, `torca-r07`, `pre-lfs-migration-*`, or similar one-off names.
-- This repo follows the stable `v3.x` line. Stay on `v3` for routine work; only cut `v4` for an intentional breaking site or API change.
+- This repo follows the stable `v4.x` line after the intentional stateless production-runtime migration. Stay on `v4`
+  for routine work; only cut `v5` for another intentional breaking site or API change.
 - Before creating a new tag, check the latest tag in the active semver line and decide whether the new commit is still the same release milestone. If it is, move that existing tag forward to the new validated commit instead of minting a new version number.
 - Keep the GitHub release aligned with that decision: when the commit still belongs to the same milestone, update or recreate the existing release so it points at the moved tag/current commit; only create a brand-new release when the change creates a genuinely new milestone.
 - Cut a fresh semver tag and release only when the work crosses a real release boundary, such as a new deployable milestone, a materially different operator/user-facing state, or a version-line change that deserves its own notes and rollback point.
@@ -86,6 +89,7 @@
 - Do not rely on `npm install` fallback as success. A change is not deploy-ready unless root `npm ci` succeeds.
 
 Required production/dev dependency update flow before every dependency commit:
+
 1. Check production and development dependency freshness from the repository root with `npm outdated --workspaces --long` or the repo's documented equivalent.
 2. Review both `dependencies` and `devDependencies` in the root and every workspace package; do not limit updates to production-only packages.
 3. Apply needed updates with the narrowest command that updates the relevant manifest and lockfile together, such as `npm install -w <workspace> <package>@<version>` or `npm install -D -w <workspace> <package>@<version>`.
@@ -93,6 +97,7 @@ Required production/dev dependency update flow before every dependency commit:
 5. Run `npm audit` from the repository root and resolve remaining production or dev advisories before committing unless a documented upstream limitation prevents it.
 
 Required dependency verification before every commit/push:
+
 1. Run `npm ci` from the repository root.
 2. Run `npm run lint`.
 3. Run `npm run typecheck`.
@@ -100,6 +105,7 @@ Required dependency verification before every commit/push:
 5. If API or back-end behavior changed and the repo has a back-end workspace, run `npm run -w back-end test` or the repo's equivalent API test command.
 
 If `npm ci` fails because `package.json` and `package-lock.json` are out of sync:
+
 1. Run `npm install --package-lock-only --ignore-scripts --no-fund --no-audit` from the repository root.
 2. Re-run `npm ci` from the repository root.
 3. Commit the resulting `package-lock.json` change with the related dependency/package change.

@@ -8,7 +8,7 @@ export default base.append(
 		files: ["**/*.ts"],
 		languageOptions: {
 			parser: ts.parser,
-			parserOptions: { project: "./tsconfig.json", sourceType: "module" },
+			parserOptions: { project: "./tsconfig.eslint.json", sourceType: "module" },
 			globals: { ...globals.node },
 		},
 		rules: {

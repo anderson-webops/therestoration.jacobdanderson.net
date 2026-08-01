@@ -1,259 +1,79 @@
-// src/server.ts
+import { constants } from "node:fs";
+import { access } from "node:fs/promises";
+import { dirname, resolve } from "node:path";
 import process, { env, exit } from "node:process";
-import bodyParser from "body-parser";
-import cookieSession from "cookie-session";
-import express from "express";
-import mongoose from "mongoose";
+import { fileURLToPath } from "node:url";
 
-import {
-	contactFormSchema,
-	contactRateLimiter,
-	isContactMailConfigured,
-	sendContactMessage
-} from "./contact.js";
-import { readMongoSecret } from "./vaultClient.js";
+import { createApp } from "./app.js";
+import { createContactSender } from "./contact.js";
 import "dotenv/config";
 
-async function main() {
-	const app = express();
-	const internalDiagnosticsKey = env.INTERNAL_DIAGNOSTICS_KEY;
-	const loopbackAddresses = new Set(["127.0.0.1", "::1", "::ffff:127.0.0.1"]);
-
-	// health
-	app.get("/healthz", (_req, res) => {
-		res.set("Cache-Control", "no-store");
-		res.json({ ok: true });
-	});
-
-	const SESSION_SECRET = env.SESSION_SECRET;
-	if (!SESSION_SECRET) throw new Error("Missing SESSION_SECRET");
-
-	app.set("trust proxy", 1);
-
-	// 1) parsers first (with limits)
-	app.use(bodyParser.urlencoded({ extended: false, limit: "256kb" }));
-	app.use(bodyParser.json({ limit: "256kb" }));
-
-	// 2) sessions BEFORE any route that needs req.session
-	///   COOKIES   ///
-	const isProd = env.NODE_ENV === "production";
-	const isCrossSite = !!env.CROSS_SITE;
-	type CookieSessionOpts = Parameters<typeof cookieSession>[0];
-
-	const cookieOptions: CookieSessionOpts = {
-		name: "session",
-		keys: [SESSION_SECRET],
-		maxAge: 24 * 60 * 60 * 1000,
-		sameSite: "lax", // default, safe for dev & same-origin
-		// Use secure cookies unless in development/local mode.
-		// It is strongly recommended to run development with HTTPS and secure cookies as well.
-		secure: env.NODE_ENV !== "development",
-	};
-
-	// Adjust for production
-	if (isProd) {
-		if (isCrossSite) {
-			cookieOptions.sameSite = "none"; // required for cross-site
-			cookieOptions.secure = true; // required when SameSite=None
-			// cookieOptions.domain = ".example.com"; // optional if you want subdomain sharing
-		}
-		else {
-			cookieOptions.sameSite = "lax"; // fine for same-origin
-			cookieOptions.secure = true; // enforce HTTPS cookies
-		}
+function parseBoundedInteger(name: string, value: string | undefined, minimum: number, maximum: number) {
+	const number = Number(value);
+	if (!Number.isSafeInteger(number) || number < minimum || number > maximum) {
+		throw new TypeError(`${name} must be an integer between ${minimum} and ${maximum}.`);
 	}
-
-	app.use(cookieSession(cookieOptions));
-
-	// 3) cache-control for auth endpoints
-	app.use((req, res, next) => {
-		if (req.path.startsWith("/accounts") || req.path.endsWith("/loggedin")) {
-			res.setHeader("Cache-Control", "no-store");
-		}
-		next();
-	});
-
-	// ready
-	app.get("/readyz", async (_req, res) => {
-		const connection = mongoose.connection;
-		const state = connection.readyState;
-		if (state !== 1 || !connection.db) {
-			return res.status(503).set("Cache-Control", "no-store").json({
-				ready: false,
-				components: {
-					db: { ok: false, state }
-				}
-			});
-		}
-
-		try {
-			await connection.db.admin().ping();
-			return res.set("Cache-Control", "no-store").json({
-				ready: true,
-				components: {
-					db: { ok: true, state }
-				}
-			});
-		}
-		catch (error) {
-			return res.status(503).set("Cache-Control", "no-store").json({
-				ready: false,
-				components: {
-					db: {
-						ok: false,
-						state,
-						error: error instanceof Error ? error.message : "db-ping-failed"
-					}
-				}
-			});
-		}
-	});
-
-	app.post("/contact", contactRateLimiter, async (req, res) => {
-		const parsedBody = contactFormSchema.safeParse(req.body);
-		if (!parsedBody.success) {
-			return res.status(400).json({
-				ok: false,
-				error: "Please provide a valid name, email address, and message."
-			});
-		}
-
-		if (parsedBody.data.website) {
-			return res.status(202).json({ ok: true });
-		}
-
-		if (!isContactMailConfigured()) {
-			return res.status(503).json({
-				ok: false,
-				error: "The contact form is not configured on the server yet."
-			});
-		}
-
-		try {
-			await sendContactMessage(parsedBody.data, req);
-			return res.status(202).json({ ok: true });
-		}
-		catch (error) {
-			console.error("Contact form email failed:", error);
-			return res.status(502).json({
-				ok: false,
-				error: "The message could not be sent right now. Please try again later."
-			});
-		}
-	});
-
-	// cache-control for auth endpoints
-	app.use((req, res, next) => {
-		if (req.path.startsWith("/accounts") || req.path.endsWith("/loggedin")) {
-			res.setHeader("Cache-Control", "no-store");
-		}
-		next();
-	});
-
-	// --- Get Mongo URI from Vault (preferred), else env fallback ---
-	let mongoUri: string | undefined;
-	try {
-		const { uri } = await readMongoSecret(); // your Vault client should read from KV v2
-		mongoUri = uri;
-	}
-	catch (e) {
-		// Fail silently if Vault is not available, then probably local test (Had to do this to avoid weird requirements
-		// console.log("Vault unavailable, falling back to MONGODB_URI:", e);
-		const m: string = e?.toString() || "";
-		if (!m.includes("Failed to fetch") && !m.includes("connect ECONNREFUSED")) {
-			console.log("");
-		}
-
-		mongoUri = env.MONGODB_URI;
-	}
-
-	if (!mongoUri) {
-		throw new Error("No MongoDB URI available (Vault and MONGODB_URI missing)");
-	}
-
-	await mongoose.connect(mongoUri);
-	console.log("Connected to MongoDB");
-	const c = mongoose.connection;
-	console.log(`Mongo connected: db=${c.db?.databaseName} host=${c.host} name=${c.name}`);
-	app.get("/_dbinfo", (req, res) => {
-		const forwardedFor = req.headers["x-forwarded-for"];
-		const forwardedIp = typeof forwardedFor === "string"
-			? forwardedFor.split(",")[0]?.trim()
-			: Array.isArray(forwardedFor)
-				? forwardedFor[0]?.trim()
-				: undefined;
-		const clientIp = forwardedIp || req.ip || req.socket.remoteAddress || "";
-		const isInternalRequest = env.NODE_ENV !== "production"
-			|| (internalDiagnosticsKey && req.get("x-internal-diagnostics-key") === internalDiagnosticsKey)
-			|| loopbackAddresses.has(clientIp);
-
-		if (!isInternalRequest) {
-			return res.status(403).set("Cache-Control", "no-store").json({ ok: false, error: "forbidden" });
-		}
-
-		res.set("Cache-Control", "no-store").json({
-			databaseName: c.db?.databaseName ?? null,
-			host: c.host || null,
-			name: c.name || null,
-			readyState: c.readyState,
-			usingVault: !!env.VAULT_ROLE_ID && !!env.VAULT_SECRET_ID
-		});
-	});
-
-	// after your session middleware in server.ts
-	app.get("/accounts/me", (req, res) => {
-		const s = req.session as any;
-		res.json({ adminID: s?.adminID ?? null, tutorID: s?.tutorID ?? null, userID: s?.userID ?? null });
-	});
-
-	const PORT = env.PORT || 3007;
-	const server = app.listen(PORT, () => console.log(`Server listening on port ${PORT}!`));
-	let isShuttingDown = false;
-
-	const shutdown = async (signal: NodeJS.Signals) => {
-		if (isShuttingDown) {
-			return;
-		}
-
-		isShuttingDown = true;
-		console.log(`${signal} received, shutting down gracefully...`);
-
-		try {
-			if (server.listening) {
-				await new Promise<void>((resolve, reject) => {
-					server.close((error) => {
-						if (error) {
-							reject(error);
-							return;
-						}
-
-						resolve();
-					});
-				});
-			}
-
-			if (mongoose.connection.readyState !== 0) {
-				await mongoose.disconnect();
-			}
-
-			console.log("Graceful shutdown complete.");
-			exit(0);
-		}
-		catch (error) {
-			console.error("Graceful shutdown failed:", error);
-			exit(1);
-		}
-	};
-
-	process.once("SIGINT", () => {
-		void shutdown("SIGINT");
-	});
-	process.once("SIGTERM", () => {
-		void shutdown("SIGTERM");
-	});
+	return number;
 }
 
-main().catch((err) => {
-	console.error(err);
+async function main() {
+	const isProduction = env.NODE_ENV === "production";
+	if (isProduction && !env.TRUST_PROXY_HOPS) {
+		throw new Error("TRUST_PROXY_HOPS is required in production.");
+	}
+
+	const port = parseBoundedInteger("PORT", env.PORT || "3007", 1, 65_535);
+	const trustProxyHops = parseBoundedInteger(
+		"TRUST_PROXY_HOPS",
+		env.TRUST_PROXY_HOPS || "0",
+		0,
+		3
+	);
+	const host = env.HOST?.trim() || "127.0.0.1";
+	const currentDirectory = dirname(fileURLToPath(import.meta.url));
+	const staticRoot = resolve(env.STATIC_ROOT || resolve(currentDirectory, "../../front-end/dist"));
+	await access(resolve(staticRoot, "index.html"), constants.R_OK);
+
+	const app = createApp({
+		contactSender: createContactSender(env),
+		staticRoot,
+		trustProxyHops
+	});
+	const server = app.listen(port, host, () => {
+		console.log(`The Restoration is listening on ${host}:${port}.`);
+	});
+	server.headersTimeout = 15_000;
+	server.requestTimeout = 30_000;
+	server.keepAliveTimeout = 5_000;
+	server.maxRequestsPerSocket = 100;
+	let isShuttingDown = false;
+
+	async function shutdown(signal: NodeJS.Signals) {
+		if (isShuttingDown) return;
+		isShuttingDown = true;
+		console.log(`${signal} received; shutting down.`);
+
+		const forceTimer = setTimeout(() => {
+			console.error("Graceful shutdown timed out.");
+			exit(1);
+		}, 10_000);
+		forceTimer.unref();
+
+		server.close((error) => {
+			clearTimeout(forceTimer);
+			if (error) {
+				console.error("Graceful shutdown failed.");
+				exit(1);
+			}
+			exit(0);
+		});
+	}
+
+	process.once("SIGINT", () => void shutdown("SIGINT"));
+	process.once("SIGTERM", () => void shutdown("SIGTERM"));
+}
+
+main().catch((error) => {
+	console.error(error instanceof Error ? error.message : "The service could not start.");
 	exit(1);
 });

@@ -1,16 +1,19 @@
 # Health Checks
 
-Use these endpoints for monitoring. They do not require auth and do not redirect.
+These endpoints are unauthenticated, never redirect, and return `Cache-Control: no-store`.
 
-## Back-end (Express API)
-- `GET /healthz`
-  - returns `200 {"ok":true}`
-- `GET /readyz`
-  - returns `200 {"ready":true,"components":{"db":{"ok":true,"state":1}}}` when Mongo is connected and pingable
-  - returns `503 {"ready":false,...}` when Mongo is unavailable
-- `GET /_dbinfo`
-  - internal diagnostics only
-  - returns non-secret database metadata when allowed
-  - returns `403 {"ok":false,"error":"forbidden"}` for public requests without internal access
+## Liveness
 
-Use `/healthz` and `/readyz` for monitors. Do not use `/`, login pages, or `/_dbinfo`.
+`GET /healthz` returns `200 {"ok":true}` when the Node process can answer HTTP requests. Use it only to distinguish a
+dead process from a live one.
+
+## Readiness
+
+`GET /readyz` returns:
+
+- `200 {"ready":true,"components":{"contactMail":{"ok":true}}}` when the TLS SMTP configuration was validated at startup.
+- `503 {"ready":false,"components":{"contactMail":{"ok":false}}}` when contact delivery is not configured.
+
+Container health checks use `/readyz`, so an incomplete SMTP configuration cannot be considered deploy-ready.
+
+There is no database diagnostic, login, account, role, promotion, or demotion endpoint in the v4 service.

@@ -1,13 +1,70 @@
 import type { Request } from "express";
-import { env } from "node:process";
-import rateLimit from "express-rate-limit";
+import type { SendMailOptions } from "nodemailer";
+import { Buffer } from "node:buffer";
+import process from "node:process";
 import nodemailer from "nodemailer";
 import { z } from "zod";
 
-const truthyValues = new Set(["1", "true", "yes", "on"]);
+const TRUE_VALUES = new Set(["1", "true", "yes", "on"]);
+const FALSE_VALUES = new Set(["0", "false", "no", "off"]);
+const SUPPORTED_CONTACT_VARIABLES = new Set([
+	"CONTACT_BCC_EMAIL",
+	"CONTACT_FROM_EMAIL",
+	"CONTACT_FROM_NAME",
+	"CONTACT_SENDMAIL_PATH",
+	"CONTACT_SMTP_HOST",
+	"CONTACT_SMTP_PASS",
+	"CONTACT_SMTP_PORT",
+	"CONTACT_SMTP_REQUIRE_TLS",
+	"CONTACT_SMTP_SECURE",
+	"CONTACT_SMTP_USER",
+	"CONTACT_TO_EMAIL",
+	"CONTACT_USE_SENDMAIL"
+]);
+const emailAddressSchema = z.string().trim().email().max(320);
 
-function isEnabled(value?: string) {
-	return truthyValues.has(value?.trim().toLowerCase() || "");
+function hasHeaderControlCharacter(value: string) {
+	return [...value].some((character) => {
+		const codePoint = character.codePointAt(0) ?? 0;
+		return codePoint < 32 || codePoint === 127;
+	});
+}
+
+function hasMessageControlCharacter(value: string) {
+	return [...value].some((character) => {
+		const codePoint = character.codePointAt(0) ?? 0;
+		return (codePoint < 32 && codePoint !== 9 && codePoint !== 10) || codePoint === 127;
+	});
+}
+
+export const contactFormSchema = z
+	.object({
+		name: z
+			.string()
+			.trim()
+			.min(1)
+			.max(120)
+			.refine(value => !hasHeaderControlCharacter(value), "Name contains invalid characters."),
+		email: emailAddressSchema,
+		message: z
+			.string()
+			.trim()
+			.min(10)
+			.max(5000)
+			.refine(value => !hasMessageControlCharacter(value), "Message contains invalid characters."),
+		website: z.string().trim().max(200).optional().default("")
+	})
+	.strict();
+
+export type ContactFormPayload = z.infer<typeof contactFormSchema>;
+export type ContactRequestContext = Pick<Request, "ip" | "headers">;
+export type ContactSender = (payload: ContactFormPayload, requestContext: ContactRequestContext) => Promise<void>;
+
+export interface ContactMailIdentity {
+	fromEmail: string;
+	fromName: string;
+	toEmail: string;
+	bccEmail?: string[];
 }
 
 function trimToUndefined(value?: string) {
@@ -15,150 +72,173 @@ function trimToUndefined(value?: string) {
 	return trimmed || undefined;
 }
 
+function parseBoolean(name: string, value?: string) {
+	const normalized = trimToUndefined(value)?.toLowerCase();
+	if (!normalized) return false;
+	if (TRUE_VALUES.has(normalized)) return true;
+	if (FALSE_VALUES.has(normalized)) return false;
+	throw new TypeError(`${name} must be a boolean value.`);
+}
+
+function parseEmail(name: string, value?: string) {
+	const result = emailAddressSchema.safeParse(value);
+	if (!result.success) throw new TypeError(`${name} must be a valid email address.`);
+	return result.data;
+}
+
 function parseAddressList(value?: string) {
-	return value
+	const entries = value
 		?.split(",")
 		.map(part => part.trim())
 		.filter(Boolean);
+
+	return entries?.map((entry, index) => parseEmail(`CONTACT_BCC_EMAIL entry ${index + 1}`, entry));
 }
 
-export const contactFormSchema = z.object({
-	name: z.string().trim().min(1).max(120),
-	email: z.string().trim().email().max(320),
-	message: z.string().trim().min(10).max(5000),
-	website: z.string().trim().max(0).optional().or(z.literal(""))
-});
-
-export type ContactFormPayload = z.infer<typeof contactFormSchema>;
-
-export const contactRateLimiter = rateLimit({
-	windowMs: 15 * 60 * 1000,
-	limit: 5,
-	standardHeaders: true,
-	legacyHeaders: false
-});
-
-function getContactMailConfig() {
-	const fromEmail = trimToUndefined(env.CONTACT_FROM_EMAIL);
-	if (!fromEmail) {
-		return null;
+function parsePort(value: string) {
+	const port = Number(value);
+	if (!Number.isSafeInteger(port) || port < 1 || port > 65_535) {
+		throw new TypeError("CONTACT_SMTP_PORT must be an integer between 1 and 65535.");
 	}
-
-	const toEmail = trimToUndefined(env.CONTACT_TO_EMAIL) || "contacts@jacobdanderson.net";
-	const bccEmail = parseAddressList(env.CONTACT_BCC_EMAIL);
-	const fromName = trimToUndefined(env.CONTACT_FROM_NAME) || "The Restoration";
-	const sendmailPath = trimToUndefined(env.CONTACT_SENDMAIL_PATH);
-	const useSendmail = isEnabled(env.CONTACT_USE_SENDMAIL) || !!sendmailPath;
-
-	if (useSendmail) {
-		return {
-			fromEmail,
-			fromName,
-			toEmail,
-			bccEmail,
-			transport: nodemailer.createTransport({
-				sendmail: true,
-				newline: "unix",
-				...(sendmailPath ? { path: sendmailPath } : {})
-			})
-		};
-	}
-
-	const host = trimToUndefined(env.CONTACT_SMTP_HOST);
-	if (!host) {
-		return null;
-	}
-
-	const secure = isEnabled(env.CONTACT_SMTP_SECURE);
-	const port = Number.parseInt(env.CONTACT_SMTP_PORT || (secure ? "465" : "587"), 10);
-	if (!Number.isFinite(port)) {
-		throw new TypeError("Invalid CONTACT_SMTP_PORT");
-	}
-
-	const user = trimToUndefined(env.CONTACT_SMTP_USER);
-	const pass = trimToUndefined(env.CONTACT_SMTP_PASS);
-
-	return {
-		fromEmail,
-		fromName,
-		toEmail,
-		bccEmail,
-		transport: nodemailer.createTransport({
-			host,
-			port,
-			secure,
-			requireTLS: isEnabled(env.CONTACT_SMTP_REQUIRE_TLS),
-			...(user && pass ? { auth: { user, pass } } : {})
-		})
-	};
+	return port;
 }
 
-export function isContactMailConfigured() {
-	try {
-		return !!getContactMailConfig();
+function parseSmtpHost(value?: string) {
+	const host = trimToUndefined(value);
+	if (!host || host.length > 253 || /[\s/\\@]/.test(host) || hasHeaderControlCharacter(host)) {
+		throw new TypeError("CONTACT_SMTP_HOST must be a valid SMTP host name or address.");
 	}
-	catch {
-		return false;
-	}
+	return host;
 }
 
-function formatHeaderLine(label: string, value?: string) {
-	return value ? `${label}: ${value}` : undefined;
+function safeHeaderValue(value?: string) {
+	return value?.replaceAll("\r", " ").replaceAll("\n", " ").replaceAll("\t", " ").trim();
 }
 
-export async function sendContactMessage(
-	payload: ContactFormPayload,
-	requestContext: Pick<Request, "ip" | "headers">
-) {
-	const mailConfig = getContactMailConfig();
-	if (!mailConfig) {
-		throw new Error("Contact mail is not configured");
-	}
-
-	const submittedAt = new Date().toISOString();
-	const userAgent = trimToUndefined(requestContext.headers["user-agent"]);
-	const referer = trimToUndefined(
-		typeof requestContext.headers.referer === "string"
-			? requestContext.headers.referer
-			: Array.isArray(requestContext.headers.referer)
-				? requestContext.headers.referer[0]
-				: undefined
-	);
-
-	const metadata = [
-		formatHeaderLine("Submitted", submittedAt),
-		formatHeaderLine("From name", payload.name),
-		formatHeaderLine("From email", payload.email),
-		formatHeaderLine("Reply-To", payload.email),
-		formatHeaderLine("IP", requestContext.ip),
-		formatHeaderLine("User-Agent", userAgent),
-		formatHeaderLine("Referer", referer)
-	]
-		.filter(Boolean)
-		.join("\n");
-
-	const escapedMessage = payload.message
+function escapeHtml(value?: string) {
+	return (value || "")
 		.replaceAll("&", "&amp;")
 		.replaceAll("<", "&lt;")
 		.replaceAll(">", "&gt;")
-		.replaceAll("\n", "<br />");
+		.replaceAll("\"", "&quot;")
+		.replaceAll("'", "&#39;");
+}
 
-	await mailConfig.transport.sendMail({
-		from: `"${mailConfig.fromName}" <${mailConfig.fromEmail}>`,
-		to: mailConfig.toEmail,
-		...(mailConfig.bccEmail?.length ? { bcc: mailConfig.bccEmail } : {}),
+function firstHeaderValue(value: string | string[] | undefined) {
+	return safeHeaderValue(Array.isArray(value) ? value[0] : value);
+}
+
+export function buildContactMessage(
+	identity: ContactMailIdentity,
+	payload: ContactFormPayload,
+	requestContext: ContactRequestContext
+): SendMailOptions {
+	const submittedAt = new Date().toISOString();
+	const clientIp = safeHeaderValue(requestContext.ip);
+	const userAgent = firstHeaderValue(requestContext.headers["user-agent"]);
+	const referer = firstHeaderValue(requestContext.headers.referer);
+	const metadata = [
+		`Submitted: ${submittedAt}`,
+		`From name: ${safeHeaderValue(payload.name)}`,
+		`From email: ${safeHeaderValue(payload.email)}`,
+		`Reply-To: ${safeHeaderValue(payload.email)}`,
+		clientIp ? `IP: ${clientIp}` : undefined,
+		userAgent ? `User-Agent: ${userAgent}` : undefined,
+		referer ? `Referer: ${referer}` : undefined
+	]
+		.filter(Boolean)
+		.join("\n");
+	const escapedMessage = escapeHtml(payload.message).replaceAll("\n", "<br />");
+
+	return {
+		from: `"${safeHeaderValue(identity.fromName)}" <${identity.fromEmail}>`,
+		to: identity.toEmail,
+		...(identity.bccEmail?.length ? { bcc: identity.bccEmail } : {}),
 		replyTo: payload.email,
-		subject: `[therestoration.jacobdanderson.net] Contact form from ${payload.name}`,
+		subject: `[therestoration.jacobdanderson.net] Contact form from ${safeHeaderValue(payload.name)}`,
 		text: `${metadata}\n\nMessage:\n${payload.message}`,
 		html: `
-			<p>A new contact form submission was received from <strong>${payload.name}</strong>.</p>
-			<p><strong>Email:</strong> ${payload.email}</p>
-			<p><strong>Submitted:</strong> ${submittedAt}</p>
-			${requestContext.ip ? `<p><strong>IP:</strong> ${requestContext.ip}</p>` : ""}
-			${userAgent ? `<p><strong>User-Agent:</strong> ${userAgent}</p>` : ""}
-			${referer ? `<p><strong>Referer:</strong> ${referer}</p>` : ""}
+			<p>A new contact form submission was received from <strong>${escapeHtml(payload.name)}</strong>.</p>
+			<p><strong>Email:</strong> ${escapeHtml(payload.email)}</p>
+			<p><strong>Submitted:</strong> ${escapeHtml(submittedAt)}</p>
+			${clientIp ? `<p><strong>IP:</strong> ${escapeHtml(clientIp)}</p>` : ""}
+			${userAgent ? `<p><strong>User-Agent:</strong> ${escapeHtml(userAgent)}</p>` : ""}
+			${referer ? `<p><strong>Referer:</strong> ${escapeHtml(referer)}</p>` : ""}
 			<hr />
 			<p>${escapedMessage}</p>
 		`
+	};
+}
+
+export function createContactSender(environment: NodeJS.ProcessEnv = process.env): ContactSender | null {
+	for (const [name, value] of Object.entries(environment)) {
+		if (name.startsWith("CONTACT_") && trimToUndefined(value) && !SUPPORTED_CONTACT_VARIABLES.has(name)) {
+			throw new TypeError(`${name} is not a supported contact-mail setting.`);
+		}
+	}
+
+	const useSendmail = parseBoolean("CONTACT_USE_SENDMAIL", environment.CONTACT_USE_SENDMAIL);
+	if (useSendmail || trimToUndefined(environment.CONTACT_SENDMAIL_PATH)) {
+		throw new TypeError("Sendmail transport is not supported; configure a TLS-protected SMTP service.");
+	}
+
+	const mailConfigurationValues = [
+		environment.CONTACT_FROM_EMAIL,
+		environment.CONTACT_TO_EMAIL,
+		environment.CONTACT_BCC_EMAIL,
+		environment.CONTACT_FROM_NAME,
+		environment.CONTACT_SMTP_HOST,
+		environment.CONTACT_SMTP_PORT,
+		environment.CONTACT_SMTP_SECURE,
+		environment.CONTACT_SMTP_USER,
+		environment.CONTACT_SMTP_PASS,
+		environment.CONTACT_SMTP_REQUIRE_TLS
+	];
+	if (!mailConfigurationValues.some(trimToUndefined)) return null;
+
+	const fromEmail = parseEmail("CONTACT_FROM_EMAIL", environment.CONTACT_FROM_EMAIL);
+	const toEmail = environment.CONTACT_TO_EMAIL
+		? parseEmail("CONTACT_TO_EMAIL", environment.CONTACT_TO_EMAIL)
+		: "contacts@jacobdanderson.net";
+	const bccEmail = parseAddressList(environment.CONTACT_BCC_EMAIL);
+	const configuredFromName = trimToUndefined(environment.CONTACT_FROM_NAME);
+	if (configuredFromName && (configuredFromName.length > 120 || hasHeaderControlCharacter(configuredFromName))) {
+		throw new TypeError("CONTACT_FROM_NAME must be a single line of at most 120 characters.");
+	}
+	const fromName = configuredFromName || "The Restoration";
+
+	const host = parseSmtpHost(environment.CONTACT_SMTP_HOST);
+	const secure = parseBoolean("CONTACT_SMTP_SECURE", environment.CONTACT_SMTP_SECURE);
+	const requireTls
+		= environment.CONTACT_SMTP_REQUIRE_TLS === undefined
+			? true
+			: parseBoolean("CONTACT_SMTP_REQUIRE_TLS", environment.CONTACT_SMTP_REQUIRE_TLS);
+	if (!requireTls) {
+		throw new TypeError("CONTACT_SMTP_REQUIRE_TLS cannot be disabled.");
+	}
+	const port = parsePort(environment.CONTACT_SMTP_PORT || (secure ? "465" : "587"));
+	const user = trimToUndefined(environment.CONTACT_SMTP_USER);
+	const pass = trimToUndefined(environment.CONTACT_SMTP_PASS);
+	if (!!user !== !!pass) {
+		throw new TypeError("CONTACT_SMTP_USER and CONTACT_SMTP_PASS must be configured together.");
+	}
+	if (environment.NODE_ENV === "production" && pass && Buffer.byteLength(pass, "utf8") < 12) {
+		throw new TypeError("CONTACT_SMTP_PASS must contain at least 12 UTF-8 bytes in production.");
+	}
+
+	const identity = { fromEmail, fromName, toEmail, bccEmail };
+	const transport = nodemailer.createTransport({
+		host,
+		port,
+		secure,
+		requireTLS: true,
+		...(user && pass ? { auth: { user, pass } } : {}),
+		connectionTimeout: 10_000,
+		greetingTimeout: 10_000,
+		socketTimeout: 15_000
 	});
+
+	return async (payload, requestContext) => {
+		await transport.sendMail(buildContactMessage(identity, payload, requestContext));
+	};
 }

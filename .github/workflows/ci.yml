@@ -1,169 +1,57 @@
 name: CI
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+
+permissions:
+    contents: read
+
+concurrency:
+    group: ci-${{ github.ref }}
+    cancel-in-progress: true
+
+env:
+    NODE_VERSION: 24.18.1
+    NPM_VERSION: 12.0.2
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
+    validate:
+        runs-on: ubuntu-latest
+        timeout-minutes: 30
+        steps:
+            - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 24.18.0
-          cache: npm
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: ${{ env.NODE_VERSION }}
+                  cache: npm
 
-      # Make runner's npm match packageManager in package.json
-      - name: Pin npm version
-        run: |
-          npm -v
-          npm i -g npm@11.16.0
-          npm -v
+            - name: Align npm
+              run: npm install --global "npm@${NPM_VERSION}"
 
-      - name: Install deps
-        run: npm ci
+            - name: Install locked dependencies
+              run: npm ci
 
-      # Root "lint" runs front-end and back-end lint
-      - name: Lint
-        run: npm run lint
+            - name: Audit development and production dependencies
+              run: |
+                  npm run audit:all
+                  npm run audit:prod
 
-  typecheck:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
+            - name: Verify Linux ARM64 native bindings
+              run: npm run check:native-bindings
 
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 24.18.0
-          cache: npm
+            - name: Validate source and unit behavior
+              run: |
+                  npm run lint
+                  npm run typecheck
+                  npm test
+                  npm run build
 
-      - name: Pin npm version
-        run: |
-          npm i -g npm@11.16.0
-          npm -v
+            - name: Accessibility smoke checks
+              run: npm run a11y
 
-      - name: Install deps
-        run: npm ci
-
-      # Only the front-end defines typecheck; call it directly
-      - name: Typecheck (front-end)
-        run: npm run -w front-end typecheck
-
-  test:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [24.18.0]
-        os: [ubuntu-latest]
-      fail-fast: false
-
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: ${{ matrix['node-version'] }}
-          cache: npm
-          registry-url: https://registry.npmjs.org/
-
-      # Only pin npm if compatible
-      - name: Pin npm version (if supported)
-        run: |
-          # optional guard:
-          if [ $(node -v | cut -d. -f1 | sed 's/v//') -ge 20 ]; then
-            npm i -g npm@11.16.0
-          fi
-          npm -v
-
-      - name: Install deps
-        run: npm ci
-
-      - name: Unit tests
-        env:
-          VITEST_WATCH: "false"
-        run: |
-          ulimit -n 4096 || true
-          npm run -w front-end test:unit
-
-  test-e2e:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 24.18.0
-          cache: npm
-          registry-url: https://registry.npmjs.org/
-
-  accessibility:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 24.18.0
-          cache: npm
-
-      - name: Pin npm version
-        run: |
-          npm i -g npm@11.16.0
-          npm -v
-
-      - name: Install deps
-        run: npm ci
-
-      - name: Axe accessibility smoke checks
-        run: npm run a11y
-
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 24.18.0
-          cache: npm
-
-      - name: Pin npm version
-        run: |
-          npm i -g npm@11.16.0
-          npm -v
-
-      - name: Install deps
-        run: npm ci
-
-      - name: Build
-        run: npm run build
-
-      - name: Pin npm version
-        run: |
-          npm i -g npm@11.16.0
-          npm -v
-
-      - name: Install deps
-        run: npm ci
-
-      # Cache Cypress binary
-      - uses: actions/cache@v6
-        with:
-          path: ~/.cache/Cypress
-          key: cypress-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-
-      # Build site and run preview server for Cypress to hit
-      - name: Build (front-end)
-        run: npm run -w front-end build
-
-      - name: Cypress
-        uses: cypress-io/github-action@v7.4.1
-        with:
-          install: false # we already ran npm ci
-          working-directory: front-end
-          config-file: cypress.config.ts
-          start: npm run preview -- --port 3333
-          wait-on: "http://localhost:3333"
+            - name: Cypress browser tests
+              run: npm run test:e2e

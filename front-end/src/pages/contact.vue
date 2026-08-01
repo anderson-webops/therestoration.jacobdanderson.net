@@ -19,10 +19,12 @@ async function handleSubmit() {
 	try {
 		const response = await fetch("/api/contact", {
 			method: "POST",
+			credentials: "omit",
 			headers: {
 				"Content-Type": "application/json"
 			},
-			body: JSON.stringify(form.value)
+			body: JSON.stringify(form.value),
+			signal: AbortSignal.timeout(15_000)
 		});
 		const payload = await response.json().catch(() => null);
 
@@ -63,7 +65,14 @@ async function handleSubmit() {
 			<form @submit.prevent="handleSubmit">
 				<div class="form-group">
 					<label for="name">Name:</label>
-					<input id="name" v-model="form.name" required type="text" />
+					<input
+						id="name"
+						v-model="form.name"
+						autocomplete="name"
+						maxlength="120"
+						required
+						type="text"
+					/>
 				</div>
 
 				<div class="form-group">
@@ -72,6 +81,8 @@ async function handleSubmit() {
 						id="email"
 						v-model="form.email"
 						required
+						autocomplete="email"
+						maxlength="320"
 						type="email"
 					/>
 				</div>
@@ -82,6 +93,8 @@ async function handleSubmit() {
 						id="message"
 						v-model="form.message"
 						required
+						minlength="10"
+						maxlength="5000"
 						rows="4"
 					/>
 				</div>
@@ -94,6 +107,7 @@ async function handleSubmit() {
 					tabindex="-1"
 					class="sr-only"
 					aria-hidden="true"
+					maxlength="200"
 				/>
 
 				<button type="submit" :disabled="isSubmitting">
@@ -103,6 +117,7 @@ async function handleSubmit() {
 				<p
 					v-if="responseMessage"
 					class="form-response"
+					aria-live="polite"
 					:class="
 						responseTone === 'error'
 							? 'form-response--error'

@@ -1,12 +1,12 @@
 {
 	"name": "therestoration-monorepo",
 	"type": "module",
-	"version": "1.0.0",
+	"version": "4.0.0",
 	"private": true,
-	"packageManager": "npm@11.16.0",
+	"packageManager": "npm@12.0.2",
 	"engines": {
-		"node": ">=24.18.0 <25",
-		"npm": ">=11.16.0 <12"
+		"node": ">=24.18.1 <25",
+		"npm": ">=12.0.2 <13"
 	},
 	"description": "Monorepo for main page",
 	"author": "Jacob Anderson",
@@ -21,40 +21,50 @@
 		"dev": "npm run -w front-end dev",
 		"server": "npm run -w back-end server",
 		"server:once": "npm run -w back-end server:once",
+		"start": "npm run -w back-end start",
 		"serve": "npm run -w front-end serve",
 		"lint-server": "npm run -w back-end lint-fix && npm run -w back-end server",
 		"lint-serve": "npm run -w front-end lint-fix && npm run -w front-end serve",
-		"lint": "npm run -w front-end lint && npm run -w back-end lint",
-		"lint-fix": "npm run -w front-end lint-fix && npm run -w back-end lint-fix",
+		"lint": "eslint \"scripts/**/*.mjs\" && npm run -w front-end lint && npm run -w back-end lint",
+		"lint-fix": "eslint \"scripts/**/*.mjs\" --fix && npm run -w front-end lint-fix && npm run -w back-end lint-fix",
 		"typecheck": "npm run -w front-end typecheck && npm run -w back-end typecheck",
-		"clean": "sudo rm -rf node_modules dist package-lock.json **/node_modules **/dist **/package-lock.json",
-		"up": "taze major -I && npm run -w front-end up && npm run -w back-end up",
-		"a11y": "node scripts/a11y-smoke.mjs"
+		"test": "npm run -w front-end test:unit && npm run -w back-end test:unit",
+		"test:e2e": "npm run -w front-end test:e2e",
+		"a11y": "node scripts/a11y-smoke.mjs",
+		"check:native-bindings": "node scripts/check-native-bindings.mjs",
+		"audit:all": "npm audit --audit-level=low",
+		"audit:prod": "npm audit --omit=dev --audit-level=low",
+		"deps:check": "npm outdated --workspaces --long",
+		"validate": "npm run check:native-bindings && npm run lint && npm run typecheck && npm test && npm run build"
 	},
 	"devDependencies": {
-		"@antfu/eslint-config": "^8.2.0",
-		"@typescript-eslint/eslint-plugin": "^8.59.0",
-		"@typescript-eslint/parser": "^8.59.0",
+		"@antfu/eslint-config": "^9.2.0",
 		"@unocss/eslint-plugin": "^66.6.7",
+		"axe-core": "^4.11.4",
 		"eslint": "^10.2.1",
 		"eslint-config-prettier": "^10.1.8",
+		"eslint-plugin-format": "^2.0.1",
 		"eslint-plugin-prettier": "^5.5.5",
 		"eslint-plugin-vue": "^10.9.0",
 		"globals": "^17.5.0",
 		"prettier": "^3.8.3",
-		"taze": "^19.11.0",
-		"typescript": "^6.0.3",
-		"axe-core": "^4.11.4",
-		"puppeteer": "^24.43.1"
+		"puppeteer": "^24.43.1",
+		"typescript": "^6.0.3"
 	},
 	"overrides": {
 		"defu": "6.1.6",
 		"vite": "^8.1.0",
 		"vue-router": "^5.0.4",
-		"follow-redirects": "1.16.0",
 		"@cypress/request": {
 			"uuid": "14.0.0",
 			"qs": "6.15.2"
 		}
+	},
+	"allowScripts": {
+		"cypress@15.19.0": true,
+		"esbuild@0.28.1": true,
+		"puppeteer@24.43.1": true,
+		"vue-demi@0.14.10": true,
+		"fsevents": false
 	}
 }
