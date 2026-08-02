@@ -68,7 +68,7 @@
 	"allowScripts": {
 		"cypress@15.19.0": true,
 		"esbuild@0.28.1": true,
-		"puppeteer@24.43.1": true,
+		"puppeteer@25.4.0": true,
 		"vue-demi@0.14.10": true,
 		"fsevents": false
 	}
