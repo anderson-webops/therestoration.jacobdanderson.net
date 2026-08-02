@@ -32,10 +32,12 @@
 		"test:e2e": "npm run -w front-end test:e2e",
 		"a11y": "node scripts/a11y-smoke.mjs",
 		"check:native-bindings": "node scripts/check-native-bindings.mjs",
+		"test:repo": "vitest run scripts/*.test.mjs",
 		"audit:all": "npm audit --audit-level=low",
 		"audit:prod": "npm audit --omit=dev --audit-level=low",
 		"deps:check": "npm outdated --workspaces --long",
-		"validate": "npm run check:native-bindings && npm run lint && npm run typecheck && npm test && npm run build"
+		"verify:public": "node scripts/verify-public.mjs",
+		"validate": "npm run check:native-bindings && npm run lint && npm run typecheck && npm run test:repo && npm test && npm run build"
 	},
 	"devDependencies": {
 		"@antfu/eslint-config": "^9.2.0",

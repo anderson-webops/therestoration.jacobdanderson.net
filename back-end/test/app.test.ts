@@ -13,6 +13,11 @@ const validContact = {
 	website: ""
 };
 const temporaryDirectories: string[] = [];
+const deployment = {
+	release: "v4.0.0",
+	commitSha: "0123456789abcdef0123456789abcdef01234567",
+	deployedAt: "2026-08-02T00:00:00.000Z"
+};
 
 afterAll(async () => {
 	await Promise.all(
@@ -23,26 +28,34 @@ afterAll(async () => {
 describe("the Restoration application", () => {
 	it("serves hardened health and readiness responses without sessions", async () => {
 		const sender = vi.fn().mockResolvedValue(undefined);
-		const app = createApp({ contactSender: sender });
+		const app = createApp({ contactSender: sender, deployment });
 
-		const health = await request(app).get("/healthz").expect(200, { ok: true });
+		const health = await request(app).get("/healthz").expect(200, { ok: true, deployment });
 		expect(health.headers["cache-control"]).toBe("no-store");
 		expect(health.headers["content-security-policy"]).toContain(
 			"https://analytics.jacobdanderson.net"
 		);
 		expect(health.headers["x-content-type-options"]).toBe("nosniff");
+		expect(health.headers["x-frame-options"]).toBe("DENY");
 		expect(health.headers["x-powered-by"]).toBeUndefined();
 		expect(health.headers["set-cookie"]).toBeUndefined();
 		expect(health.headers["access-control-allow-origin"]).toBeUndefined();
 
 		await request(app).get("/readyz").expect(200, {
 			ready: true,
-			components: { contactMail: { ok: true } }
+			components: { contactMail: { ok: true } },
+			deployment
 		});
 		await request(createApp()).get("/readyz").expect(503, {
 			ready: false,
-			components: { contactMail: { ok: false } }
+			components: { contactMail: { ok: false } },
+			deployment: {
+				release: "development",
+				commitSha: "development",
+				deployedAt: null
+			}
 		});
+		await request(app).get("/release.json").expect(200, deployment);
 	});
 
 	it("validates and sends bounded contact submissions", async () => {
@@ -71,6 +84,30 @@ describe("the Restoration application", () => {
 			.send({ ...validContact, website: "https://spam.example" })
 			.expect(202, { ok: true });
 		expect(sender).not.toHaveBeenCalled();
+	});
+
+	it("rejects browser cross-site contact submissions before delivery", async () => {
+		const sender = vi.fn().mockResolvedValue(undefined);
+		const app = createApp({
+			contactSender: sender,
+			publicOrigin: "https://therestoration.jacobdanderson.net"
+		});
+
+		await request(app)
+			.post("/api/contact")
+			.set("Origin", "https://attacker.invalid")
+			.set("Sec-Fetch-Site", "cross-site")
+			.send(validContact)
+			.expect(403, { ok: false, error: "cross-site-request-denied" });
+		expect(sender).not.toHaveBeenCalled();
+
+		await request(app)
+			.post("/api/contact")
+			.set("Origin", "https://therestoration.jacobdanderson.net")
+			.set("Sec-Fetch-Site", "same-origin")
+			.send(validContact)
+			.expect(202, { ok: true });
+		expect(sender).toHaveBeenCalledOnce();
 	});
 
 	it("rejects invalid, malformed, oversized, and unexpected input", async () => {

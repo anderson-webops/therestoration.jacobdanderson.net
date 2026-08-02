@@ -17,6 +17,7 @@ Adding any of those is a breaking security-boundary change, not an extension of 
 - `back-end/` — stateless Express contact API and production web server
 - `scripts/check-native-bindings.mjs` — Linux ARM64 lockfile reproducibility gate
 - `HEALTHCHECKS.md` — liveness and readiness contracts
+- `deploy/nginx/therestoration.locations.conf` — host routing for the single application origin
 
 The root `package-lock.json` is the only lockfile and the source of truth for local, CI, and container installs.
 
@@ -43,7 +44,8 @@ sendmail and disabling TLS are rejected. `CONTACT_TO_EMAIL` defaults to `contact
 `CONTACT_BCC_EMAIL` is optional.
 
 The API accepts only strict JSON, bounds every field and request body, silently absorbs a honeypot, rate limits by the
-proxy-derived client address, escapes all mail HTML, and returns sanitized errors. The container publishes only
+proxy-derived client address, rejects cross-site browser writes, escapes all mail HTML, and returns sanitized errors. The container publishes only
 `127.0.0.1:3007` and is intended to sit behind one trusted local reverse proxy.
 
-Use [`HEALTHCHECKS.md`](./HEALTHCHECKS.md) for deployment monitors.
+Use [`HEALTHCHECKS.md`](./HEALTHCHECKS.md) for deployment monitors and [`deploy/README.md`](./deploy/README.md) for the
+exact-identity production rollout.

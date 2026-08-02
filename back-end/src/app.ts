@@ -1,5 +1,6 @@
 import type { ErrorRequestHandler } from "express";
 import type { ContactSender } from "./contact.js";
+import type { DeploymentIdentity } from "./deployment.js";
 import { extname, resolve } from "node:path";
 import express from "express";
 import rateLimit from "express-rate-limit";
@@ -12,6 +13,8 @@ export interface AppOptions {
 	staticRoot?: string;
 	trustProxyHops?: number;
 	contactRateLimit?: number;
+	deployment?: DeploymentIdentity;
+	publicOrigin?: string;
 }
 
 const RESERVED_SERVER_PATHS = ["/accounts", "/admin", "/auth", "/login", "/session", "/users"];
@@ -50,39 +53,70 @@ function securityMiddleware() {
 		crossOriginEmbedderPolicy: false,
 		crossOriginOpenerPolicy: { policy: "same-origin" },
 		crossOriginResourcePolicy: { policy: "same-origin" },
+		frameguard: { action: "deny" },
 		referrerPolicy: { policy: "strict-origin-when-cross-origin" }
 	});
+}
+
+function sameOriginWriteMiddleware(publicOrigin?: string) {
+	return (req: express.Request, res: express.Response, next: express.NextFunction) => {
+		const requestOrigin = req.get("origin");
+		const fetchSite = req.get("sec-fetch-site")?.toLowerCase();
+		const expectedOrigin = publicOrigin || `${req.protocol}://${req.get("host")}`;
+
+		if (fetchSite === "cross-site" || (requestOrigin && requestOrigin !== expectedOrigin)) {
+			res.status(403).json({ ok: false, error: "cross-site-request-denied" });
+			return;
+		}
+		next();
+	};
 }
 
 export function createApp(options: AppOptions = {}) {
 	const app = express();
 	const contactSender = options.contactSender ?? null;
 	const staticRoot = options.staticRoot ? resolve(options.staticRoot) : undefined;
+	const deployment = options.deployment ?? {
+		release: "development",
+		commitSha: "development",
+		deployedAt: null
+	};
 
 	app.disable("x-powered-by");
 	app.set("trust proxy", options.trustProxyHops || false);
 	app.use(securityMiddleware());
 
 	app.use((req, res, next) => {
-		if (req.path.startsWith("/api/") || req.path === "/healthz" || req.path === "/readyz") {
+		if (
+			req.path.startsWith("/api/")
+			|| req.path === "/healthz"
+			|| req.path === "/readyz"
+			|| req.path === "/release.json"
+		) {
 			res.set("Cache-Control", "no-store");
 		}
 		next();
 	});
 
 	app.get("/healthz", (_req, res) => {
-		res.json({ ok: true });
+		res.json({ ok: true, deployment });
 	});
 
 	app.get("/readyz", (_req, res) => {
 		res.status(contactSender ? 200 : 503).json({
 			ready: Boolean(contactSender),
-			components: { contactMail: { ok: Boolean(contactSender) } }
+			components: { contactMail: { ok: Boolean(contactSender) } },
+			deployment
 		});
+	});
+
+	app.get("/release.json", (_req, res) => {
+		res.json(deployment);
 	});
 
 	app.post(
 		"/api/contact",
+		sameOriginWriteMiddleware(options.publicOrigin),
 		rateLimit({
 			windowMs: 15 * 60 * 1000,
 			limit: options.contactRateLimit ?? 5,

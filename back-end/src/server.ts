@@ -1,11 +1,12 @@
 import { constants } from "node:fs";
-import { access } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import process, { env, exit } from "node:process";
 import { fileURLToPath } from "node:url";
 
 import { createApp } from "./app.js";
 import { createContactSender } from "./contact.js";
+import { parseDeploymentIdentity, parsePublicOrigin } from "./deployment.js";
 import "dotenv/config";
 
 function parseBoundedInteger(name: string, value: string | undefined, minimum: number, maximum: number) {
@@ -33,9 +34,19 @@ async function main() {
 	const currentDirectory = dirname(fileURLToPath(import.meta.url));
 	const staticRoot = resolve(env.STATIC_ROOT || resolve(currentDirectory, "../../front-end/dist"));
 	await access(resolve(staticRoot, "index.html"), constants.R_OK);
+	const packageMetadata = JSON.parse(
+		await readFile(resolve(currentDirectory, "../package.json"), "utf8")
+	) as { version?: unknown };
+	if (typeof packageMetadata.version !== "string") {
+		throw new TypeError("The back-end package version is missing.");
+	}
+	const deployment = parseDeploymentIdentity(env, `v${packageMetadata.version}`);
+	const publicOrigin = parsePublicOrigin(env.RESTORATION_PUBLIC_ORIGIN, isProduction);
 
 	const app = createApp({
 		contactSender: createContactSender(env),
+		deployment,
+		publicOrigin,
 		staticRoot,
 		trustProxyHops
 	});
