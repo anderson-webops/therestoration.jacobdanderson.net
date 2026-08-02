@@ -2,6 +2,7 @@
 **/node_modules
 **/dist
 **/*.tsbuildinfo
+.restoration-release-prepared.json
 .run
 
 #package-lock.json

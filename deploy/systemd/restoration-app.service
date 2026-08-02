@@ -1,0 +1,47 @@
+[Unit]
+Description=The Restoration public site and contact API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=restoration
+Group=restoration
+WorkingDirectory=/srv/therestoration/current
+Environment=NODE_ENV=production
+Environment=HOST=127.0.0.1
+Environment=PORT=3007
+Environment=STATIC_ROOT=/srv/therestoration/current/front-end/dist
+EnvironmentFile=/etc/therestoration/app.env
+EnvironmentFile=/etc/therestoration/release.env
+ExecStart=/usr/bin/node back-end/dist/server.js
+Restart=on-failure
+RestartSec=5s
+TimeoutStartSec=30s
+TimeoutStopSec=20s
+UMask=0077
+
+NoNewPrivileges=true
+PrivateDevices=true
+PrivateTmp=true
+ProtectClock=true
+ProtectControlGroups=true
+ProtectHome=true
+ProtectHostname=true
+ProtectKernelLogs=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+ProtectProc=invisible
+ProtectSystem=strict
+ProcSubset=pid
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+RestrictNamespaces=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+LockPersonality=true
+CapabilityBoundingSet=
+AmbientCapabilities=
+SystemCallArchitectures=native
+
+[Install]
+WantedBy=multi-user.target

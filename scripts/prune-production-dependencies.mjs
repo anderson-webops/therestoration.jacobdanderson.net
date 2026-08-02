@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { execFileSync } from "node:child_process";
 import { access, readFile, rm } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { isAbsolute, relative, resolve } from "node:path";
@@ -6,17 +7,19 @@ import process from "node:process";
 
 const projectRoot = process.cwd();
 const nodeModulesRoot = resolve(projectRoot, "node_modules");
-const selectionPath = process.argv[2];
-if (!selectionPath) throw new TypeError("A JSON selection file is required.");
-
-const selection = JSON.parse(await readFile(resolve(projectRoot, selectionPath), "utf8"));
-if (!Array.isArray(selection)) throw new TypeError("The dependency selection must be an array.");
-
 const backendManifestPath = resolve(projectRoot, "back-end/package.json");
 const backendManifest = JSON.parse(await readFile(backendManifestPath, "utf8"));
-const requiredDependencies = new Set(Object.keys(backendManifest.dependencies || {}));
-const removalTargets = new Set();
+const requiredDependencies = new Set(Object.keys(backendManifest.dependencies ?? {}));
+const npmExecutable = process.platform === "win32" ? "npm.cmd" : "npm";
+const selection = JSON.parse(execFileSync(
+	npmExecutable,
+	["query", ".dev:not(.prod), :extraneous", "--json"],
+	{ cwd: projectRoot, encoding: "utf8", maxBuffer: 16 * 1024 * 1024 }
+));
 
+if (!Array.isArray(selection)) throw new TypeError("The npm production-prune selection must be an array.");
+
+const removalTargets = new Set();
 for (const dependency of selection) {
 	const location = dependency?.location;
 	if (typeof location !== "string" || isAbsolute(location)) {
@@ -39,7 +42,7 @@ await rm(resolve(nodeModulesRoot, ".bin"), { force: true, recursive: true });
 const requireFromBackend = createRequire(backendManifestPath);
 for (const dependency of requiredDependencies) requireFromBackend.resolve(dependency);
 
-const forbiddenRuntimePackages = [
+for (const packageName of [
 	"@antfu/eslint-config",
 	"cypress",
 	"eslint",
@@ -47,11 +50,12 @@ const forbiddenRuntimePackages = [
 	"puppeteer",
 	"rolldown",
 	"rollup",
+	"tsx",
 	"typescript",
 	"vite",
-	"vitest"
-];
-for (const packageName of forbiddenRuntimePackages) {
+	"vitest",
+	"vue"
+]) {
 	try {
 		await access(resolve(nodeModulesRoot, packageName));
 		throw new Error(`${packageName} remained in the production dependency tree.`);

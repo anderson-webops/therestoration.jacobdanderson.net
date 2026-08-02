@@ -1,7 +1,7 @@
 {
 	"name": "therestoration-monorepo",
 	"type": "module",
-	"version": "4.0.0",
+	"version": "4.0.1",
 	"private": true,
 	"packageManager": "npm@12.0.2",
 	"engines": {
@@ -37,7 +37,10 @@
 		"audit:prod": "npm audit --omit=dev --audit-level=low",
 		"deps:check": "npm outdated --workspaces --long",
 		"verify:public": "node scripts/verify-public.mjs",
-		"validate": "npm run check:native-bindings && npm run lint && npm run typecheck && npm run test:repo && npm test && npm run build"
+		"verify:deploy-assets": "node scripts/verify-deploy-assets.mjs",
+		"verify:production-install": "node scripts/verify-production-install.mjs",
+		"test:direct-runtime": "node scripts/direct-runtime-smoke.mjs",
+		"validate": "npm run check:native-bindings && npm run lint && npm run typecheck && npm run test:repo && npm test && npm run build && npm run verify:deploy-assets"
 	},
 	"devDependencies": {
 		"@antfu/eslint-config": "^9.2.0",

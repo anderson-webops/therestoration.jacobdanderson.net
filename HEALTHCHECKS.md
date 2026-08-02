@@ -18,6 +18,6 @@ Both responses include the same exact release, full Git revision, and deployment
 returns that identity alone. Production startup fails unless all three values are present and the release matches the
 source package version.
 
-Container health checks use `/readyz`, so an incomplete SMTP configuration cannot be considered deploy-ready.
+The systemd promotion gate uses `/readyz`, so an incomplete SMTP configuration cannot be considered deploy-ready.
 
 There is no database diagnostic, login, account, role, promotion, or demotion endpoint in the v4 service.

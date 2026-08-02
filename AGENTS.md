@@ -61,8 +61,8 @@
 
 - The only secret-bearing runtime integration is TLS-protected SMTP for the public contact form. Keep credentials in
   an ignored `.env`, require STARTTLS or implicit TLS, and never enable sendmail or certificate bypasses.
-- The container binds to host loopback and trusts exactly the documented reverse-proxy hop count. Do not broaden the
-  published port or proxy trust boundary without reviewing rate-limit identity and the external routing topology.
+- The systemd service binds to host loopback and trusts exactly the documented reverse-proxy hop count. Do not broaden
+  the listener or proxy trust boundary without reviewing rate-limit identity and the external routing topology.
 - Never commit real credentials. Logs and HTTP responses must contain only bounded error names/codes, not SMTP
   response bodies, credentials, submitted messages, or other visitor data.
 

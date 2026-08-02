@@ -14,7 +14,7 @@ const validContact = {
 };
 const temporaryDirectories: string[] = [];
 const deployment = {
-	release: "v4.0.0",
+	release: "v4.0.1",
 	commitSha: "0123456789abcdef0123456789abcdef01234567",
 	deployedAt: "2026-08-02T00:00:00.000Z"
 };

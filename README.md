@@ -5,8 +5,9 @@ Public history site and contact service for `therestoration.jacobdanderson.net`.
 ## Production design
 
 The Vite application is generated into static files. One stateless Express process serves those files and the bounded
-`POST /api/contact` endpoint. The production image does not contain a database, Vault client, account/session state,
-role management, or package manager.
+`POST /api/contact` endpoint. Production runs directly as the unprivileged `restoration` account under a hardened
+systemd unit; it has no database, Vault client, account/session state, or role management, and the runtime process does
+not invoke a package manager.
 
 This site is intentionally unauthenticated. There are no promotion or demotion operations and no administrative API.
 Adding any of those is a breaking security-boundary change, not an extension of the contact endpoint.
@@ -18,8 +19,9 @@ Adding any of those is a breaking security-boundary change, not an extension of 
 - `scripts/check-native-bindings.mjs` — Linux ARM64 lockfile reproducibility gate
 - `HEALTHCHECKS.md` — liveness and readiness contracts
 - `deploy/nginx/therestoration.locations.conf` — host routing for the single application origin
+- `deploy/systemd/` — direct service installation, exact release preparation, promotion, and rollback
 
-The root `package-lock.json` is the only lockfile and the source of truth for local, CI, and container installs.
+The root `package-lock.json` is the only lockfile and the source of truth for local, CI, and direct production installs.
 
 ## Validation
 
@@ -44,8 +46,9 @@ sendmail and disabling TLS are rejected. `CONTACT_TO_EMAIL` defaults to `contact
 `CONTACT_BCC_EMAIL` is optional.
 
 The API accepts only strict JSON, bounds every field and request body, silently absorbs a honeypot, rate limits by the
-proxy-derived client address, rejects cross-site browser writes, escapes all mail HTML, and returns sanitized errors. The container publishes only
-`127.0.0.1:3007` and is intended to sit behind one trusted local reverse proxy.
+proxy-derived client address, rejects cross-site browser writes, escapes all mail HTML, and returns sanitized errors.
+The systemd service listens only on `127.0.0.1:3007` behind one trusted local reverse proxy. Production does not use
+Docker or Compose.
 
 Use [`HEALTHCHECKS.md`](./HEALTHCHECKS.md) for deployment monitors and [`deploy/README.md`](./deploy/README.md) for the
 exact-identity production rollout.
