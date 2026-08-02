@@ -26,8 +26,7 @@ export const useMainStore = defineStore("main", {
 				},
 				{
 					title: "Explore Multimedia Content",
-					description:
-						"Travel the map, view images, and read stories that bring the Restoration to life.",
+					description: "Travel the map, view images, and read stories that bring the Restoration to life.",
 					image: "/images/restoration/home/golden-plates-and-other-artifacts-360px.jpg",
 					imgAlt: "Translation of the Book of Mormon"
 				}
@@ -97,8 +96,7 @@ export const useMainStore = defineStore("main", {
 					image: "/images/restoration/events/golden-plates-500px.jpg",
 					imgAlt: "Translation of the Book of Mormon",
 					quote: "I told the brethren that the Book of Mormon was the most correct of any book on earth, and the keystone of our religion.",
-					quoteSource:
-						"Joseph Smith, Introduction to the Book of Mormon",
+					quoteSource: "Joseph Smith, Introduction to the Book of Mormon",
 					sources: ["Joseph Smith—History 1:14-17"]
 				},
 				{
@@ -142,9 +140,7 @@ export const useMainStore = defineStore("main", {
 					imgAlt: "Organization of the Church",
 					quote: "Behold, there shall be a record kept among you...",
 					quoteSource: "Doctrine and Covenants 21:1",
-					sources: [
-						"Saints: The Story of the Church of Jesus Christ in the Latter Days, Volume 1"
-					]
+					sources: ["Saints: The Story of the Church of Jesus Christ in the Latter Days, Volume 1"]
 				}
 			]
 		},
@@ -162,10 +158,7 @@ export const useMainStore = defineStore("main", {
 					imgAlt: "Joseph Smith",
 					quote: "The Standard of Truth has been erected; no unhallowed hand can stop the work from progressing; persecutions may rage, mobs may combine, armies may assemble, calumny may defame, but the truth of God will go forth boldly, nobly, and independent, till it has penetrated every continent, visited every clime, swept every country, and sounded in every ear, till the purposes of God shall be accomplished, and the Great Jehovah shall say the work is done.",
 					quoteSource: "Joseph Smith, History of the Church, 4:540",
-					sources: [
-						"Joseph Smith—History 1:14-17",
-						"Doctrine and Covenants 76"
-					]
+					sources: ["Joseph Smith—History 1:14-17", "Doctrine and Covenants 76"]
 				},
 				{
 					name: "Emma Smith",
@@ -174,8 +167,7 @@ export const useMainStore = defineStore("main", {
 					image: "/images/restoration/figures/emma-smith.jpg",
 					imgAlt: "Emma Smith",
 					quote: "We are going to do something extraordinary. When a boat is stuck on the rapids with a multitude of Mormons on board we shall consider that a loud call for relief. We expect extraordinary occasions and pressing calls.",
-					quoteSource:
-						"Emma Smith, Relief Society Minute Book, 17 March 1842",
+					quoteSource: "Emma Smith, Relief Society Minute Book, 17 March 1842",
 					sources: []
 				},
 				{
@@ -196,9 +188,7 @@ export const useMainStore = defineStore("main", {
 					imgAlt: "Oliver Cowdery",
 					quote: "I wrote with my own pen the entire Book of Mormon (save a few pages) as it fell from the lips of the Prophet Joseph Smith, as he translated it by the gift and power of God, by the means of the Urim and Thummim, or, as it is called by that book, Holy Interpreters.",
 					quoteSource: "Oliver Cowdery",
-					sources: [
-						"Testimonies of Oliver Cowdery and Martin Harris, Millennial Star"
-					]
+					sources: ["Testimonies of Oliver Cowdery and Martin Harris, Millennial Star"]
 				},
 				{
 					name: "Parley P. Pratt",
@@ -217,11 +207,8 @@ export const useMainStore = defineStore("main", {
 					image: "/images/restoration/figures/eliza-r-snow-244px.jpg",
 					imgAlt: "Eliza R. Snow",
 					quote: "Truth is reason; truth eternal tells me I've a mother there.",
-					quoteSource:
-						"'O My Father', Hymns of The Church of Jesus Christ of Latter-day Saints",
-					sources: [
-						"Hymns of The Church of Jesus Christ of Latter-day Saints"
-					]
+					quoteSource: "'O My Father', Hymns of The Church of Jesus Christ of Latter-day Saints",
+					sources: ["Hymns of The Church of Jesus Christ of Latter-day Saints"]
 				}
 			]
 		},
@@ -238,18 +225,9 @@ export const useMainStore = defineStore("main", {
 						name: "Palmyra, New York",
 						latitude: 43.0631,
 						longitude: -77.2332,
-						events: [
-							"The First Vision",
-							"Translation of the Book of Mormon",
-							"Organization of the Church"
-						],
-						figures: [
-							"Joseph Smith",
-							"Emma Smith",
-							"Oliver Cowdery"
-						],
-						imageUrl:
-							"/images/restoration/map/the-first-vision.jpeg",
+						events: ["The First Vision", "Translation of the Book of Mormon", "Organization of the Church"],
+						figures: ["Joseph Smith", "Emma Smith", "Oliver Cowdery"],
+						imageUrl: "/images/restoration/map/the-first-vision.jpeg",
 						imgAlt: "The First Vision"
 					},
 					{
@@ -257,14 +235,8 @@ export const useMainStore = defineStore("main", {
 						latitude: 42.9136,
 						longitude: -76.9659,
 						events: ["Organization of the Church"],
-						figures: [
-							"Joseph Smith",
-							"Oliver Cowdery",
-							"David Whitmer",
-							"Martin Harris"
-						],
-						imageUrl:
-							"/images/restoration/map/organization-of-the-church.jpeg",
+						figures: ["Joseph Smith", "Oliver Cowdery", "David Whitmer", "Martin Harris"],
+						imageUrl: "/images/restoration/map/organization-of-the-church.jpeg",
 						imgAtl: "Organization of the Church"
 					},
 					{
@@ -272,13 +244,8 @@ export const useMainStore = defineStore("main", {
 						latitude: 41.5247,
 						longitude: -81.3615,
 						events: ["Revelation on the Degrees of Glory"],
-						figures: [
-							"Joseph Smith",
-							"Sidney Rigdon",
-							"Parley P. Pratt"
-						],
-						imageUrl:
-							"/images/restoration/map/kirtland-temple-ohio-usa.jpg",
+						figures: ["Joseph Smith", "Sidney Rigdon", "Parley P. Pratt"],
+						imageUrl: "/images/restoration/map/kirtland-temple-ohio-usa.jpg",
 						imgAlt: "Kirtland Temple"
 					},
 					{
@@ -286,13 +253,8 @@ export const useMainStore = defineStore("main", {
 						latitude: 39.2461,
 						longitude: -94.4191,
 						events: ["Liberty Jail Teachings"],
-						figures: [
-							"Joseph Smith",
-							"Hyrum Smith",
-							"Sidney Rigdon"
-						],
-						imageUrl:
-							"/images/restoration/map/liberty-jail-350px.jpg",
+						figures: ["Joseph Smith", "Hyrum Smith", "Sidney Rigdon"],
+						imageUrl: "/images/restoration/map/liberty-jail-350px.jpg",
 						imgAlt: "Liberty Jail"
 					},
 					{
@@ -300,14 +262,8 @@ export const useMainStore = defineStore("main", {
 						latitude: 40.5509,
 						longitude: -91.4634,
 						events: ["Revelation on the Degrees of Glory"],
-						figures: [
-							"Joseph Smith",
-							"Hyrum Smith",
-							"Brigham Young",
-							"John Taylor"
-						],
-						imageUrl:
-							"/images/restoration/map/new-nauvoo-temple-500px.jpg",
+						figures: ["Joseph Smith", "Hyrum Smith", "Brigham Young", "John Taylor"],
+						imageUrl: "/images/restoration/map/new-nauvoo-temple-500px.jpg",
 						imgAlt: "Nauvoo Temple"
 					},
 					{
@@ -318,13 +274,8 @@ export const useMainStore = defineStore("main", {
 							"Arrival of the Saints in the Salt Lake Valley",
 							"Construction of the Salt Lake Temple"
 						],
-						figures: [
-							"Brigham Young",
-							"Wilford Woodruff",
-							"John Taylor"
-						],
-						imageUrl:
-							"/images/restoration/map/salt-lake-temple-440px.jpg",
+						figures: ["Brigham Young", "Wilford Woodruff", "John Taylor"],
+						imageUrl: "/images/restoration/map/salt-lake-temple-440px.jpg",
 						imgAlt: "Salt Lake Temple"
 					}
 				]

@@ -28,11 +28,7 @@ function setActiveLink(linkName: string) {
 		<nav class="flex-container">
 			<div class="logo-container">
 				<RouterLink to="/" aria-label="The Restoration home">
-					<img
-						alt=""
-						class="logo"
-						src="/images/restoration/brand/mormon-book-440px.jpg"
-					/>
+					<img alt="" class="logo" src="/images/restoration/brand/mormon-book-440px.jpg" />
 				</RouterLink>
 				<span class="site-name">The Restoration</span>
 			</div>

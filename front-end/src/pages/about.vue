@@ -14,11 +14,7 @@ const about = computed(() => store.about);
 		</div>
 
 		<div class="body-container">
-			<div
-				v-for="(item, index) in about.body"
-				:key="index"
-				class="item body"
-			>
+			<div v-for="(item, index) in about.body" :key="index" class="item body">
 				<h3>{{ item.title }}</h3>
 				<p>{{ item.description }}</p>
 			</div>

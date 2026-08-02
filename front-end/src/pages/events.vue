@@ -19,9 +19,7 @@ const events = computed(() => store.events);
 				<p>{{ item.description }}</p>
 				<i>{{ item.quote }} - {{ item.quoteSource }}</i>
 				<br /><br />
-				<i v-for="(source, index2) in item.sources" :key="index2">{{
-					source
-				}}</i>
+				<i v-for="(source, index2) in item.sources" :key="index2">{{ source }}</i>
 			</div>
 		</div>
 	</div>

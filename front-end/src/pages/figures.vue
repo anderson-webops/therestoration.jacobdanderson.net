@@ -13,20 +13,14 @@ const figures = computed(() => store.figures);
 		</div>
 
 		<div class="items-container">
-			<div
-				v-for="(item, index) in figures.body"
-				:key="index"
-				class="item"
-			>
+			<div v-for="(item, index) in figures.body" :key="index" class="item">
 				<h3>{{ item.name }}</h3>
 				<img :alt="item.imgAlt" :src="item.image" />
 				<p>{{ item.description }}</p>
 				<br />
 				<i>{{ item.quote }} <br />- {{ item.quoteSource }}</i>
 				<br /><br />
-				<i v-for="(source, index2) in item.sources" :key="index2">{{
-					source
-				}}</i>
+				<i v-for="(source, index2) in item.sources" :key="index2">{{ source }}</i>
 			</div>
 		</div>
 	</div>

@@ -44,8 +44,7 @@ onMounted(async () => {
 	map.value = L.map(mapContainer.value).setView([40.2338, -111.6585], 5);
 
 	L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-		attribution:
-			'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 	}).addTo(map.value);
 
 	// Watch markers
@@ -53,10 +52,7 @@ onMounted(async () => {
 		() => props.coordinates,
 		(newCoordinates: Location[]) => {
 			newCoordinates.forEach((location: Location) => {
-				const marker = L.marker([
-					location.latitude,
-					location.longitude
-				]).addTo(map.value);
+				const marker = L.marker([location.latitude, location.longitude]).addTo(map.value);
 
 				const popupContent = `
                     <b>${location.name}</b><br>

@@ -11,9 +11,7 @@ const robotsContent = computed(() =>
 		? "noindex,nofollow"
 		: "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
 );
-const canonicalUrl = computed(() =>
-	new URL(route.path || "/", `${siteUrl}/`).toString()
-);
+const canonicalUrl = computed(() => new URL(route.path || "/", `${siteUrl}/`).toString());
 const structuredData = computed(() => [
 	{
 		"@context": "https://schema.org",
@@ -84,9 +82,7 @@ useHead(
 				{
 					rel: "icon",
 					type: "image/svg+xml",
-					href: preferredDark.value
-						? "/favicon-dark.svg"
-						: "/favicon.svg"
+					href: preferredDark.value ? "/favicon-dark.svg" : "/favicon.svg"
 				},
 				{
 					rel: "canonical",
@@ -99,8 +95,7 @@ useHead(
 							{
 								defer: true,
 								src: "https://analytics.jacobdanderson.net/script.js",
-								"data-website-id":
-									"0c8d7bfe-1d94-4d8e-833e-abb2b4ef1e58"
+								"data-website-id": "0c8d7bfe-1d94-4d8e-833e-abb2b4ef1e58"
 							}
 						]
 					: []),

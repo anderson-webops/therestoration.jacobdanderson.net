@@ -31,8 +31,7 @@ async function handleSubmit() {
 		if (!response.ok) {
 			responseTone.value = "error";
 			responseMessage.value =
-				payload?.error ||
-				"The message could not be sent right now. Please try again later.";
+				payload?.error || "The message could not be sent right now. Please try again later.";
 			return;
 		}
 
@@ -45,8 +44,7 @@ async function handleSubmit() {
 	} catch (error) {
 		console.error("The Restoration contact form failed:", error);
 		responseTone.value = "error";
-		responseMessage.value =
-			"The message could not be sent right now. Please try again later.";
+		responseMessage.value = "The message could not be sent right now. Please try again later.";
 	} finally {
 		isSubmitting.value = false;
 	}
@@ -57,46 +55,22 @@ async function handleSubmit() {
 	<div class="page">
 		<h1>Contact Me</h1>
 		<div class="item">
-			<p>
-				If you have any questions or feedback, please feel free to reach
-				out to us through the form below.
-			</p>
+			<p>If you have any questions or feedback, please feel free to reach out to us through the form below.</p>
 
 			<form @submit.prevent="handleSubmit">
 				<div class="form-group">
 					<label for="name">Name:</label>
-					<input
-						id="name"
-						v-model="form.name"
-						autocomplete="name"
-						maxlength="120"
-						required
-						type="text"
-					/>
+					<input id="name" v-model="form.name" autocomplete="name" maxlength="120" required type="text" />
 				</div>
 
 				<div class="form-group">
 					<label for="email">Email:</label>
-					<input
-						id="email"
-						v-model="form.email"
-						required
-						autocomplete="email"
-						maxlength="320"
-						type="email"
-					/>
+					<input id="email" v-model="form.email" required autocomplete="email" maxlength="320" type="email" />
 				</div>
 
 				<div class="form-group">
 					<label for="message">Message:</label>
-					<textarea
-						id="message"
-						v-model="form.message"
-						required
-						minlength="10"
-						maxlength="5000"
-						rows="4"
-					/>
+					<textarea id="message" v-model="form.message" required minlength="10" maxlength="5000" rows="4" />
 				</div>
 
 				<input
@@ -118,11 +92,7 @@ async function handleSubmit() {
 					v-if="responseMessage"
 					class="form-response"
 					aria-live="polite"
-					:class="
-						responseTone === 'error'
-							? 'form-response--error'
-							: 'form-response--success'
-					"
+					:class="responseTone === 'error' ? 'form-response--error' : 'form-response--success'"
 				>
 					{{ responseMessage }}
 				</p>

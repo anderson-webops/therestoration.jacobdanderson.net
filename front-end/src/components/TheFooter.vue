@@ -14,10 +14,7 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 						rel="noreferrer"
 						target="_blank"
 					>
-						<FontAwesomeIcon
-							:icon="['fab', 'facebook']"
-							size="2x"
-						/>
+						<FontAwesomeIcon :icon="['fab', 'facebook']" size="2x" />
 					</a>
 				</li>
 				<li>
@@ -37,10 +34,7 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 						rel="noreferrer"
 						target="_blank"
 					>
-						<FontAwesomeIcon
-							:icon="['fab', 'instagram']"
-							size="2x"
-						/>
+						<FontAwesomeIcon :icon="['fab', 'instagram']" size="2x" />
 					</a>
 				</li>
 			</ul>
