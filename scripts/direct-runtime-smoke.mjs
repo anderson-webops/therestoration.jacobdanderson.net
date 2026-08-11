@@ -116,12 +116,22 @@ try {
 
 	const health = await requestJson(baseUrl, "/healthz");
 	assert.equal(health.response.status, 200);
-	assert.deepEqual(health.body.deployment, marker);
+	assert.deepEqual(health.body, { ok: true });
+	assert.equal(health.response.headers.get("cache-control"), "no-store");
+	assert.equal(health.response.headers.get("set-cookie"), null);
 
 	const readiness = await requestJson(baseUrl, "/readyz");
 	assert.equal(readiness.response.status, 200);
-	assert.equal(readiness.body.ready, true);
-	assert.deepEqual(readiness.body.deployment, marker);
+	assert.deepEqual(readiness.body, { ok: true });
+
+	for (const probe of ["/healthz", "/readyz"]) {
+		const response = await fetch(`${baseUrl}${probe}`, {
+			method: "HEAD",
+			signal: AbortSignal.timeout(5_000)
+		});
+		assert.equal(response.status, 200);
+		assert.equal(await response.text(), "");
+	}
 
 	const release = await requestJson(baseUrl, "/release.json");
 	assert.equal(release.response.status, 200);

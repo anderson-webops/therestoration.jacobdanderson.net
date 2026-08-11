@@ -58,19 +58,32 @@ const [home, health, readiness, release, reserved] = await Promise.all([
 ]);
 
 assert(home.response.status === 200 && /<!doctype html/i.test(home.text), "/ must serve the application");
-assert(health.response.status === 200 && health.body?.ok === true, "/healthz must report liveness");
-assert(readiness.response.status === 200 && readiness.body?.ready === true, "/readyz must report readiness");
+assert(
+	health.response.status === 200 && JSON.stringify(health.body) === "{\"ok\":true}",
+	"/healthz must return the minimal liveness payload"
+);
+assert(
+	readiness.response.status === 200 && JSON.stringify(readiness.body) === "{\"ok\":true}",
+	"/readyz must return the minimal readiness payload"
+);
 assert(release.response.status === 200, "/release.json must return 200");
 assert(reserved.response.status === 404 && reserved.body?.error === "not-found", "/admin must not use the SPA fallback");
 
-assertIdentity(health.body?.deployment, "/healthz");
-assertIdentity(readiness.body?.deployment, "/readyz");
 assertIdentity(release.body, "/release.json");
 assert(health.response.headers.get("cache-control") === "no-store", "/healthz must be no-store");
 assert(readiness.response.headers.get("cache-control") === "no-store", "/readyz must be no-store");
 assert(release.response.headers.get("cache-control") === "no-store", "/release.json must be no-store");
 for (const [label, response] of [["/", home.response], ["/healthz", health.response], ["/readyz", readiness.response]]) {
 	assertSecurityHeaders(response, label);
+}
+for (const [label, response] of [["/healthz", health.response], ["/readyz", readiness.response]]) {
+	for (const header of ["location", "set-cookie", "www-authenticate"]) {
+		assert(!response.headers.get(header), `${label} must not set ${header}`);
+	}
+}
+for (const path of ["/healthz", "/readyz"]) {
+	const head = await request(path, { method: "HEAD" });
+	assert(head.response.status === 200 && head.text === "", `${path} HEAD must be bodyless`);
 }
 
 const blockedWrite = await request("/api/contact", {

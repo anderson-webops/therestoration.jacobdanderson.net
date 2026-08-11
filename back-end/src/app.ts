@@ -98,17 +98,17 @@ export function createApp(options: AppOptions = {}) {
 		next();
 	});
 
-	app.get("/healthz", (_req, res) => {
-		res.json({ ok: true, deployment });
-	});
+	const sendProbe = (req: express.Request, res: express.Response, ok: boolean) => {
+		const response = res.status(ok ? 200 : 503);
+		return req.method === "HEAD" ? response.end() : response.json({ ok });
+	};
+	const healthHandler: express.RequestHandler = (req, res) => sendProbe(req, res, true);
+	const readinessHandler: express.RequestHandler = (req, res) => sendProbe(req, res, Boolean(contactSender));
 
-	app.get("/readyz", (_req, res) => {
-		res.status(contactSender ? 200 : 503).json({
-			ready: Boolean(contactSender),
-			components: { contactMail: { ok: Boolean(contactSender) } },
-			deployment
-		});
-	});
+	app.head("/healthz", healthHandler);
+	app.get("/healthz", healthHandler);
+	app.head("/readyz", readinessHandler);
+	app.get("/readyz", readinessHandler);
 
 	app.get("/release.json", (_req, res) => {
 		res.json(deployment);

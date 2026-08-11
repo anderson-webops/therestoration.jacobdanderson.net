@@ -30,7 +30,7 @@ describe("the Restoration application", () => {
 		const sender = vi.fn().mockResolvedValue(undefined);
 		const app = createApp({ contactSender: sender, deployment });
 
-		const health = await request(app).get("/healthz").expect(200, { ok: true, deployment });
+		const health = await request(app).get("/healthz").expect(200, { ok: true });
 		expect(health.headers["cache-control"]).toBe("no-store");
 		expect(health.headers["content-security-policy"]).toContain(
 			"https://analytics.jacobdanderson.net"
@@ -39,22 +39,18 @@ describe("the Restoration application", () => {
 		expect(health.headers["x-frame-options"]).toBe("DENY");
 		expect(health.headers["x-powered-by"]).toBeUndefined();
 		expect(health.headers["set-cookie"]).toBeUndefined();
+		expect(health.headers.location).toBeUndefined();
+		expect(health.headers["www-authenticate"]).toBeUndefined();
 		expect(health.headers["access-control-allow-origin"]).toBeUndefined();
 
-		await request(app).get("/readyz").expect(200, {
-			ready: true,
-			components: { contactMail: { ok: true } },
-			deployment
-		});
-		await request(createApp()).get("/readyz").expect(503, {
-			ready: false,
-			components: { contactMail: { ok: false } },
-			deployment: {
-				release: "development",
-				commitSha: "development",
-				deployedAt: null
-			}
-		});
+		const healthHead = await request(app).head("/healthz").expect(200);
+		expect(healthHead.text).toBeUndefined();
+		await request(app).get("/readyz").expect(200, { ok: true });
+		const readyHead = await request(app).head("/readyz").expect(200);
+		expect(readyHead.text).toBeUndefined();
+		await request(createApp()).get("/readyz").expect(503, { ok: false });
+		const unavailableHead = await request(createApp()).head("/readyz").expect(503);
+		expect(unavailableHead.text).toBeUndefined();
 		await request(app).get("/release.json").expect(200, deployment);
 	});
 
