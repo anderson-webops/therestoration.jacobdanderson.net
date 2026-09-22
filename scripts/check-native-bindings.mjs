@@ -2,6 +2,8 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
+import { findResolvedPackage, resolveWorkspacePackage } from "./native-binding-lock.mjs";
+
 const projectRoot = resolve(import.meta.dirname, "..");
 const lockfile = JSON.parse(readFileSync(resolve(projectRoot, "package-lock.json"), "utf8"));
 const frontendManifest = JSON.parse(readFileSync(resolve(projectRoot, "front-end/package.json"), "utf8"));
@@ -34,20 +36,14 @@ function expectedLibc(packageName) {
 	return undefined;
 }
 
-function findResolvedPackage(packageName, version) {
-	return Object.entries(packages).find(([packagePath, metadata]) => {
-		const matchesName = packagePath === `node_modules/${packageName}`
-			|| packagePath.endsWith(`/node_modules/${packageName}`);
-		return matchesName && metadata.version === version;
-	});
-}
-
 assert(lockfile.lockfileVersion === 3, "package-lock.json must use lockfile v3");
 assert(frontendLockEntry, "package-lock.json must contain the front-end workspace importer");
 
 for (const family of directBindingFamilies) {
-	const parentVersion = packages[`node_modules/${family.parent}`]?.version;
-	assert(parentVersion, `package-lock.json must resolve ${family.parent}`);
+	const resolvedParent = resolveWorkspacePackage(packages, "front-end", family.parent);
+	assert(resolvedParent, `package-lock.json must resolve ${family.parent} for the front-end workspace`);
+	const [parentPath, parentMetadata] = resolvedParent;
+	const parentVersion = parentMetadata.version;
 	for (const packageName of family.bindings) {
 		assert(
 			frontendManifest.optionalDependencies?.[packageName] === parentVersion,
@@ -58,8 +54,8 @@ for (const family of directBindingFamilies) {
 			`package-lock.json must pin the front-end optional dependency ${packageName}@${parentVersion}`
 		);
 		assert(
-			findResolvedPackage(packageName, parentVersion),
-			`package-lock.json must resolve ${packageName}@${parentVersion}`
+			findResolvedPackage(packages, packageName, parentVersion),
+			`package-lock.json must resolve ${packageName}@${parentVersion} for ${parentPath}`
 		);
 	}
 }
@@ -78,7 +74,7 @@ for (const [parentPath, parentMetadata] of Object.entries(packages)) {
 
 assert(requiredBindings.length > 0, "The lockfile does not declare any Linux ARM64 native bindings");
 for (const required of requiredBindings) {
-	const resolved = findResolvedPackage(required.packageName, required.version);
+	const resolved = findResolvedPackage(packages, required.packageName, required.version);
 	assert(
 		resolved,
 		`Missing deploy-native lock entry: ${required.packageName}@${required.version} required by ${required.parentPath}`
