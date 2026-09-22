@@ -43,3 +43,10 @@ release checkouts and build artifacts.
 The only deliberately retained version gaps are Node 24 type definitions rather than Node 26 definitions, TypeScript 6
 rather than the ecosystem-incompatible TypeScript 7 line, and OXC 0.140 platform bindings that must match their parent
 parser ABI. They are not vulnerability exceptions.
+
+## September 21 follow-up
+
+Version 4.0.3 explicitly limits the Qodana workflow token to read-only repository contents. The production server now
+indexes top-level generated HTML and loads the branded 404 response once during startup, so canonical redirects and
+unknown HTML routes do not perform attacker-amplifiable filesystem operations per request. The static release remains
+immutable, and startup still fails if the configured static root is unavailable.

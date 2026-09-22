@@ -1,4 +1,4 @@
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, rm, unlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import request from "supertest";
@@ -210,5 +210,19 @@ describe("the Restoration application", () => {
 		await request(app).get("/api/missing").set("Accept", "text/html").expect(404);
 		await request(app).get("/accounts/me").set("Accept", "text/html").expect(404);
 		await request(app).get("/_dbinfo").set("Accept", "text/html").expect(404);
+	});
+
+	it("snapshots canonical pages and the 404 response instead of touching the filesystem per request", async () => {
+		const staticRoot = await mkdtemp(join(tmpdir(), "restoration-static-snapshot-"));
+		temporaryDirectories.push(staticRoot);
+		await writeFile(join(staticRoot, "index.html"), "<!doctype html><title>Restoration</title>");
+		await writeFile(join(staticRoot, "about.html"), "<!doctype html><title>About</title>");
+		await writeFile(join(staticRoot, "404.html"), "<!doctype html><title>Snapshot not found</title>");
+		const app = createApp({ staticRoot });
+
+		await unlink(join(staticRoot, "about.html"));
+		await unlink(join(staticRoot, "404.html"));
+		await request(app).get("/about.html?source=snapshot").expect(308).expect("Location", "/about?source=snapshot");
+		await request(app).get("/missing").set("Accept", "text/html").expect(404).expect(/Snapshot not found/);
 	});
 });

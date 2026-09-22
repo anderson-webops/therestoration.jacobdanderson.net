@@ -1,7 +1,7 @@
 import type { ErrorRequestHandler } from "express";
 import type { ContactSender } from "./contact.js";
 import type { DeploymentIdentity } from "./deployment.js";
-import { access } from "node:fs/promises";
+import { readdirSync, readFileSync } from "node:fs";
 import { extname, resolve } from "node:path";
 import express from "express";
 import rateLimit from "express-rate-limit";
@@ -30,6 +30,24 @@ function safeErrorCode(error: unknown) {
 	if (!error || typeof error !== "object" || !("code" in error)) return undefined;
 	const code = String(error.code);
 	return /^[\w.-]{1,64}$/.test(code) ? code : undefined;
+}
+
+const FALLBACK_NOT_FOUND_HTML = "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>Page not found | The Restoration</title></head><body><main><h1>Page not found</h1><p>The page may have moved or the address may be incorrect.</p><a href=\"/\">Return home</a></main></body></html>";
+
+function loadStaticSurface(staticRoot: string) {
+	const pages = new Set(
+		readdirSync(staticRoot, { withFileTypes: true })
+			.filter(entry => entry.isFile() && entry.name.endsWith(".html"))
+			.map(entry => entry.name.slice(0, -".html".length))
+	);
+	let notFoundHtml = FALLBACK_NOT_FOUND_HTML;
+	try {
+		notFoundHtml = readFileSync(resolve(staticRoot, "404.html"), "utf8");
+	}
+	catch (error) {
+		if (safeErrorCode(error) !== "ENOENT") throw error;
+	}
+	return { notFoundHtml, pages };
 }
 
 function securityMiddleware() {
@@ -77,6 +95,7 @@ export function createApp(options: AppOptions = {}) {
 	const app = express();
 	const contactSender = options.contactSender ?? null;
 	const staticRoot = options.staticRoot ? resolve(options.staticRoot) : undefined;
+	const staticSurface = staticRoot ? loadStaticSurface(staticRoot) : undefined;
 	const deployment = options.deployment ?? {
 		release: "development",
 		commitSha: "development",
@@ -174,11 +193,10 @@ export function createApp(options: AppOptions = {}) {
 
 	if (staticRoot) {
 		app.use(
-			async (req, res, next) => {
+			(req, res, next) => {
 				const page = /^\/([a-z0-9-]+)(?:\/|\.html)$/.exec(req.path)?.[1];
 				if ((req.method === "GET" || req.method === "HEAD") && page && page !== "404" && !isReservedServerPath(`/${page}`)) {
-					const exists = await access(resolve(staticRoot, `${page}.html`)).then(() => true, () => false);
-					if (exists) {
+					if (staticSurface!.pages.has(page)) {
 						const query = req.url.includes("?") ? req.url.slice(req.url.indexOf("?")) : "";
 						res.redirect(308, `${page === "index" ? "/" : `/${page}`}${query}`);
 						return;
@@ -216,15 +234,7 @@ export function createApp(options: AppOptions = {}) {
 			}
 
 			res.set("Cache-Control", "public, max-age=0, must-revalidate");
-			res.status(404).sendFile("404.html", { root: staticRoot }, (error) => {
-				if (error && !res.headersSent && safeErrorCode(error) === "ENOENT") {
-					res.status(404).type("html").send(
-						"<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>Page not found | The Restoration</title></head><body><main><h1>Page not found</h1><p>The page may have moved or the address may be incorrect.</p><a href=\"/\">Return home</a></main></body></html>"
-					);
-					return;
-				}
-				if (error) next(error);
-			});
+			res.status(404).type("html").send(staticSurface!.notFoundHtml);
 		});
 	}
 

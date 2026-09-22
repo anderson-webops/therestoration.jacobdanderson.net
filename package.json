@@ -1,7 +1,7 @@
 {
 	"name": "therestoration-monorepo",
 	"type": "module",
-	"version": "4.0.2",
+	"version": "4.0.3",
 	"private": true,
 	"packageManager": "npm@12.0.2",
 	"engines": {

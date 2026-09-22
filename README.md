@@ -47,6 +47,8 @@ sendmail and disabling TLS are rejected. `CONTACT_TO_EMAIL` defaults to `contact
 
 The API accepts only strict JSON, bounds every field and request body, silently absorbs a honeypot, rate limits by the
 proxy-derived client address, rejects cross-site browser writes, escapes all mail HTML, and returns sanitized errors.
+Canonical-page metadata and the branded 404 body are loaded once from the immutable release at startup, avoiding
+filesystem work for arbitrary visitor paths.
 The systemd service listens only on `127.0.0.1:3007` behind one trusted local reverse proxy. Production does not use
 Docker or Compose.
 
