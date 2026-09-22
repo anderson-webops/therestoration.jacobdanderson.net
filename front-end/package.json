@@ -55,7 +55,7 @@
 		"@types/node": "^24.13.6",
 		"@types/nprogress": "^0.2.3",
 		"@vitejs/plugin-vue": "^6.0.9",
-		"beasties": "0.3.5",
+		"beasties": "0.5.4",
 		"cypress": "^16.1.0",
 		"rollup": "^4.63.4",
 		"unocss": "^66.10.5",
