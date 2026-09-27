@@ -40,9 +40,11 @@ npm ci --include=dev --include=optional --strict-allow-scripts --no-fund
 npm run audit:all
 npm run audit:prod
 npm audit signatures
-npm run validate
-npm run a11y
-npm run test:e2e
+npm run check:native-bindings
+npm run test:runtime-artifact
+npm run build
+npm run verify:deploy-assets
+npm run verify:site
 npm run test:promotion
 
 export RESTORATION_RELEASE="$release"

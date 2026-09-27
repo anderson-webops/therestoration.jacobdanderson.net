@@ -6,10 +6,11 @@ not use Docker, Compose, a source checkout, development dependencies, or a packa
 
 ## Release artifact
 
-An annotated `v4.*` tag launches one Linux ARM64 release job. That single job performs the clean locked install,
-development and production audits, package signatures, lint, types, unit tests, build, accessibility and browser
-checks, promotion/recovery regressions, and sterile runtime acceptance. It then publishes these immutable release
-assets without overwriting an existing release:
+An annotated `v4.*` tag must point to the exact default-branch commit that already passed the main CI workflow. Main
+CI owns lint, types, unit tests, accessibility, and browser checks once. The tag launches one focused Linux ARM64 job
+for the clean locked install, development and production audits, package signatures, native-binding checks, build,
+promotion/recovery regressions, and sterile runtime acceptance. It then publishes these immutable release assets
+without overwriting an existing release:
 
 - the closed Linux ARM64 runtime archive;
 - its SHA-256 file;
@@ -86,7 +87,7 @@ v4.0.4 runtime. A root-only recovery record is retained only when rollback itsel
 After activation, verify the exact public release from an independent external network:
 
 ```bash
-VERIFY_RESTORATION_EXPECT_RELEASE=v4.0.5 \
+VERIFY_RESTORATION_EXPECT_RELEASE=v4.0.6 \
 VERIFY_RESTORATION_EXPECT_COMMIT=<full-40-character-commit> \
 npm run verify:public
 ```

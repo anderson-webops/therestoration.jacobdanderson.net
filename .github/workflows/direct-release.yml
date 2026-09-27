@@ -22,6 +22,7 @@ jobs:
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 60
     permissions:
+      actions: read
       contents: write
     steps:
       - name: Check out exact tagged source
@@ -50,6 +51,15 @@ jobs:
           git fetch --no-tags origin +refs/heads/main:refs/remotes/origin/main
           test "$(git rev-parse HEAD)" = "$(git rev-parse refs/remotes/origin/main)"
 
+      - name: Require successful exact-commit CI evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          CI_RUN_ID="$(gh run list --repo "$GITHUB_REPOSITORY" --workflow ci.yml \
+            --commit "$GITHUB_SHA" --event push --status success --limit 1 \
+            --json databaseId --jq '.[0].databaseId // empty')"
+          test -n "$CI_RUN_ID"
+
       - name: Install isolated artifact tooling
         run: |
           sudo apt-get update
@@ -60,7 +70,7 @@ jobs:
           fi
           printf '/.ai-work/\n' >> "$(git rev-parse --git-path info/exclude)"
 
-      - name: Validate source once and build the exact runtime archive
+      - name: Build and test the exact runtime archive
         env:
           CI: "true"
         run: |
