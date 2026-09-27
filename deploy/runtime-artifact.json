@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "entrypoints": [
+    "back-end/dist/server.js"
+  ],
+  "required": [
+    "package.json",
+    "package-lock.json",
+    "back-end/package.json",
+    "front-end/package.json",
+    ".restoration-release-prepared.json",
+    "back-end/dist/server.js",
+    "back-end/dist/app.js",
+    "back-end/dist/contact.js",
+    "back-end/dist/deployment.js",
+    "back-end/dist/boundedRateStore.js",
+    "front-end/dist/index.html",
+    "front-end/dist/404.html"
+  ],
+  "allowedRoots": [
+    "back-end/dist",
+    "front-end/dist",
+    "node_modules"
+  ],
+  "allowedFiles": [
+    "package.json",
+    "package-lock.json",
+    "back-end/package.json",
+    "front-end/package.json",
+    ".restoration-release-prepared.json"
+  ],
+  "allowedExecutables": [],
+  "runtime": {
+    "os": "linux",
+    "arch": "arm64",
+    "libc": "glibc",
+    "node": "24.18.1",
+    "npmBuildOnly": "12.0.2"
+  },
+  "modulesOutsideBuildDirectories": [],
+  "generatedClients": [],
+  "nativeBindings": [],
+  "staticAssets": [
+    "front-end/dist"
+  ],
+  "dependencyRoots": [
+    "back-end"
+  ],
+  "writableState": [
+    {
+      "name": "logs",
+      "location": "existing service journal",
+      "rollback": "Preserve the journal. The application has no release-local writable state or database migrations."
+    }
+  ],
+  "privateConfiguration": "SMTP credentials and both protected host environment files remain outside immutable artifacts. Contact submissions, caches, queues, and other writable state are never packaged.",
+  "topology": "One compiled Node process serves static output and the contact API on 127.0.0.1:3007 behind the existing Nginx IPv4 and IPv6 listeners. Preserve the installed service identity, environment files, Nginx policy, certificates, and port."
+}

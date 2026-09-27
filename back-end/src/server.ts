@@ -56,6 +56,8 @@ async function main() {
 	server.headersTimeout = 15_000;
 	server.requestTimeout = 30_000;
 	server.keepAliveTimeout = 5_000;
+	server.maxConnections = 64;
+	server.maxHeadersCount = 100;
 	server.maxRequestsPerSocket = 100;
 	let isShuttingDown = false;
 
@@ -66,6 +68,7 @@ async function main() {
 
 		const forceTimer = setTimeout(() => {
 			console.error("Graceful shutdown timed out.");
+			server.closeAllConnections();
 			exit(1);
 		}, 10_000);
 		forceTimer.unref();
@@ -78,6 +81,7 @@ async function main() {
 			}
 			exit(0);
 		});
+		server.closeIdleConnections();
 	}
 
 	process.once("SIGINT", () => void shutdown("SIGINT"));

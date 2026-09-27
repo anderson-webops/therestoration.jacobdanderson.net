@@ -1,7 +1,7 @@
 {
 	"name": "therestoration-monorepo",
 	"type": "module",
-	"version": "4.0.4",
+	"version": "4.0.5",
 	"private": true,
 	"packageManager": "npm@12.0.2",
 	"engines": {
@@ -33,6 +33,9 @@
 		"a11y": "node scripts/a11y-smoke.mjs",
 		"check:native-bindings": "node scripts/check-native-bindings.mjs",
 		"test:repo": "vitest run scripts/*.test.mjs",
+		"test:runtime-artifact": "python3 -B -m unittest scripts/test_runtime_artifact.py -v",
+		"test:promotion": "bash scripts/test-promotion-recovery.sh",
+		"package:runtime": "bash scripts/build-arm64-release.sh",
 		"audit:all": "npm audit --audit-level=low",
 		"audit:prod": "npm audit --omit=dev --audit-level=low",
 		"deps:check": "npm outdated --workspaces --long",
@@ -40,7 +43,7 @@
 		"verify:deploy-assets": "node scripts/verify-deploy-assets.mjs",
 		"verify:production-install": "node scripts/verify-production-install.mjs",
 		"test:direct-runtime": "node scripts/direct-runtime-smoke.mjs",
-		"validate": "npm run check:native-bindings && npm run lint && npm run typecheck && npm run test:repo && npm test && npm run build && npm run verify:deploy-assets && npm run verify:site",
+		"validate": "npm run check:native-bindings && npm run lint && npm run typecheck && npm run test:repo && npm test && npm run test:runtime-artifact && npm run build && npm run verify:deploy-assets && npm run verify:site",
 		"verify:site": "node scripts/verify-site.mjs"
 	},
 	"devDependencies": {
@@ -55,12 +58,13 @@
 		"globals": "^17.5.0",
 		"prettier": "^3.9.8",
 		"puppeteer": "^25.11.0",
+		"supertest": "^7.3.0",
 		"typescript": "^6.0.3",
-		"vitest": "^5.0.1"
+		"vitest": "^5.0.2"
 	},
 	"overrides": {
 		"defu": "6.1.6",
-		"vite": "^8.3.0",
+		"vite": "^8.3.1",
 		"vue-router": "^5.3.1",
 		"qs": "6.16.0",
 		"@cypress/request": {

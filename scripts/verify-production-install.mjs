@@ -2,8 +2,11 @@ import assert from "node:assert/strict";
 import { access, readFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import path from "node:path";
+import process from "node:process";
 
-const repositoryRoot = path.resolve(import.meta.dirname, "..");
+const repositoryRoot = process.env.RESTORATION_RUNTIME_ROOT
+	? path.resolve(process.env.RESTORATION_RUNTIME_ROOT)
+	: path.resolve(import.meta.dirname, "..");
 const require = createRequire(path.join(repositoryRoot, "back-end/package.json"));
 const rootManifest = JSON.parse(await readFile(path.join(repositoryRoot, "package.json"), "utf8"));
 
@@ -47,7 +50,7 @@ const marker = JSON.parse(
 );
 assert.equal(marker.release, `v${rootManifest.version}`);
 assert.match(marker.commitSha, /^[0-9a-f]{40}$/u);
-assert.match(marker.deployedAt, /^\d{4}-\d{2}-\d{2}T/u);
+assert.match(marker.preparedAt, /^\d{4}-\d{2}-\d{2}T/u);
 
 console.log(JSON.stringify({
 	productionInstall: "passed",

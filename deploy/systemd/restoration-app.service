@@ -11,6 +11,8 @@ WorkingDirectory=/srv/therestoration/current
 Environment=NODE_ENV=production
 Environment=HOST=127.0.0.1
 Environment=PORT=3007
+Environment=NODE_OPTIONS=--max-old-space-size=96
+Environment=UV_THREADPOOL_SIZE=2
 Environment=STATIC_ROOT=/srv/therestoration/current/front-end/dist
 EnvironmentFile=/etc/therestoration/app.env
 EnvironmentFile=/etc/therestoration/release.env
@@ -19,10 +21,16 @@ Restart=on-failure
 RestartSec=5s
 TimeoutStartSec=30s
 TimeoutStopSec=20s
+LimitNOFILE=512
+MemoryHigh=160M
+MemoryMax=192M
+MemorySwapMax=0
+TasksMax=32
 UMask=0077
 
 NoNewPrivileges=true
 PrivateDevices=true
+PrivateMounts=true
 PrivateTmp=true
 ProtectClock=true
 ProtectControlGroups=true
@@ -38,6 +46,7 @@ RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
 RestrictNamespaces=true
 RestrictRealtime=true
 RestrictSUIDSGID=true
+RemoveIPC=true
 LockPersonality=true
 CapabilityBoundingSet=
 AmbientCapabilities=

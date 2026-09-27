@@ -7,6 +7,7 @@ import express from "express";
 import rateLimit from "express-rate-limit";
 
 import helmet from "helmet";
+import { BoundedRateStore } from "./boundedRateStore.js";
 import { contactFormSchema } from "./contact.js";
 
 export interface AppOptions {
@@ -14,6 +15,8 @@ export interface AppOptions {
 	staticRoot?: string;
 	trustProxyHops?: number;
 	contactRateLimit?: number;
+	contactRateLimitKeys?: number;
+	maxConcurrentContactDeliveries?: number;
 	deployment?: DeploymentIdentity;
 	publicOrigin?: string;
 }
@@ -94,6 +97,18 @@ function sameOriginWriteMiddleware(publicOrigin?: string) {
 export function createApp(options: AppOptions = {}) {
 	const app = express();
 	const contactSender = options.contactSender ?? null;
+	const contactRateLimitKeys = options.contactRateLimitKeys ?? 1_024;
+	const maxConcurrentContactDeliveries = options.maxConcurrentContactDeliveries ?? 4;
+	if (!Number.isSafeInteger(contactRateLimitKeys) || contactRateLimitKeys < 1 || contactRateLimitKeys > 16_384) {
+		throw new RangeError("contactRateLimitKeys must be an integer between 1 and 16384.");
+	}
+	if (
+		!Number.isSafeInteger(maxConcurrentContactDeliveries)
+		|| maxConcurrentContactDeliveries < 1
+		|| maxConcurrentContactDeliveries > 32
+	) {
+		throw new RangeError("maxConcurrentContactDeliveries must be an integer between 1 and 32.");
+	}
 	const staticRoot = options.staticRoot ? resolve(options.staticRoot) : undefined;
 	const staticSurface = staticRoot ? loadStaticSurface(staticRoot) : undefined;
 	const deployment = options.deployment ?? {
@@ -101,6 +116,7 @@ export function createApp(options: AppOptions = {}) {
 		commitSha: "development",
 		deployedAt: null
 	};
+	let inFlightContactDeliveries = 0;
 
 	app.disable("x-powered-by");
 	app.set("trust proxy", options.trustProxyHops || false);
@@ -140,8 +156,10 @@ export function createApp(options: AppOptions = {}) {
 		rateLimit({
 			windowMs: 15 * 60 * 1000,
 			limit: options.contactRateLimit ?? 5,
+			passOnStoreError: false,
 			standardHeaders: true,
 			legacyHeaders: false,
+			store: new BoundedRateStore(contactRateLimitKeys),
 			handler: (_req, res) => {
 				res.status(429).json({
 					ok: false,
@@ -173,7 +191,15 @@ export function createApp(options: AppOptions = {}) {
 					error: "The contact form is not configured on the server yet."
 				});
 			}
+			if (inFlightContactDeliveries >= maxConcurrentContactDeliveries) {
+				res.set("Retry-After", "5");
+				return res.status(503).json({
+					ok: false,
+					error: "contact-delivery-busy"
+				});
+			}
 
+			inFlightContactDeliveries += 1;
 			try {
 				await contactSender(parsedBody.data, req);
 				return res.status(202).json({ ok: true });
@@ -187,6 +213,9 @@ export function createApp(options: AppOptions = {}) {
 					ok: false,
 					error: "The message could not be sent right now. Please try again later."
 				});
+			}
+			finally {
+				inFlightContactDeliveries -= 1;
 			}
 		}
 	);

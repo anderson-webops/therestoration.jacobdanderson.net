@@ -10,6 +10,7 @@ const repositoryRoot = path.resolve(import.meta.dirname, "..");
 const marker = JSON.parse(
 	await readFile(path.join(repositoryRoot, ".restoration-release-prepared.json"), "utf8")
 );
+const deployedAt = "2026-09-27T00:00:00Z";
 
 async function reservePort() {
 	const server = net.createServer();
@@ -94,7 +95,7 @@ const child = spawn(process.execPath, ["back-end/dist/server.js"], {
 		RESTORATION_PUBLIC_ORIGIN: "https://therestoration.jacobdanderson.net",
 		RESTORATION_RELEASE: marker.release,
 		RESTORATION_COMMIT_SHA: marker.commitSha,
-		RESTORATION_DEPLOYED_AT: marker.deployedAt,
+		RESTORATION_DEPLOYED_AT: deployedAt,
 		CONTACT_FROM_EMAIL: "restoration@example.test",
 		CONTACT_TO_EMAIL: "contact@example.test",
 		CONTACT_SMTP_HOST: "127.0.0.1",
@@ -136,7 +137,11 @@ try {
 
 	const release = await requestJson(baseUrl, "/release.json");
 	assert.equal(release.response.status, 200);
-	assert.deepEqual(release.body, marker);
+	assert.deepEqual(release.body, {
+		release: marker.release,
+		commitSha: marker.commitSha,
+		deployedAt
+	});
 
 	const home = await fetch(`${baseUrl}/`, { signal: AbortSignal.timeout(5_000) });
 	assert.equal(home.status, 200);

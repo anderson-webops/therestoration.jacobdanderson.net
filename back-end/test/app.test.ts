@@ -151,6 +151,42 @@ describe("the Restoration application", () => {
 		await request(app).post("/api/contact").send(validContact).expect(429);
 	});
 
+	it("bounds aggregate contact delivery and releases capacity", async () => {
+		let releaseDeliveries!: () => void;
+		let reportStarted!: () => void;
+		let started = 0;
+		const deliveryGate = new Promise<void>((resolve) => {
+			releaseDeliveries = resolve;
+		});
+		const bothStarted = new Promise<void>((resolve) => {
+			reportStarted = resolve;
+		});
+		const sender = vi.fn(async () => {
+			started += 1;
+			if (started === 2) reportStarted();
+			await deliveryGate;
+		});
+		const app = createApp({
+			contactSender: sender,
+			maxConcurrentContactDeliveries: 2
+		});
+
+		const first = request(app).post("/api/contact").send(validContact);
+		const second = request(app).post("/api/contact").send(validContact);
+		const firstResult = first.then(response => response);
+		const secondResult = second.then(response => response);
+		await bothStarted;
+
+		const overloaded = await request(app).post("/api/contact").send(validContact).expect(503);
+		expect(overloaded.body).toEqual({ ok: false, error: "contact-delivery-busy" });
+		expect(overloaded.headers["retry-after"]).toBe("5");
+
+		releaseDeliveries();
+		const completed = await Promise.all([firstResult, secondResult]);
+		expect(completed.map(response => response.status)).toEqual([202, 202]);
+		await request(app).post("/api/contact").send(validContact).expect(202, { ok: true });
+	});
+
 	it("does not expose internal delivery errors", async () => {
 		const logSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 		const app = createApp({

@@ -1,4 +1,4 @@
-name: Validate direct production release
+name: Validate and publish Restoration direct release
 
 on:
   push:
@@ -8,31 +8,97 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: restoration-direct-release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: 24.18.1
+  NPM_VERSION: 12.0.2
+  PUPPETEER_SKIP_DOWNLOAD: "true"
+
 jobs:
-  prepare:
-    runs-on: ubuntu-latest
+  immutable-runtime:
+    runs-on: ubuntu-24.04-arm
     timeout-minutes: 60
+    permissions:
+      contents: write
     steps:
-      - name: Check out tagged source
+      - name: Check out exact tagged source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
-          persist-credentials: true
+          persist-credentials: false
 
       - name: Set up Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: 24.18.1
+          node-version: ${{ env.NODE_VERSION }}
           cache: npm
 
-      - name: Pin npm
-        run: npm install --global npm@12.0.2
+      - name: Pin the reviewed npm release
+        run: npm install --global "npm@${NPM_VERSION}" --allow-scripts=npm
 
-      - name: Prepare exact tagged direct runtime
+      - name: Verify annotated source identity
+        run: |
+          test "$(node --version)" = "v${NODE_VERSION}"
+          test "$(npm --version)" = "${NPM_VERSION}"
+          PACKAGE_VERSION="$(node -p "require('./package.json').version")"
+          test "${GITHUB_REF_NAME}" = "v${PACKAGE_VERSION}"
+          test "$(git cat-file -t "refs/tags/${GITHUB_REF_NAME}")" = tag
+          test "$(git rev-parse "refs/tags/${GITHUB_REF_NAME}^{}")" = "$(git rev-parse HEAD)"
+          git fetch --no-tags origin +refs/heads/main:refs/remotes/origin/main
+          test "$(git rev-parse HEAD)" = "$(git rev-parse refs/remotes/origin/main)"
+
+      - name: Install isolated artifact tooling
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends apparmor bubblewrap python3-minimal
+          if test -d /sys/kernel/security/apparmor; then
+            printf 'abi <abi/4.0>,\ninclude <tunables/global>\nprofile restoration-artifact-tests /usr/bin/bwrap flags=(unconfined) {\n  userns,\n}\n' | sudo tee /etc/apparmor.d/restoration-artifact-tests >/dev/null
+            sudo apparmor_parser -r /etc/apparmor.d/restoration-artifact-tests
+          fi
+          printf '/.ai-work/\n' >> "$(git rev-parse --git-path info/exclude)"
+
+      - name: Validate source once and build the exact runtime archive
         env:
           CI: "true"
-          PUPPETEER_SKIP_DOWNLOAD: "true"
         run: |
-          RELEASE_ROOT="$(dirname "$GITHUB_WORKSPACE")" \
-          NODE_BIN_DIR="$(dirname "$(command -v node)")" \
-          deploy/systemd/prepare-release.sh "$GITHUB_WORKSPACE"
+          mkdir -p .ai-work/runs/tagged-artifact
+          npm run package:runtime -- "$PWD/.ai-work/runs/tagged-artifact"
+
+      - name: Preserve accepted runtime evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: therestoration-${{ github.ref_name }}-linux-arm64-runtime
+          path: |
+            .ai-work/runs/tagged-artifact/*.tar.gz
+            .ai-work/runs/tagged-artifact/*.tar.gz.sha256
+            .ai-work/runs/tagged-artifact/*.tar.gz.manifest.json
+            .ai-work/runs/tagged-artifact/*.tar.gz.acceptance.json
+            .ai-work/runs/tagged-artifact/dependency-tree.txt
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Publish accepted immutable release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          mapfile -t archives < <(find .ai-work/runs/tagged-artifact -maxdepth 1 -type f -name '*.tar.gz' -print)
+          mapfile -t checksums < <(find .ai-work/runs/tagged-artifact -maxdepth 1 -type f -name '*.tar.gz.sha256' -print)
+          mapfile -t manifests < <(find .ai-work/runs/tagged-artifact -maxdepth 1 -type f -name '*.tar.gz.manifest.json' -print)
+          mapfile -t receipts < <(find .ai-work/runs/tagged-artifact -maxdepth 1 -type f -name '*.tar.gz.acceptance.json' -print)
+          test "${#archives[@]}" -eq 1
+          test "${#checksums[@]}" -eq 1
+          test "${#manifests[@]}" -eq 1
+          test "${#receipts[@]}" -eq 1
+          if gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release $RELEASE_TAG already exists; immutable assets will not be replaced." >&2
+            exit 1
+          fi
+          gh release create "$RELEASE_TAG" \
+            "${archives[0]}" "${checksums[0]}" "${manifests[0]}" "${receipts[0]}" \
+            --repo "$GITHUB_REPOSITORY" --verify-tag \
+            --title "The Restoration $RELEASE_TAG" \
+            --notes "Validated source release with a closed, sterile-tested Linux ARM64 direct-runtime artifact. Production deployment is separate."
