@@ -67,6 +67,7 @@ assert.match(trustedPaths, /metadata\.st_mode & 0o022/u);
 const contract = JSON.parse(artifactContract);
 assert.deepEqual(contract.entrypoints, ["back-end/dist/server.js"]);
 assert.ok(contract.required.includes("back-end/dist/boundedRateStore.js"));
+assert.ok(contract.allowedRoots.includes("back-end/node_modules"));
 assert.deepEqual(contract.nativeBindings, []);
 
 assert.match(nginx, /proxy_pass http:\/\/127\.0\.0\.1:3007;/u);

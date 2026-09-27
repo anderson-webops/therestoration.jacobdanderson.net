@@ -156,22 +156,36 @@ def runtime_dependency_closure(root, contract=None):
     return visited
 
 
-def package_directories(root):
-    for package_file in sorted(Path(root).glob("node_modules/**/package.json")):
-        relative = package_file.parent.relative_to(root).as_posix()
-        parts = PurePosixPath(relative).parts
-        package_index = len(parts) - 1
-        if package_index > 0 and parts[package_index - 1].startswith("@"):
-            package_index -= 1
-        if package_index > 0 and parts[package_index - 1] == "node_modules":
-            yield relative, package_file
+def package_directories(root, contract=None):
+    root = Path(root)
+    contract = contract or load_contract()
+    install_roots = [
+        root / "node_modules",
+        *(root / name / "node_modules" for name in contract["dependencyRoots"]),
+    ]
+    packages = {}
+    for install_root in install_roots:
+        if not install_root.is_dir():
+            continue
+        for package_file in install_root.glob("**/package.json"):
+            relative = package_file.parent.relative_to(root).as_posix()
+            parts = PurePosixPath(relative).parts
+            package_index = len(parts) - 1
+            if package_index > 0 and parts[package_index - 1].startswith("@"):
+                package_index -= 1
+            if package_index > 0 and parts[package_index - 1] == "node_modules":
+                packages[relative] = package_file
+    yield from sorted(packages.items())
 
 
 def prune_runtime_dependencies(root):
     root = Path(root).resolve(strict=True)
-    keep = runtime_dependency_closure(root)
+    contract = load_contract()
+    keep = runtime_dependency_closure(root, contract)
     removed = []
-    for relative, _package_file in sorted(package_directories(root), key=lambda item: len(item[0]), reverse=True):
+    for relative, _package_file in sorted(
+        package_directories(root, contract), key=lambda item: len(item[0]), reverse=True
+    ):
         if relative in keep:
             continue
         path = root / relative
@@ -230,10 +244,10 @@ def validate(root, manifest):
             raise ValueError(f"runtime entrypoint missing: {name}")
     validate_identity(root, manifest)
     expected_packages = runtime_dependency_closure(root, contract)
-    observed_packages = {name for name, _package in package_directories(root)}
+    observed_packages = {name for name, _package in package_directories(root, contract)}
     if observed_packages != expected_packages:
         raise ValueError("runtime dependencies differ from the back-end production closure")
-    for relative, package_file in package_directories(root):
+    for relative, package_file in package_directories(root, contract):
         package_name = str(read_json(package_file, f"runtime package {relative}").get("name", ""))
         if package_name.rsplit("/", 1)[-1] in DEVELOPMENT_PACKAGES:
             raise ValueError(f"development dependency in runtime: {relative}")

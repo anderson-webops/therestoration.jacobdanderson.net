@@ -19,6 +19,7 @@
   ],
   "allowedRoots": [
     "back-end/dist",
+    "back-end/node_modules",
     "front-end/dist",
     "node_modules"
   ],

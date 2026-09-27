@@ -100,6 +100,21 @@ class RuntimeArtifactTests(unittest.TestCase):
         self.assertEqual(artifact.prune_runtime_dependencies(self.root), ["node_modules/unrelated"])
         artifact.validate(self.root, self.manifest())
 
+    def test_workspace_local_production_dependency_is_preserved(self):
+        backend = json.loads((self.root / "back-end/package.json").read_text())
+        backend["dependencies"] = {"fixture-runtime": "1.0.0"}
+        (self.root / "back-end/package.json").write_text(json.dumps(backend))
+        lock = json.loads((self.root / "package-lock.json").read_text())
+        lock["packages"]["back-end"]["dependencies"] = backend["dependencies"]
+        (self.root / "package-lock.json").write_text(json.dumps(lock))
+        package = self.root / "back-end/node_modules/fixture-runtime/package.json"
+        package.parent.mkdir(parents=True)
+        package.write_text(json.dumps({"name": "fixture-runtime", "version": "1.0.0"}))
+        package.parent.chmod(0o755)
+        package.chmod(0o644)
+        artifact.validate(self.root, self.manifest())
+        self.assertEqual(artifact.prune_runtime_dependencies(self.root), [])
+
     def test_dependency_names_cannot_escape_the_artifact(self):
         backend = json.loads((self.root / "back-end/package.json").read_text())
         backend["dependencies"] = {"../../outside": "1.0.0"}
