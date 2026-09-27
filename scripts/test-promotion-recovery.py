@@ -275,7 +275,7 @@ for mode in modes:
 		"MAX_ATTEMPTS": "2",
 		"NODE_BIN": "/runtime/node",
 		"RELEASE_ENV_DEST": str(root / "etc/release.env"),
-		"RELEASE_GROUP": "root",
+		"RELEASE_GROUP": "0",
 		"RELEASE_ROOT": str(root / "releases"),
 	}
 	command = [

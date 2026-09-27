@@ -91,7 +91,7 @@ else
 		echo "The supplied archive checksum does not match." >&2
 		exit 1
 	fi
-	install -o root -g root -m 0600 "$archive" "$retained_archive"
+	install -o 0 -g 0 -m 0600 "$archive" "$retained_archive"
 fi
 
 stage="$(mktemp -d "$release_root_real/.stage-XXXXXXXX")"
@@ -299,7 +299,7 @@ if [[ -e "$candidate" || -L "$candidate" ]]; then
 	cleanup_stage
 	stage=""
 else
-	chown -R "root:$release_group" "$stage"
+	chown -R "0:$release_group" "$stage"
 	find "$stage" -type d -exec chmod 0755 {} +
 	find "$stage" -type f -exec chmod 0644 {} +
 	mv -T -- "$stage" "$candidate"
@@ -339,7 +339,7 @@ write_release_environment() {
 	IFS=$'\t' read -r target_release target_commit target_deployed <<<"$fields"
 	printf 'RESTORATION_RELEASE=%s\nRESTORATION_COMMIT_SHA=%s\nRESTORATION_DEPLOYED_AT=%s\n' \
 		"$target_release" "$target_commit" "$target_deployed" > "$release_env_temp"
-	install -o root -g "$release_group" -m 0640 "$release_env_temp" "$release_env_dest"
+	install -o 0 -g "$release_group" -m 0640 "$release_env_temp" "$release_env_dest"
 }
 
 activate_target() {
