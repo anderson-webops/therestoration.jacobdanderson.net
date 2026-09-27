@@ -7,7 +7,7 @@ for (const removedPath of ["Dockerfile", ".dockerignore", "docker-compose.yml", 
 	await assert.rejects(access(new URL(`../${removedPath}`, import.meta.url)), undefined, `${removedPath} must be absent.`);
 }
 
-const [service, prepare, promote, install, legacySeal, trustedPaths, artifactBuilder, artifactContract, nginx, runbook, packageManifest, backendPackage] = await Promise.all([
+const [service, prepare, promote, install, legacySeal, trustedPaths, artifactBuilder, artifactContract, nginx, runbook, mainCi, packageManifest, backendPackage] = await Promise.all([
 	read("deploy/systemd/restoration-app.service"),
 	read("deploy/systemd/prepare-release.sh"),
 	read("deploy/systemd/promote-release.sh"),
@@ -18,6 +18,7 @@ const [service, prepare, promote, install, legacySeal, trustedPaths, artifactBui
 	read("deploy/runtime-artifact.json"),
 	read("deploy/nginx/therestoration.locations.conf"),
 	read("deploy/README.md"),
+	read(".github/workflows/ci.yml"),
 	read("package.json"),
 	read("back-end/package.json")
 ]);
@@ -43,7 +44,8 @@ assert.match(artifactBuilder, /npm ci --include=dev --include=optional --strict-
 assert.match(artifactBuilder, /npm audit signatures/u);
 assert.match(artifactBuilder, /runtime-artifact\.py pack/u);
 assert.match(artifactBuilder, /test-unpacked-artifact\.sh/u);
-assert.match(artifactBuilder, /test:promotion/u);
+assert.doesNotMatch(artifactBuilder, /test:promotion/u);
+assert.match(mainCi, /npm run test:promotion/u);
 assert.match(promote, /127\.0\.0\.1:3007\/readyz/u);
 assert.match(promote, /runtime-artifact\.py/u);
 assert.match(promote, /unpack "\$stage"/u);

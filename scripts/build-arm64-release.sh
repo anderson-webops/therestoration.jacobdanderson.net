@@ -45,7 +45,6 @@ npm run test:runtime-artifact
 npm run build
 npm run verify:deploy-assets
 npm run verify:site
-npm run test:promotion
 
 export RESTORATION_RELEASE="$release"
 export RESTORATION_COMMIT_SHA="$commit"

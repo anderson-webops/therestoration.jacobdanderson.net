@@ -158,7 +158,7 @@ def accepted_record(root: Path, target: Path, archive_sha: str, commit: str):
 
 def setup(root: Path, mode: str):
 	root.mkdir(parents=True, mode=0o755)
-	for directory, mode in [
+	for directory, directory_mode in [
 		(root / "releases", 0o755),
 		(root / "legacy-releases", 0o755),
 		(root / "artifacts", 0o700),
@@ -167,7 +167,7 @@ def setup(root: Path, mode: str):
 		(root / ".deployment-recovery/accepted", 0o700),
 		(root / "etc", 0o700),
 	]:
-		directory.mkdir(mode=mode)
+		directory.mkdir(mode=directory_mode)
 	control = root / "control"
 	(control / "deploy/systemd").mkdir(parents=True)
 	(control / "scripts").mkdir(parents=True)
