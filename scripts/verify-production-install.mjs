@@ -9,6 +9,13 @@ const repositoryRoot = process.env.RESTORATION_RUNTIME_ROOT
 	: path.resolve(import.meta.dirname, "..");
 const require = createRequire(path.join(repositoryRoot, "back-end/package.json"));
 const rootManifest = JSON.parse(await readFile(path.join(repositoryRoot, "package.json"), "utf8"));
+function isInsideRuntime(target) {
+	const relative = path.relative(repositoryRoot, target);
+	return relative !== ""
+		&& relative !== ".."
+		&& !relative.startsWith(`..${path.sep}`)
+		&& !path.isAbsolute(relative);
+}
 
 for (const packageName of [
 	"dotenv",
@@ -18,11 +25,24 @@ for (const packageName of [
 	"nodemailer",
 	"zod"
 ]) {
-	require.resolve(packageName);
+	assert.equal(
+		isInsideRuntime(require.resolve(packageName)),
+		true,
+		`${packageName} must resolve from inside the production artifact.`
+	);
 }
 
 for (const packageName of ["cypress", "eslint", "puppeteer", "tsx", "typescript", "vite", "vitest", "vue"]) {
-	assert.throws(() => require.resolve(packageName), undefined, `${packageName} must not be installed in production.`);
+	try {
+		assert.equal(
+			isInsideRuntime(require.resolve(packageName)),
+			false,
+			`${packageName} must not be installed in production.`
+		);
+	}
+	catch (error) {
+		if (error?.code !== "MODULE_NOT_FOUND") throw error;
+	}
 }
 
 for (const manifestPath of ["package.json", "back-end/package.json", "front-end/package.json"]) {

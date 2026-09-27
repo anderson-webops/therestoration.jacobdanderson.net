@@ -87,7 +87,7 @@ v4.0.4 runtime. A root-only recovery record is retained only when rollback itsel
 After activation, verify the exact public release from an independent external network:
 
 ```bash
-VERIFY_RESTORATION_EXPECT_RELEASE=v4.0.7 \
+VERIFY_RESTORATION_EXPECT_RELEASE=v4.0.8 \
 VERIFY_RESTORATION_EXPECT_COMMIT=<full-40-character-commit> \
 npm run verify:public
 ```
