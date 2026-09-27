@@ -20,7 +20,7 @@ timeout -k 5 120 bwrap --unshare-all --die-with-parent --new-session \
 	--ro-bind "$node" /runtime/node --proc /proc --dev /dev --tmpfs /tmp --tmpfs /state \
 	--ro-bind "$artifact" /app --ro-bind "$script_dir/artifact-acceptance" /harness \
 	--clearenv --setenv PATH /runtime:/usr/bin:/bin --setenv HOME /state \
-	--setenv NODE_OPTIONS=--max-old-space-size=96 --setenv UV_THREADPOOL_SIZE 2 \
+	--setenv NODE_OPTIONS --max-old-space-size=96 --setenv UV_THREADPOOL_SIZE 2 \
 	--chdir /app /runtime/node /harness/runtime.mjs "$case_name"
 
 if [[ "$case_name" == complete ]]; then
