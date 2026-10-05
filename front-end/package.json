@@ -40,12 +40,12 @@
 		"leaflet": "^1.9.4",
 		"nprogress": "^0.2.0",
 		"pinia": "^4.0.3",
-		"rolldown": "^1.2.11",
+		"rolldown": "^1.2.12",
 		"vite-plugin-pages": "^0.33.3",
-		"vite-plugin-vue-layouts-next": "^3.1.0",
+		"vite-plugin-vue-layouts-next": "^3.2.0",
 		"vue": "^3.5.43",
 		"vue-demi": "^0.14.10",
-		"vue-i18n": "^11.4.12",
+		"vue-i18n": "^11.4.13",
 		"vue-router": "^5.3.1"
 	},
 	"devDependencies": {
