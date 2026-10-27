@@ -1,7 +1,7 @@
 {
 	"name": "therestoration-monorepo",
 	"type": "module",
-	"version": "4.0.11",
+	"version": "4.0.12",
 	"private": true,
 	"packageManager": "npm@12.0.2",
 	"engines": {
@@ -57,26 +57,28 @@
 		"eslint-plugin-vue": "^10.9.0",
 		"globals": "^17.5.0",
 		"prettier": "^3.9.8",
-		"puppeteer": "^25.11.0",
+		"puppeteer": "^25.16.0",
 		"supertest": "^7.3.0",
 		"typescript": "^6.0.3",
-		"vitest": "^5.0.2"
+		"vitest": "^5.0.5"
 	},
 	"overrides": {
 		"defu": "6.1.6",
-		"vite": "^8.3.1",
+		"vite": "^8.3.5",
 		"vue-router": "^5.3.1",
 		"qs": "6.16.0",
 		"@cypress/request": {
 			"uuid": "14.0.0",
 			"qs": "6.16.0"
-		}
+		},
+		"katex": "0.18.2",
+		"tinypool": "^2.1.2"
 	},
 	"allowScripts": {
 		"cypress@16.1.0": true,
 		"esbuild@0.28.2": true,
-		"puppeteer@25.11.0": true,
 		"vue-demi@0.14.10": true,
-		"fsevents": false
+		"fsevents": false,
+		"puppeteer@25.16.0": true
 	}
 }

@@ -1,6 +1,6 @@
 {
 	"name": "front-end",
-	"version": "4.0.11",
+	"version": "4.0.12",
 	"description": "Public history site for The Restoration",
 	"author": "Jacob Anderson",
 	"keywords": [],
@@ -61,10 +61,10 @@
 		"unocss": "^66.10.5",
 		"unplugin-auto-import": "^21.1.0",
 		"unplugin-vue-components": "^32.0.0",
-		"vite": "^8.3.1",
+		"vite": "^8.3.5",
 		"vite-ssg": "^28.3.0",
 		"vite-ssg-sitemap": "^0.10.0",
-		"vitest": "^5.0.2",
+		"vitest": "^5.0.5",
 		"vue-eslint-parser": "^10.4.0",
 		"vue-tsc": "^3.3.11"
 	},
@@ -90,8 +90,8 @@
 	"optionalDependencies": {
 		"@oxc-parser/binding-linux-arm64-gnu": "0.150.0",
 		"@oxc-parser/binding-linux-arm64-musl": "0.150.0",
-		"@rolldown/binding-linux-arm64-gnu": "1.2.11",
-		"@rolldown/binding-linux-arm64-musl": "1.2.11",
+		"@rolldown/binding-linux-arm64-gnu": "1.2.15",
+		"@rolldown/binding-linux-arm64-musl": "1.2.15",
 		"@rollup/rollup-linux-arm64-gnu": "4.63.5",
 		"@rollup/rollup-linux-arm64-musl": "4.63.5"
 	}
