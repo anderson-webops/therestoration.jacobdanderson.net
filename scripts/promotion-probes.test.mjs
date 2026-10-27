@@ -4,6 +4,7 @@ import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import process from "node:process";
+import { fileURLToPath } from "node:url";
 import request from "supertest";
 import { it } from "vitest";
 import { createApp } from "../back-end/src/app.ts";
@@ -20,7 +21,7 @@ it("accepts actual healthy API probes during promotion and rejects unavailable r
 		await writeFile(healthFile, health.text);
 		await writeFile(readyFile, ready.text);
 		const verify = () => spawnSync(process.execPath, [
-			new URL("./verify-probes.mjs", import.meta.url).pathname,
+			fileURLToPath(new URL("./verify-probes.mjs", import.meta.url)),
 			healthFile,
 			readyFile
 		], { encoding: "utf8" });
