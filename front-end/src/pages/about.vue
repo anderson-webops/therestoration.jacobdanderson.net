@@ -10,14 +10,7 @@ const about = computed(() => store.about);
 	<div class="page">
 		<div class="item">
 			<h1>{{ about.header.title }}</h1>
-			<p>{{ about.header.description }}</p>
-		</div>
-
-		<div class="body-container">
-			<div v-for="(item, index) in about.body" :key="index" class="item body">
-				<h3>{{ item.title }}</h3>
-				<p>{{ item.description }}</p>
-			</div>
+			<p v-for="(paragraph, index) in about.body" :key="index">{{ paragraph }}</p>
 		</div>
 	</div>
 </template>
@@ -28,15 +21,6 @@ const about = computed(() => store.about);
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-}
-
-.body-container {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: center; /* Centers the child elements */
-	gap: 20px; /* Adjust the gap between the elements */
-	width: 100%;
-	max-width: 1200px; /* Adjust based on your preference */
 }
 
 .item {
@@ -54,11 +38,6 @@ const about = computed(() => store.about);
 
 .item p {
 	margin-top: 10px;
-}
-
-.body {
-	flex: 1 1 300px; /* Adjust the basis to control the minimum width */
-	height: 100%; /* Ensures equal height */
 }
 </style>
 

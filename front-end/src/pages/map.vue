@@ -12,7 +12,6 @@ const map = computed(() => store.map);
 	<div class="page">
 		<div class="item">
 			<h1>{{ map.header.title }}</h1>
-			<p>{{ map.header.description }}</p>
 		</div>
 		<MapComponent :coordinates="map.body.coordinates" class="item" />
 	</div>

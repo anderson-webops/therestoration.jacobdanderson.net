@@ -55,7 +55,7 @@ context("Production navigation", () => {
 		cy.get('meta[name="robots"]').should("have.attr", "content", "noindex,nofollow");
 		cy.get('link[rel="canonical"]').should("not.exist");
 		cy.contains("a", "Return home").click();
-		cy.contains("h1", "Welcome to the Digital Restoration Journey").should("be.visible");
+		cy.contains("h1", "The Restoration").should("be.visible");
 	});
 
 	it("does not publish developer documentation or turn API misses into HTML", () => {

@@ -4,29 +4,21 @@ export const useMainStore = defineStore("main", {
 	state: () => ({
 		home: {
 			header: {
-				title: "Welcome to the Digital Restoration Journey",
-				description:
-					"Explore the pivotal events of the Restoration of the Gospel through an interactive digital experience.\n" +
-					"Delve into key events, figures, and the profound spiritual journey that marks the beginning of a new era of guidance."
+				title: "The Restoration"
 			},
 			body: [
 				{
-					title: "Explore Key Events",
-					description:
-						"Learn about the First Vision, the translation of the Book of Mormon, and other key events in the Restoration.",
+					title: "The First Vision",
 					image: "/images/restoration/shared/the-first-vision-home.jpg",
 					imgAlt: "The First Vision"
 				},
 				{
-					title: "Meet Key Figures",
-					description:
-						"Discover the stories of Joseph Smith, Emma Smith, Brigham Young, and other key figures in the Restoration.",
+					title: "Joseph Smith",
 					image: "/images/restoration/home/joseph-smith-daguerreotype.jpg",
 					imgAlt: "Joseph Smith"
 				},
 				{
-					title: "Explore Multimedia Content",
-					description: "Travel the map, view images, and read stories that bring the Restoration to life.",
+					title: "Translation of the Book of Mormon",
 					image: "/images/restoration/home/golden-plates-and-other-artifacts-360px.jpg",
 					imgAlt: "Translation of the Book of Mormon"
 				}
@@ -34,42 +26,16 @@ export const useMainStore = defineStore("main", {
 			testimony: {
 				title: "Our Testimony",
 				description:
-					"We believe in the power of the Restoration to bring hope, healing, and light to all who seek it. " +
-					"Our mission is to share the story of the Restoration with the world, one interactive experience at a time."
+					"We believe in the power of the Restoration to bring hope, healing, and light to all who seek it."
 			}
 		},
 		about: {
 			header: {
-				title: "About the Digital Restoration Journey",
-				description:
-					"This project was conceived as a bridge between technology and faith, aiming to make the rich history of the Restoration accessible to all through interactive media. It represents an innovative approach to storytelling, where history and doctrine converge with modern digital experiences to foster understanding and testimony of the Restoration."
+				title: "About"
 			},
 			body: [
-				{
-					title: "Motivation Behind the Project",
-					description:
-						"Our passion for programming and storytelling propels this initiative forward. We are convinced of the transformative power of interactive learning in making historical events resonate on a personal level. This project aspires to transcend traditional learning boundaries, making the Restoration's pivotal moments, key figures, and foundational doctrines not just subjects to be studied, but experiences to be lived. Through this, we aim to inspire a deeper faith and a more profound understanding of these spiritual milestones among individuals around the world."
-				},
-				{
-					title: "Innovative Features and Interactivity",
-					description:
-						"The Digital Restoration Journey is not merely a passive learning experience. It incorporates interactive timelines, geographic maps, and multimedia narratives to engage users actively. Features include personalized pathways through Restoration history, interactive discussions on doctrine, and reflective spaces for personal testimony growth. Each user's journey through the map is unique, encouraging exploration, discovery, and a personalized connection with the content."
-				},
-				{
-					title: "How to Explore the Digital Restoration",
-					description:
-						"Begin your exploration through the Interactive Map, a central feature of the application. Each point on the map serves as a portal to a story, revealing the significance of events, the lives of key figures, and the evolution of sacred doctrines. Enriched with texts, images, and videos, the map offers a multidimensional view of the Restoration. Special features allow users to trace thematic pathways (e.g., the development of priesthood authority, temple construction) across different locations and time periods, illustrating the interconnectedness of the Restoration's many facets."
-				},
-				{
-					title: "Engaging with the Community",
-					description:
-						"Understanding one’s role in the ongoing Restoration is pivotal. This project introduces community features, such as forums and shared testimonial spaces, enabling users to connect with others, share insights, and learn from diverse perspectives. These features aim to foster a sense of global community among users, reinforcing the idea that every individual plays a role in the unfolding story of the Restoration."
-				},
-				{
-					title: "Preparing for the Future",
-					description:
-						"The Digital Restoration Journey is more than a look back at the past; it's a bridge to the future. By understanding the trials, triumphs, and testimonies of those who laid the foundations of the faith, users can find inspiration for their own discipleship. The project emphasizes preparation for the Second Coming, encouraging users to reflect on how they can contribute to the work of salvation and exaltation in their own lives."
-				}
+				"This project grew out of our interests in programming and storytelling.",
+				"The trials, triumphs, and testimonies of those who laid the foundations of the faith offer inspiration for discipleship and preparation for the Second Coming."
 			]
 		},
 		events: {
@@ -215,9 +181,7 @@ export const useMainStore = defineStore("main", {
 		multimedia: [], // To store multimedia content data
 		map: {
 			header: {
-				title: "Interactive Map of the Restoration",
-				description:
-					"Explore key locations of the Restoration journey through our interactive map. Click on markers to learn more about each event and figure."
+				title: "Interactive Map of the Restoration"
 			},
 			body: {
 				coordinates: [

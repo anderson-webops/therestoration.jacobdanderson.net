@@ -6,7 +6,7 @@ context("Basic", () => {
 	});
 
 	it("shows the home hero and navigation", () => {
-		cy.contains("h1", "Welcome to the Digital Restoration Journey").should("be.visible");
+		cy.contains("h1", "The Restoration").should("be.visible");
 		cy.get("header nav").within(() => {
 			cy.contains("a", "Map").should("be.visible");
 			cy.contains("a", "Events").should("be.visible");
@@ -19,7 +19,7 @@ context("Basic", () => {
 	it("navigates to about via header", () => {
 		cy.contains("a", "About").click();
 		cy.url().should("include", "/about");
-		cy.contains("h1", "About the Digital Restoration Journey").should("be.visible");
+		cy.contains("h1", "About").should("be.visible");
 	});
 
 	it("navigates to the interactive map", () => {

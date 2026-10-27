@@ -30,9 +30,6 @@ const home = computed(() => store.home);
 		<div class="items-container">
 			<div v-for="(item, index) in home.body" :key="index" class="item">
 				<h3>{{ item.title }}</h3>
-				<br />
-				<h4>{{ item.description }}</h4>
-				<br />
 				<img :alt="item.imgAlt" :src="item.image" />
 			</div>
 		</div>

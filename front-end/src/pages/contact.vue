@@ -39,7 +39,7 @@ async function handleSubmit() {
 		}
 
 		responseTone.value = "success";
-		responseMessage.value = "Message sent. We'll get back to you soon.";
+		responseMessage.value = "Message sent.";
 		form.value.name = "";
 		form.value.email = "";
 		form.value.message = "";
@@ -60,8 +60,6 @@ async function handleSubmit() {
 	<div class="page">
 		<h1>Contact Me</h1>
 		<div class="item">
-			<p>If you have any questions or feedback, please feel free to reach out to us through the form below.</p>
-
 			<form :aria-busy="isSubmitting" @submit.prevent="handleSubmit">
 				<div class="form-group">
 					<label for="name">Name:</label>
