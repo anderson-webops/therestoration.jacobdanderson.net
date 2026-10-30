@@ -65,17 +65,18 @@
 	"overrides": {
 		"defu": "6.1.6",
 		"vite": "^8.3.5",
-		"vue-router": "^5.3.1",
-		"qs": "6.16.0",
+		"vue-router": "^5.4.0",
+		"qs": "6.17.1",
 		"@cypress/request": {
 			"uuid": "14.0.0",
-			"qs": "6.16.0"
+			"qs": "6.17.1"
 		},
+		"systeminformation": "5.33.19",
 		"katex": "0.18.2",
 		"tinypool": "^2.1.2"
 	},
 	"allowScripts": {
-		"cypress@16.1.0": true,
+		"cypress@16.2.0": true,
 		"esbuild@0.28.2": true,
 		"vue-demi@0.14.10": true,
 		"fsevents": false,
