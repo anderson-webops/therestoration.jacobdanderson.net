@@ -98,7 +98,7 @@ function serialize() {
 //#region src/utils.ts
 const REGEX_BACKSLASH = /\\/g;
 const REGEX_TRAILING_SLASHES = /\/+$/;
-const REGEX_BRACES = /[{}]/g;
+const REGEX_LITERAL_GLOB_CHARACTERS = /[\\{}]/g;
 const REGEX_REPEATED_SLASHES = /(?<=[^/])\/{2,}/g;
 function extensionsToGlob(extensions) {
 	return extensions.length > 1 ? `{${extensions.join(",")}}` : extensions[0] || "";
@@ -123,7 +123,7 @@ function isDirectory(entry, path) {
 * the escapes, so they are added back before picomatch reads the pattern.
 */
 function expandBraces(patterns) {
-	return patterns.flatMap((pattern) => expand(pattern).map((expanded) => expanded.replace(REGEX_BRACES, "\\$&")));
+	return patterns.flatMap((pattern) => expand(pattern).map((expanded) => expanded.replace(REGEX_LITERAL_GLOB_CHARACTERS, "\\$&")));
 }
 function splitBase(pattern) {
 	const segments = pattern.split("/");

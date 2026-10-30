@@ -6,9 +6,10 @@ License: MIT; retained in `LICENSE`.
 
 The distributed plugin declares `brace-expansion@^3.0.9`, which is flagged by
 GHSA-3jxr-9vmj-r5cp. Its 3.x line has no patched release. This copy changes
-the dependency to `^5.0.12` and the import to that version's named `expand`
-export. The local package manifest retains only runtime metadata and drops
-upstream's development scripts and dependencies, which npm would otherwise
+the dependency to `^5.0.12`, imports that version's named `expand` export,
+and escapes literal backslashes as well as braces before passing expanded
+patterns to picomatch. The local package manifest retains only runtime metadata
+and drops upstream's development scripts and dependencies, which npm would otherwise
 install into this repository. Keep the other distributed files byte-identical
 to the upstream tarball and retest layout glob expansion, the built pages,
 audits and the exact release artifact when updating this patch.
