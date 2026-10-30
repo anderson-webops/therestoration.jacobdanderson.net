@@ -1,7 +1,7 @@
 import { fileURLToPath } from "node:url";
 
-import { expect, it } from "vitest";
 import Layouts from "vite-plugin-vue-layouts-next";
+import { expect, it } from "vitest";
 
 it("expands excluded layout braces without dropping the default layout", async () => {
 	const repositoryRoot = fileURLToPath(new URL("../", import.meta.url));
