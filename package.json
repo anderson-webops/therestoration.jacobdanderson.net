@@ -47,35 +47,36 @@
 		"verify:site": "node scripts/verify-site.mjs"
 	},
 	"devDependencies": {
-		"@antfu/eslint-config": "^9.5.1",
-		"@unocss/eslint-plugin": "^66.10.5",
-		"axe-core": "^4.13.0",
-		"eslint": "^10.9.1",
+		"@antfu/eslint-config": "^10.0.0",
+		"@unocss/eslint-plugin": "^66.11.0",
+		"axe-core": "^4.14.0",
+		"eslint": "^10.13.0",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-format": "^2.0.1",
-		"eslint-plugin-prettier": "^5.5.5",
+		"eslint-plugin-prettier": "^5.5.7",
 		"eslint-plugin-vue": "^10.9.0",
-		"globals": "^17.5.0",
-		"prettier": "^3.9.8",
+		"globals": "^17.13.0",
+		"prettier": "^3.9.10",
 		"puppeteer": "^25.16.0",
-		"supertest": "^7.3.0",
+		"supertest": "^7.3.1",
 		"typescript": "^6.0.3",
 		"vitest": "^5.0.5"
 	},
 	"overrides": {
 		"defu": "6.1.6",
 		"vite": "^8.3.5",
-		"vue-router": "^5.3.1",
-		"qs": "6.16.0",
+		"vue-router": "^5.4.0",
+		"qs": "6.17.1",
 		"@cypress/request": {
 			"uuid": "14.0.0",
-			"qs": "6.16.0"
+			"qs": "6.17.1"
 		},
+		"systeminformation": "5.33.19",
 		"katex": "0.18.2",
 		"tinypool": "^2.1.2"
 	},
 	"allowScripts": {
-		"cypress@16.1.0": true,
+		"cypress@16.2.0": true,
 		"esbuild@0.28.2": true,
 		"vue-demi@0.14.10": true,
 		"fsevents": false,
