@@ -36,6 +36,9 @@ jobs:
             - name: Install locked dependencies
               run: npm ci --include=optional --strict-allow-scripts
 
+            - name: Verify locked dependency peers
+              run: npm ls --all --package-lock-only
+
             - name: Audit development and production dependencies
               run: |
                   npm run audit:all
