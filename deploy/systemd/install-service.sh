@@ -24,8 +24,8 @@ node=/usr/bin/node
 	"$script_dir/release.env.example" "$source_root/scripts/runtime-artifact.py" \
 	"$source_root/scripts/legacy-runtime.py" "$source_root/deploy/runtime-artifact.json" \
 	"$source_root/package.json" "$node"
-if [[ ! -x "$node" || "$($node --version)" != v24.18.1 ]]; then
-	echo "/usr/bin/node must remain the approved Node 24.18.1 runtime." >&2
+if [[ ! -x "$node" || "$($node --version)" != v26.13.0 ]]; then
+	echo "/usr/bin/node must remain the approved Node 26.13.0 runtime." >&2
 	exit 1
 fi
 

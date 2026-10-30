@@ -1,16 +1,16 @@
 {
 	"name": "front-end",
-	"version": "4.0.14",
+	"version": "4.0.15",
 	"description": "Public history site for The Restoration",
 	"author": "Jacob Anderson",
 	"keywords": [],
 	"license": "ISC",
 	"type": "module",
 	"private": true,
-	"packageManager": "npm@12.0.2",
+	"packageManager": "npm@12.2.1",
 	"engines": {
-		"node": ">=24.18.1 <25",
-		"npm": ">=12.0.2 <13"
+		"node": ">=26.13.0 <27",
+		"npm": ">=12.2.1 <13"
 	},
 	"main": "dist/script.js",
 	"scripts": {
@@ -52,7 +52,7 @@
 		"@iconify-json/carbon": "^1.2.29",
 		"@types/bootstrap": "^5.2.10",
 		"@types/leaflet": "^1.9.21",
-		"@types/node": "^24.19.2",
+		"@types/node": "^26.6.6",
 		"@types/nprogress": "^0.2.3",
 		"@vitejs/plugin-vue": "^6.0.10",
 		"beasties": "0.3.5",

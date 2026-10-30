@@ -54,7 +54,7 @@ Shared Sites policy (`../AGENTS.md` when available) applies. These essentials al
 
 ## Build, Test, and Development Commands
 
-- `npm ci` (root) installs the authoritative lockfile using Node `24.18.1` and npm `12.0.2`. Avoid mixing package
+- `npm ci` (root) installs the authoritative lockfile using Node `26.13.0` and npm `12.2.1`. Avoid mixing package
   managers or using a nested lockfile.
 - `npm run dev` starts the front-end dev server on port 3333; `npm run serve` runs the same build with `--host` enabled
   for LAN previews.

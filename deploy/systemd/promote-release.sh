@@ -53,8 +53,8 @@ fi
 	"$promoter" "$trusted_paths" "$artifact_verifier" "$legacy_verifier" "$artifact_contract" \
 	"$archive" "$release_root" "$artifact_root" "$legacy_root" \
 	"$(dirname -- "$current_link")" "$node"
-if [[ ! -x "$node" || "$($node --version)" != v24.18.1 ]]; then
-	echo "/usr/bin/node must remain the approved Node 24.18.1 runtime." >&2
+if [[ ! -x "$node" || "$($node --version)" != v26.13.0 ]]; then
+	echo "/usr/bin/node must remain the approved Node 26.13.0 runtime." >&2
 	exit 1
 fi
 

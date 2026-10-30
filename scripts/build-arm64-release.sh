@@ -7,8 +7,8 @@ cd -- "$root"
 test "$(id -u)" -ne 0
 test "$(uname -s)" = Linux
 test "$(uname -m)" = aarch64
-test "$(node --version)" = v24.18.1
-test "$(npm --version)" = 12.0.2
+test "$(node --version)" = v26.13.0
+test "$(npm --version)" = 12.2.1
 test -z "$(git status --porcelain)"
 git check-ignore -q .ai-work/
 

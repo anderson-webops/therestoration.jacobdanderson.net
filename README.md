@@ -25,7 +25,7 @@ The root `package-lock.json` is the only lockfile and the source of truth for lo
 
 ## Validation
 
-Use Node `24.18.1` and npm `12.0.2`:
+Use Node `26.13.0` and npm `12.2.1`:
 
 ```bash
 npm ci

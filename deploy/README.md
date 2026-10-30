@@ -39,7 +39,7 @@ sudo deploy/systemd/install-service.sh
 The installer does not restart production. It preserves the existing protected environment files, establishes
 root-owned release/artifact/recovery directories, installs versioned root-owned controls beneath
 `/usr/local/libexec/therestoration-release`, updates the `current` helper symlink atomically, and installs the hardened
-service unit. The service remains `restoration:restoration`, uses `/usr/bin/node` v24.18.1, and retains the established
+service unit. The service remains `restoration:restoration`, uses `/usr/bin/node` v26.13.0, and retains the established
 port and host paths. Its 96 MiB V8 heap, 160/192 MiB systemd memory thresholds, disabled swap, 32-task ceiling, and
 bounded file descriptors are intentional memory-pressure controls.
 
