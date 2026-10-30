@@ -1,0 +1,54 @@
+{
+  "name": "vite-plugin-vue-layouts-next",
+  "type": "module",
+  "version": "3.3.1",
+  "description": "Router based layout plugin for Vite 8, Vue 3 and Vue Router 5.",
+  "author": "loicduong",
+  "license": "MIT",
+  "funding": "https://github.com/sponsors/loicduong",
+  "homepage": "https://github.com/loicduong/vite-plugin-vue-layouts-next",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/loicduong/vite-plugin-vue-layouts-next.git"
+  },
+  "bugs": "https://github.com/loicduong/vite-plugin-vue-layouts-next/issues",
+  "keywords": [
+    "typescript",
+    "vite-plugin",
+    "vite",
+    "vue-router",
+    "vue"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    },
+    "./runtime": {
+      "types": "./dist/runtime.d.mts",
+      "import": "./dist/runtime.mjs"
+    },
+    "./client": {
+      "types": "./client.d.ts"
+    },
+    "./*": "./*"
+  },
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "files": [
+    "client.d.ts",
+    "dist"
+  ],
+  "peerDependencies": {
+    "vite": "^6.0.0 || ^7.0.0 || ^8.0.0",
+    "vue": "^3.2.4",
+    "vue-router": "^4.0.11 || ^5.0.0"
+  },
+  "dependencies": {
+    "brace-expansion": "^5.0.12",
+    "debug": "^4.4.3",
+    "picomatch": "^4.0.7",
+    "tinyglobby": "^0.2.17"
+  }
+}
