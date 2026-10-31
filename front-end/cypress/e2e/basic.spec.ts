@@ -6,6 +6,8 @@ context("Basic", () => {
 	});
 
 	it("shows the home hero and navigation", () => {
+		cy.title().should("eq", "The Restoration");
+		cy.get('link[rel="canonical"]').should("have.attr", "href", "https://therestoration.jacobdanderson.net/");
 		cy.contains("h1", "The Restoration").should("be.visible");
 		cy.get("header nav").within(() => {
 			cy.contains("a", "Map").should("be.visible");
@@ -19,6 +21,8 @@ context("Basic", () => {
 	it("navigates to about via header", () => {
 		cy.contains("a", "About").click();
 		cy.url().should("include", "/about");
+		cy.title().should("eq", "About | The Restoration");
+		cy.get('link[rel="canonical"]').should("have.attr", "href", "https://therestoration.jacobdanderson.net/about");
 		cy.contains("h1", "About").should("be.visible");
 	});
 
