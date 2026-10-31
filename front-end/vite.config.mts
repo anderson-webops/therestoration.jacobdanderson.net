@@ -1,9 +1,12 @@
 // vite.config.ts
+import type { ViteSSGContext } from "vite-ssg";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { unheadVueComposablesImports } from "@unhead/vue";
 import Vue from "@vitejs/plugin-vue";
+import { JSDOM } from "jsdom";
+import { renderDOMHead } from "unhead/client";
 
 import Unocss from "unocss/vite";
 import AutoImport from "unplugin-auto-import/vite";
@@ -86,6 +89,14 @@ export default defineConfig(({ command }) => ({
 		formatting: "minify",
 		beastiesOptions: {
 			reduceInlineStyles: false
+		},
+		async onPageRendered(_route: string, html: string, appCtx: ViteSSGContext) {
+			if (!appCtx.head) return html;
+			const document = new JSDOM(html);
+			await renderDOMHead(appCtx.head as unknown as Parameters<typeof renderDOMHead>[0], {
+				document: document.window.document
+			});
+			return document.serialize();
 		},
 		onFinished() {
 			generateSitemap({ hostname: siteUrl, exclude: ["/404"], generateRobotsTxt: false });
