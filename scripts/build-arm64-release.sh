@@ -104,6 +104,7 @@ assert any(record.get("negativeModule") == "passed" and record.get("commit") == 
 assert any(record.get("accepted") is True and record.get("commit") == commit for record in records)
 harness = [
     Path("deploy/runtime-artifact.json"),
+    Path("deploy/retained-contracts/v4.0.14.json"),
     Path("deploy/systemd/install-service.sh"),
     Path("deploy/systemd/promote-release.sh"),
     Path("deploy/systemd/seal-v4.0.4-rollback.sh"),
@@ -114,6 +115,7 @@ harness = [
     Path("scripts/legacy-runtime.py"),
     Path("scripts/test-promotion-recovery.py"),
     Path("scripts/test-promotion-recovery.sh"),
+    Path("scripts/test-retained-v4014.sh"),
     Path("scripts/test-unpacked-artifact.sh"),
 ]
 receipt = {

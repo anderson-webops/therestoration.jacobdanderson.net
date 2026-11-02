@@ -44,7 +44,7 @@ if name == "nginx":
     if candidate and mode == "nginx-failure" and once("nginx-failed"): sys.exit(1)
     sys.exit(0)
 if name == "curl":
-    if candidate and mode in {"bad-health", "legacy-bad-health", "rollback-failure", "first-failure"}: sys.exit(22)
+    if candidate and mode in {"bad-health", "legacy-bad-health", "rollback-failure", "first-failure", "retained-contract-failure"}: sys.exit(22)
     url = next(value for value in args if value.startswith(("http://", "https://")))
     with (root / "probes").open("a") as stream: stream.write(" ".join(args) + "\n")
     if "--write-out" in args:
@@ -91,10 +91,11 @@ def load_legacy(control: Path):
 	return legacy
 
 
-def make_archive(root: Path, artifact, version: str, commit: str, name: str):
+def make_archive(root: Path, artifact, version: str, commit: str, name: str, retained=False):
 	tree = root / f"build-{name}"
 	tree.mkdir()
-	contract = artifact.load_contract()
+	contract_path = artifact.RETAINED_CONTRACTS[next(iter(artifact.RETAINED_CONTRACTS))] if retained else artifact.CONTRACT
+	contract = json.loads(contract_path.read_text())
 	for required in contract["required"]:
 		path = tree / required
 		path.parent.mkdir(parents=True, exist_ok=True)
@@ -124,8 +125,8 @@ def make_archive(root: Path, artifact, version: str, commit: str, name: str):
 		"format": 1,
 		"commit": commit,
 		"contractVersion": contract["version"],
-		"contractSha256": artifact.digest(artifact.CONTRACT),
-		"files": artifact.inventory(tree),
+		"contractSha256": artifact.digest(contract_path),
+		"files": artifact.inventory(tree, contract),
 	}
 	(tree / artifact.MANIFEST).write_text(json.dumps(manifest, sort_keys=True))
 	archive = root / "incoming" / f"{name}.tar.gz"
@@ -178,14 +179,16 @@ def setup(root: Path, mode: str):
 		(SOURCE / "scripts/runtime-artifact.py", control / "scripts/runtime-artifact.py"),
 		(SOURCE / "scripts/legacy-runtime.py", control / "scripts/legacy-runtime.py"),
 		(SOURCE / "deploy/runtime-artifact.json", control / "deploy/runtime-artifact.json"),
+		(SOURCE / "deploy/retained-contracts/v4.0.14.json", control / "deploy/retained-contracts/v4.0.14.json"),
 	]:
+		destination.parent.mkdir(parents=True, exist_ok=True)
 		shutil.copy2(source, destination)
 	artifact = load_artifact(control)
 	_candidate_tree, candidate_archive, candidate_sha = make_archive(
 		root, artifact, "1.0.1", CANDIDATE_COMMIT, "candidate"
 	)
 	previous_tree, previous_archive, previous_sha = make_archive(
-		root, artifact, "1.0.0", PREVIOUS_COMMIT, "previous"
+		root, artifact, "1.0.0", PREVIOUS_COMMIT, "previous", retained=mode.startswith("retained-contract-")
 	)
 	previous = root / "releases" / f"v1.0.0-{PREVIOUS_COMMIT[:12]}"
 	shutil.copytree(previous_tree, previous)
@@ -193,6 +196,9 @@ def setup(root: Path, mode: str):
 	shutil.copy2(previous_archive, retained_previous)
 	retained_previous.chmod(0o600)
 	previous_record = accepted_record(root, previous, previous_sha, PREVIOUS_COMMIT)
+	if mode.startswith("retained-contract-"):
+		(root / "etc/app.env").write_text("CONTACT_SMTP_HOST=fixture.invalid\n")
+		(root / "etc/app.env").chmod(0o640)
 	if mode.startswith("legacy-"):
 		legacy = load_legacy(control)
 		legacy_source = root / "legacy-source"
@@ -241,6 +247,9 @@ modes = [
 	"missing-previous-acceptance",
 	"first-success",
 	"first-failure",
+	"retained-contract-success",
+	"retained-contract-failure",
+	"retained-contract-tampered",
 ]
 if len(sys.argv) > 1 and sys.argv[1] != "all":
 	assert sys.argv[1] in modes
@@ -261,6 +270,9 @@ for mode in modes:
 		(previous / "back-end/dist/server.js").write_text("tampered\n")
 	if mode == "missing-previous-acceptance":
 		previous_record.unlink()
+	if mode == "retained-contract-tampered":
+		with (control / "deploy/retained-contracts/v4.0.14.json").open("a") as retained_contract:
+			retained_contract.write(" ")
 	held = None
 	if mode == "lock-contention":
 		held = (root / ".deployment-recovery/promotion.lock").open("w")
@@ -291,9 +303,18 @@ for mode in modes:
 		if held:
 			held.close()
 	evidence = result.stdout + result.stderr
-	success = mode in {"success", "legacy-success", "first-success"}
+	success = mode in {"success", "legacy-success", "first-success", "retained-contract-success"}
 	assert (result.returncode == 0) == success, (mode, evidence)
 	assert not Path("/fixture/ROOT_CODE_EXECUTED").exists(), (mode, "candidate code executed as root")
+	if mode.startswith("retained-contract-"):
+		assert (root / "etc/app.env").read_text() == "CONTACT_SMTP_HOST=fixture.invalid\n", (mode, evidence)
+		assert (previous / "back-end/dist/server.js").read_text() == "synthetic runtime file\n", (mode, evidence)
+		if mode in {"retained-contract-success", "retained-contract-failure"}:
+			release_environment = (root / "etc/release.env").read_text()
+			expected_release = "v1.0.1" if success else "v1.0.0"
+			expected_commit = CANDIDATE_COMMIT if success else PREVIOUS_COMMIT
+			assert f"RESTORATION_RELEASE={expected_release}\n" in release_environment, (mode, evidence)
+			assert f"RESTORATION_COMMIT_SHA={expected_commit}\n" in release_environment, (mode, evidence)
 	candidate = root / "releases" / f"v1.0.1-{CANDIDATE_COMMIT[:12]}"
 	if mode == "first-failure":
 		assert not (root / "current").exists(), evidence

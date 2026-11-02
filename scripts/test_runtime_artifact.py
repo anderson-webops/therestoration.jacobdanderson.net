@@ -7,6 +7,7 @@ import sys
 import tarfile
 import tempfile
 import unittest
+from unittest import mock
 
 
 SPEC = importlib.util.spec_from_file_location("artifact", Path(__file__).with_name("runtime-artifact.py"))
@@ -58,6 +59,25 @@ class RuntimeArtifactTests(unittest.TestCase):
 
     def test_valid_tree(self):
         artifact.validate(self.root, self.manifest())
+
+    def test_exact_retained_contract_requires_protected_verification(self):
+        manifest = self.manifest()
+        manifest["contractSha256"] = next(iter(artifact.RETAINED_CONTRACTS))
+        with self.assertRaisesRegex(ValueError, "runtime contract digest mismatch"):
+            artifact.validate(self.root, manifest)
+        artifact.validate(self.root, manifest, allow_retained_contract=True)
+        with tempfile.TemporaryDirectory(dir=self.root.parent) as temporary:
+            retained = Path(temporary) / "changed-retained-contract.json"
+            retained.write_text(artifact.RETAINED_CONTRACTS[manifest["contractSha256"]].read_text() + " ")
+            with mock.patch.dict(artifact.RETAINED_CONTRACTS, {manifest["contractSha256"]: retained}):
+                with self.assertRaisesRegex(ValueError, "runtime contract digest mismatch"):
+                    artifact.validate(self.root, manifest, allow_retained_contract=True)
+
+    def test_unknown_retained_contract_is_rejected(self):
+        manifest = self.manifest()
+        manifest["contractSha256"] = "0" * 64
+        with self.assertRaisesRegex(ValueError, "runtime contract digest mismatch"):
+            artifact.validate(self.root, manifest, allow_retained_contract=True)
 
     def test_hash_tampering(self):
         manifest = self.manifest()

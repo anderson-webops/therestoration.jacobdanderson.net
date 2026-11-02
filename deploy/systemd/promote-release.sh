@@ -223,7 +223,9 @@ PY
 }
 
 verify_accepted_release() {
-	local target="$1" record fields accepted_commit accepted_manifest accepted_archive retained
+	local target="$1" retained_mode="${2:-}" record fields accepted_commit accepted_manifest accepted_archive retained
+	local -a retained_option=()
+	if [[ "$retained_mode" == retained ]]; then retained_option=(--retained-contract); fi
 	record="$(acceptance_record_path "$target")"
 	[[ -f "$record" ]] || return 1
 	/usr/bin/python3 -I "$trusted_paths" "$record" --tree "$target" || return 1
@@ -233,7 +235,7 @@ verify_accepted_release() {
 	/usr/bin/python3 -I "$trusted_paths" "$retained" || return 1
 	/usr/bin/python3 -I "$artifact_verifier" verify "$target" \
 		--archive "$retained" --sha256 "$accepted_archive" --commit "$accepted_commit" \
-		--manifest-sha256 "$accepted_manifest"
+		--manifest-sha256 "$accepted_manifest" "${retained_option[@]}"
 }
 
 target_kind() {
@@ -248,7 +250,7 @@ verify_target() {
 	local target="$1" kind
 	kind="$(target_kind "$target")" || return 1
 	if [[ "$kind" == artifact ]]; then
-		verify_accepted_release "$target" >/dev/null
+		verify_accepted_release "$target" retained >/dev/null
 	else
 		/usr/bin/python3 -I "$trusted_paths" --tree "$target" \
 			&& /usr/bin/python3 -I "$legacy_verifier" verify "$target" >/dev/null

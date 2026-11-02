@@ -28,6 +28,13 @@ failure, cross-site denial, graceful shutdown/restart, and a deliberately missin
 harness exercises success, failure, interruption, lock contention, tampering, first activation, and verified rollback.
 Candidate code is never executed as root.
 
+The v4.0.14 archive was built under the earlier Node 24 contract. The reviewed, byte-identical historical contract at
+`deploy/retained-contracts/v4.0.14.json` is installed with the protected helper, not taken from a candidate archive.
+Only an already accepted rollback target may use it, with its root-protected acceptance record, exact retained archive,
+manifest digest, and source commit. Candidate unpacking and acceptance still require the current Node 26 contract.
+CI checks the published v4.0.14 archive against its pinned SHA-256; tagged ARM64 acceptance also starts its actual
+compiled service under Node 26 with isolated configuration and no provider access.
+
 ## Protected host controls
 
 From a separately reviewed root-owned copy of the exact release source, run:
@@ -82,7 +89,9 @@ manifest and source identity, installs a root-owned immutable release, and recor
 It checks Nginx without changing or reloading it, switches `current` atomically, restarts only the Restoration service,
 and verifies minimal probes, exact identity/content, strict headers, cross-site mutation denial, and reserved-route
 denial over local IPv4 and IPv6 TLS. If acceptance fails, it re-verifies and restores the previous artifact or sealed
-v4.0.4 runtime. A root-only recovery record is retained only when rollback itself fails.
+v4.0.4 runtime. An accepted v4.0.14 rollback additionally verifies its historical contract and exact service entrypoint
+from the retained archive; the installed Node executable and protected environment remain host-controlled. A root-only
+recovery record is retained only when rollback itself fails.
 
 After activation, verify the exact public release from an independent external network:
 

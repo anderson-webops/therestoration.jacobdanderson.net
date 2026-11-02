@@ -63,6 +63,17 @@ jobs:
             - name: Exercise promotion and rollback recovery
               run: npm run test:promotion
 
+            - name: Verify genuine retained Node 24 artifact
+              env:
+                  GH_TOKEN: ${{ github.token }}
+              run: |
+                  mkdir -p .ai-work/runs/retained-v4014-archive
+                  gh release download v4.0.14 --repo "$GITHUB_REPOSITORY" \
+                    --pattern 'therestoration-v4.0.14-c35232fbcac1-linux-arm64.tar.gz' \
+                    --dir .ai-work/runs/retained-v4014-archive
+                  bash scripts/test-retained-v4014.sh \
+                    .ai-work/runs/retained-v4014-archive/therestoration-v4.0.14-c35232fbcac1-linux-arm64.tar.gz
+
             - name: Accessibility smoke checks
               run: npm run a11y
 

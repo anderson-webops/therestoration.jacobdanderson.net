@@ -17,6 +17,10 @@ import tarfile
 
 REPOSITORY_ROOT = Path(__file__).resolve().parent.parent
 CONTRACT = REPOSITORY_ROOT / "deploy/runtime-artifact.json"
+RETAINED_CONTRACTS = {
+    "feceb9d13f1b2b1f25c8a7d21f9316ae31c086713582bfd63867a26ecc302721":
+        REPOSITORY_ROOT / "deploy/retained-contracts/v4.0.14.json",
+}
 MANIFEST = "runtime-manifest.json"
 IDENTITY = ".restoration-release-prepared.json"
 COMMIT = re.compile(r"^[0-9a-f]{40}$")
@@ -222,15 +226,18 @@ def validate_identity(root, manifest):
         raise ValueError("back-end package and root lock dependencies disagree")
 
 
-def validate(root, manifest):
+def validate(root, manifest, allow_retained_contract=False):
     root = Path(root).resolve(strict=True)
-    contract = load_contract()
     if not isinstance(manifest, dict) or set(manifest) != {"commit", "contractSha256", "contractVersion", "files", "format"}:
         raise ValueError("invalid runtime manifest fields")
+    contract_path = CONTRACT
+    if allow_retained_contract and manifest.get("contractSha256") in RETAINED_CONTRACTS:
+        contract_path = RETAINED_CONTRACTS[manifest["contractSha256"]]
+    if manifest.get("contractSha256") != digest(contract_path):
+        raise ValueError("runtime contract digest mismatch")
+    contract = read_json(contract_path, "runtime contract")
     if manifest.get("format") != 1 or manifest.get("contractVersion") != contract["version"]:
         raise ValueError("unsupported runtime manifest")
-    if manifest.get("contractSha256") != digest(CONTRACT):
-        raise ValueError("runtime contract digest mismatch")
     if not COMMIT.fullmatch(str(manifest.get("commit", ""))):
         raise ValueError("invalid source commit")
     actual = inventory(root, contract)
@@ -285,7 +292,10 @@ def main():
     parser.add_argument("--commit")
     parser.add_argument("--manifest-sha256")
     parser.add_argument("--sha256")
+    parser.add_argument("--retained-contract", action="store_true")
     args = parser.parse_args()
+    if args.retained_contract and (args.operation != "verify" or not all((args.archive, args.sha256, args.commit, args.manifest_sha256))):
+        parser.error("retained-contract verification requires a trusted archive, digest, commit, and manifest digest")
     root = args.tree.resolve(strict=True)
 
     if args.operation == "prune":
@@ -347,7 +357,7 @@ def main():
             trusted = json.load(archive.extractfile(MANIFEST))
         if declared != trusted:
             raise ValueError("staged manifest differs from trusted archive")
-    manifest = validate(root, declared)
+    manifest = validate(root, declared, allow_retained_contract=args.retained_contract)
     if args.commit and manifest["commit"] != args.commit:
         raise ValueError("artifact source identity mismatch")
     print(json.dumps({"verified": True, "commit": manifest["commit"], "files": len(manifest["files"])}))

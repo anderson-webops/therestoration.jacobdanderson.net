@@ -23,6 +23,7 @@ node=/usr/bin/node
 	"$script_dir/restoration-app.service" "$script_dir/app.env.example" \
 	"$script_dir/release.env.example" "$source_root/scripts/runtime-artifact.py" \
 	"$source_root/scripts/legacy-runtime.py" "$source_root/deploy/runtime-artifact.json" \
+	"$source_root/deploy/retained-contracts/v4.0.14.json" \
 	"$source_root/package.json" "$node"
 if [[ ! -x "$node" || "$($node --version)" != v26.13.0 ]]; then
 	echo "/usr/bin/node must remain the approved Node 26.13.0 runtime." >&2
@@ -92,7 +93,7 @@ if [[ -e "$helper_root" || -L "$helper_root" ]]; then
 	exit 1
 fi
 install -d -o root -g root -m 0755 "$helper_parent" "$helper_root" \
-	"$helper_root/deploy" "$helper_root/deploy/systemd" "$helper_root/scripts"
+	"$helper_root/deploy" "$helper_root/deploy/systemd" "$helper_root/deploy/retained-contracts" "$helper_root/scripts"
 install -o root -g root -m 0755 \
 	"$script_dir/install-service.sh" "$script_dir/promote-release.sh" \
 	"$script_dir/seal-v4.0.4-rollback.sh" "$trusted_paths" \
@@ -101,6 +102,7 @@ install -o root -g root -m 0755 \
 	"$source_root/scripts/runtime-artifact.py" "$source_root/scripts/legacy-runtime.py" \
 	"$helper_root/scripts/"
 install -o root -g root -m 0644 "$source_root/deploy/runtime-artifact.json" "$helper_root/deploy/"
+install -o root -g root -m 0644 "$source_root/deploy/retained-contracts/v4.0.14.json" "$helper_root/deploy/retained-contracts/"
 /usr/bin/python3 -I "$helper_root/deploy/systemd/trusted-paths.py" --tree "$helper_root"
 
 current_helper="$helper_parent/current"

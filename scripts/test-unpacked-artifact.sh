@@ -3,6 +3,7 @@ set -euo pipefail
 
 artifact="$(realpath "${1:?Pass the exact unpacked artifact}")"
 case_name="${2:-complete}"
+verify_args=("${@:3}")
 [[ "$case_name" == complete || "$case_name" == missing-module ]]
 script_dir="$(cd -- "$(dirname -- "$0")" && pwd -P)"
 node="$(realpath "$(command -v node)")"
@@ -12,7 +13,7 @@ test "$(uname -m)" = aarch64
 test "$(node --version)" = v26.13.0
 
 if [[ "$case_name" == complete ]]; then
-	python3 -B "$script_dir/runtime-artifact.py" verify "$artifact"
+	python3 -B "$script_dir/runtime-artifact.py" verify "$artifact" "${verify_args[@]}"
 fi
 
 timeout -k 5 120 bwrap --unshare-all --die-with-parent --new-session \
@@ -24,5 +25,5 @@ timeout -k 5 120 bwrap --unshare-all --die-with-parent --new-session \
 	--chdir /app /runtime/node /harness/runtime.mjs "$case_name"
 
 if [[ "$case_name" == complete ]]; then
-	python3 -B "$script_dir/runtime-artifact.py" verify "$artifact"
+	python3 -B "$script_dir/runtime-artifact.py" verify "$artifact" "${verify_args[@]}"
 fi
