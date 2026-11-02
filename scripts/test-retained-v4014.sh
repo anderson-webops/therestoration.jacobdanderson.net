@@ -35,6 +35,13 @@ if "${verifier[@]}" >"$temporary/current-only.log" 2>&1; then
 fi
 grep -q "runtime contract digest mismatch" "$temporary/current-only.log"
 "${verifier[@]}" --retained-contract
+mkdir "$temporary/candidate"
+if python3 -B "$source_root/scripts/runtime-artifact.py" unpack "$temporary/candidate" \
+	--archive "$archive" --sha256 "$archive_sha" --commit "$commit" >"$temporary/candidate.log" 2>&1; then
+	echo "Candidate unpacking accepted the historical contract." >&2
+	exit 1
+fi
+grep -q "runtime contract digest mismatch" "$temporary/candidate.log"
 if [[ "${2:-}" == --exercise-runtime ]]; then
 	bash "$source_root/scripts/test-unpacked-artifact.sh" "$temporary/tree" complete \
 		--archive "$archive" --sha256 "$archive_sha" --commit "$commit" \
