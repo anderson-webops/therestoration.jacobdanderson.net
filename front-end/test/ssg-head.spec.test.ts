@@ -82,6 +82,53 @@ describe("supported Unhead 3 server rendering", () => {
 		);
 	});
 
+	it("reuses keyed SSR scripts after stylesheet HTML normalization", async () => {
+		const component = {
+			setup() {
+				useHead({
+					script: [
+						{
+							key: "fixture-analytics",
+							src: "https://fixture.invalid/analytics.js",
+							defer: true
+						}
+					]
+				});
+				return () => h("main", "Fixture");
+			}
+		};
+		const serverApp = createSSRApp(component);
+		const serverContext = installSsgHeadBridge({ app: serverApp }, createServerSsgHeadBridge());
+		const body = await renderToString(serverApp);
+		const html = renderSsgDocumentHead(
+			`<!doctype html><html><head></head><body>${body}</body></html>`,
+			serverContext
+		);
+		const script = new DOMParser().parseFromString(html, "text/html").querySelector("script");
+		if (!script) throw new Error("Missing fixture script");
+		script.setAttribute("defer", "defer");
+		document.head.append(script);
+		const container = document.createElement("div");
+		container.innerHTML = body;
+		document.body.append(container);
+		const clientApp = createSSRApp(component);
+		const clientBridge = createClientSsgHeadBridge();
+		installSsgHeadBridge({ app: clientApp }, clientBridge);
+		const selector = "script[src=\"https://fixture.invalid/analytics.js\"]";
+		try {
+			clientApp.mount(container);
+			await clientBridge.head.render();
+			expect(document.querySelectorAll(selector)).toHaveLength(1);
+			expect(document.querySelector(selector)).toBe(script);
+		}
+		finally {
+			clientApp.unmount();
+			await clientBridge.head.render();
+			document.querySelectorAll(selector).forEach(element => element.remove());
+			container.remove();
+		}
+	});
+
 	it("updates and removes reactive browser metadata", async () => {
 		const title = ref("Initial page");
 		const app = createApp({

@@ -33,6 +33,9 @@ Beasties 0.5.5 is installed as `beasties-renderer` and called explicitly after h
 is disabled rather than forcing its incompatible optional peer. Full stylesheets and dynamic inline styles remain
 intact, with no script-based stylesheet loader. Every missing-stylesheet warning fails the build, including repeats.
 
+The analytics script has a stable provider key so hydration reuses the server tag after HTML normalization. Production
+browser checks cover one script across hydration and repeated navigation, with provider traffic blocked.
+
 TypeScript 7 remains outside the current typescript-eslint parser's supported range (`>=4.8.4 <6.1.0`); the supported
 TypeScript 6 line is retained until that compatibility boundary changes.
 

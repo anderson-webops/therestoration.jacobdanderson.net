@@ -23,6 +23,7 @@ useHead(() => ({
 		...(import.meta.env.PROD
 			? [
 					{
+						key: "site-analytics",
 						defer: true,
 						src: "https://analytics.jacobdanderson.net/script.js",
 						"data-website-id": "0c8d7bfe-1d94-4d8e-833e-abb2b4ef1e58"
