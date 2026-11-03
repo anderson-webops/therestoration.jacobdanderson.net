@@ -5,8 +5,6 @@ import { fileURLToPath } from "node:url";
 
 import { unheadVueComposablesImports } from "@unhead/vue";
 import Vue from "@vitejs/plugin-vue";
-import { JSDOM } from "jsdom";
-import { renderDOMHead } from "unhead/client";
 
 import Unocss from "unocss/vite";
 import AutoImport from "unplugin-auto-import/vite";
@@ -16,9 +14,12 @@ import Layouts from "vite-plugin-vue-layouts-next";
 import generateSitemap from "vite-ssg-sitemap";
 import { VueRouterAutoImports } from "vue-router/unplugin";
 import VueRouter from "vue-router/vite";
+import { createCriticalCssRenderer } from "./scripts/critical-css.mts";
 import { siteUrl } from "./src/site.ts";
+import { renderSsgDocumentHead } from "./src/utils/ssgHead.ts";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const renderCriticalCss = createCriticalCssRenderer(path.join(__dirname, "dist"));
 
 export default defineConfig(({ command }) => ({
 	resolve: {
@@ -87,16 +88,9 @@ export default defineConfig(({ command }) => ({
 	ssgOptions: {
 		script: "async",
 		formatting: "minify",
-		beastiesOptions: {
-			reduceInlineStyles: false
-		},
+		beastiesOptions: false,
 		async onPageRendered(_route: string, html: string, appCtx: ViteSSGContext) {
-			if (!appCtx.head) return html;
-			const document = new JSDOM(html);
-			await renderDOMHead(appCtx.head as unknown as Parameters<typeof renderDOMHead>[0], {
-				document: document.window.document
-			});
-			return document.serialize();
+			return renderCriticalCss(renderSsgDocumentHead(html, appCtx));
 		},
 		onFinished() {
 			generateSitemap({ hostname: siteUrl, exclude: ["/404"], generateRobotsTxt: false });

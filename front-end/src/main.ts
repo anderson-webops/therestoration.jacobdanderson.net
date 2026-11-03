@@ -2,13 +2,12 @@ import type { UserModule } from "~/types.ts";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faFacebook, faGithub, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { createHead as createClientHead } from "@unhead/vue/client";
-import { createHead as createServerHead } from "@unhead/vue/server";
 import { setupLayouts } from "virtual:generated-layouts";
 import { ViteSSG } from "vite-ssg";
 import { routes } from "vue-router/auto-routes";
 
 import App from "./App.vue";
+import { installSsgHeadBridge } from "./utils/ssgHead";
 // Assuming you have styles defined in these files
 import "@unocss/reset/tailwind.css";
 import "./styles/main.css";
@@ -30,9 +29,7 @@ export const createApp = ViteSSG(
 		}
 	},
 	ctx => {
-		const head = import.meta.env.SSR ? createServerHead() : createClientHead();
-		ctx.app.use(head);
-		ctx.head = head as unknown as typeof ctx.head;
+		installSsgHeadBridge(ctx);
 		// ctx is the context where you can add global components or plugins
 		ctx.app.component("font-awesome-icon", FontAwesomeIcon);
 

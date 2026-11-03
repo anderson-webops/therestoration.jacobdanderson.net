@@ -23,6 +23,24 @@ Adding any of those is a breaking security-boundary change, not an extension of 
 
 The root `package-lock.json` is the only lockfile and the source of truth for local, CI, and direct production installs.
 
+## Static rendering compatibility
+
+Unhead 3 uses its supported Vue server renderer independently of ViteSSG 28's internal Unhead 2. Each route gets a fresh
+head; the browser gets a separate client head. The page-render hook preserves structured metadata and serializes the
+head without a DOM emulation pass or cross-major casts.
+
+Beasties 0.5.5 is installed as `beasties-renderer` and called explicitly after head rendering. ViteSSG's legacy optimizer
+is disabled rather than forcing its incompatible optional peer. Full stylesheets and dynamic inline styles remain
+intact, with no script-based stylesheet loader. Every missing-stylesheet warning fails the build, including repeats.
+
+TypeScript 7 remains outside the current typescript-eslint parser's supported range (`>=4.8.4 <6.1.0`); the supported
+TypeScript 6 line is retained until that compatibility boundary changes.
+
+The dependency graph uses normal supported resolution except for patched Minimatch, Oxfmt's patched Tinypool and
+current KaTeX. The KaTeX override is backed by ordinary-rendering, untrusted-HTML and polluted-prototype regressions;
+lint and formatter checks exercise the updated tool dependencies. Obsolete blanket pins are removed rather than
+retaining old transitive versions.
+
 ## Validation
 
 Use Node `26.13.0` and npm `12.2.1`:
