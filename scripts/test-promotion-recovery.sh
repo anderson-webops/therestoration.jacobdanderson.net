@@ -7,6 +7,8 @@ test "$(uname -s)" = Linux
 test "$(id -u)" -ne 0
 test "$(node --version)" = v26.13.0
 
+umask 077
+
 timeout -k 5 120 bwrap --unshare-all --die-with-parent --new-session --uid 0 --gid 0 \
 	--ro-bind /usr /usr --symlink usr/bin /bin --symlink usr/lib /lib --symlink usr/lib64 /lib64 \
 	--tmpfs /usr/local --ro-bind "$node" /runtime/node --proc /proc --dev /dev --tmpfs /tmp --tmpfs /fixture \

@@ -138,12 +138,17 @@ def capture(source: Path, target: Path) -> dict:
 	before = inventory(source)
 	target.mkdir(mode=0o755)
 	try:
+		target.chmod(0o755)
 		for name in sorted(before):
 			data = read_regular(source / name)
 			if digest_bytes(data) != before[name]["sha256"] or len(data) != before[name]["size"]:
 				raise ValueError(f"legacy source changed during capture: {name}")
 			destination = target / name
-			destination.parent.mkdir(parents=True, exist_ok=True, mode=0o755)
+			parent = target
+			for component in Path(name).parts[:-1]:
+				parent /= component
+				parent.mkdir(exist_ok=True, mode=0o755)
+				parent.chmod(0o755)
 			with destination.open("xb") as stream:
 				stream.write(data)
 			destination.chmod(0o644)

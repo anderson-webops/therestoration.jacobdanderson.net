@@ -94,6 +94,7 @@ def load_legacy(control: Path):
 def make_archive(root: Path, artifact, version: str, commit: str, name: str, retained=False):
 	tree = root / f"build-{name}"
 	tree.mkdir()
+	tree.chmod(0o755)
 	contract_path = artifact.RETAINED_CONTRACTS[next(iter(artifact.RETAINED_CONTRACTS))] if retained else artifact.CONTRACT
 	contract = json.loads(contract_path.read_text())
 	for required in contract["required"]:
@@ -159,6 +160,7 @@ def accepted_record(root: Path, target: Path, archive_sha: str, commit: str):
 
 def setup(root: Path, mode: str):
 	root.mkdir(parents=True, mode=0o755)
+	root.chmod(0o755)
 	for directory, directory_mode in [
 		(root / "releases", 0o755),
 		(root / "legacy-releases", 0o755),
@@ -169,10 +171,13 @@ def setup(root: Path, mode: str):
 		(root / "etc", 0o700),
 	]:
 		directory.mkdir(mode=directory_mode)
+		directory.chmod(directory_mode)
 	control = root / "control"
 	(control / "deploy/systemd").mkdir(parents=True)
 	(control / "scripts").mkdir(parents=True)
 	(control / "deploy").mkdir(exist_ok=True)
+	for directory in [control, control / "deploy", control / "deploy/systemd", control / "scripts"]:
+		directory.chmod(0o755)
 	for source, destination in [
 		(SOURCE / "deploy/systemd/promote-release.sh", control / "deploy/systemd/promote-release.sh"),
 		(SOURCE / "deploy/systemd/trusted-paths.py", control / "deploy/systemd/trusted-paths.py"),
@@ -220,6 +225,18 @@ def setup(root: Path, mode: str):
 			path.chmod(0o755 if path.is_dir() else 0o644)
 		previous = root / "legacy-releases" / f"legacy-v4.0.4-{legacy.LEGACY_COMMIT[:12]}"
 		legacy.capture(legacy_source, previous)
+	for directory in [
+		root, root / "releases", root / "legacy-releases", control,
+		previous, previous / "back-end", previous / "back-end/dist",
+	]:
+		assert directory.stat().st_uid == 0 and stat.S_IMODE(directory.stat().st_mode) == 0o755, (mode, directory)
+	for directory in [
+		root / "artifacts", root / "incoming", root / ".deployment-recovery",
+		root / ".deployment-recovery/accepted", root / "etc",
+	]:
+		assert directory.stat().st_uid == 0 and stat.S_IMODE(directory.stat().st_mode) == 0o700, (mode, directory)
+	assert (previous / "back-end/dist/server.js").stat().st_uid == 0
+	assert stat.S_IMODE((previous / "back-end/dist/server.js").stat().st_mode) == 0o644
 	(root / "current").symlink_to(previous)
 	return control, candidate_archive, candidate_sha, previous, previous_record
 
