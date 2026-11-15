@@ -5,7 +5,7 @@ root="$(cd -- "$(dirname -- "$0")/.." && pwd -P)"
 node="$(realpath "$(command -v node)")"
 test "$(uname -s)" = Linux
 test "$(id -u)" -ne 0
-test "$(node --version)" = v26.13.0
+test "$(node --version)" = v26.13.1
 
 umask 077
 

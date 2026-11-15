@@ -46,7 +46,7 @@ retaining old transitive versions.
 
 ## Validation
 
-Use Node `26.13.0` and npm `12.2.1`:
+Use Node `26.13.1` and npm `12.2.2`:
 
 ```bash
 npm ci

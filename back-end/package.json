@@ -1,11 +1,11 @@
 {
 	"name": "back-end",
-	"version": "4.0.22",
+	"version": "4.0.23",
 	"private": true,
-	"packageManager": "npm@12.2.1",
+	"packageManager": "npm@12.2.2",
 	"engines": {
-		"node": ">=26.13.0 <27",
-		"npm": ">=12.2.1 <13"
+		"node": ">=26.13.1 <27",
+		"npm": ">=12.2.2 <13"
 	},
 	"description": "Stateless contact API and production web server for The Restoration",
 	"type": "module",
@@ -29,11 +29,11 @@
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
-		"dotenv": "^18.0.9",
+		"dotenv": "^18.0.10",
 		"express": "^5.3.0",
-		"express-rate-limit": "^8.7.1",
-		"helmet": "^8.1.0",
-		"nodemailer": "^10.3.1",
+		"express-rate-limit": "^8.7.4",
+		"helmet": "^8.3.0",
+		"nodemailer": "^10.6.0",
 		"zod": "^4.6.7"
 	},
 	"devDependencies": {
@@ -41,10 +41,10 @@
 		"@types/node": "^26.6.6",
 		"@types/nodemailer": "^8.0.2",
 		"@types/supertest": "^7.2.1",
-		"supertest": "^7.3.1",
+		"supertest": "^7.3.2",
 		"tsx": "^4.23.15",
 		"typescript": "^6.0.3",
-		"typescript-eslint": "^8.72.1",
-		"vitest": "^5.0.5"
+		"typescript-eslint": "^8.72.2",
+		"vitest": "^5.1.0"
 	}
 }

@@ -10,7 +10,7 @@ node="$(realpath "$(command -v node)")"
 test "$(id -u)" -ne 0
 test "$(uname -s)" = Linux
 test "$(uname -m)" = aarch64
-test "$(node --version)" = v26.13.0
+test "$(node --version)" = v26.13.1
 
 if [[ "$case_name" == complete ]]; then
 	python3 -B "$script_dir/runtime-artifact.py" verify "$artifact" "${verify_args[@]}"

@@ -35,8 +35,8 @@
     "os": "linux",
     "arch": "arm64",
     "libc": "glibc",
-    "node": "26.13.0",
-    "npmBuildOnly": "12.2.1"
+    "node": "26.13.1",
+    "npmBuildOnly": "12.2.2"
   },
   "modulesOutsideBuildDirectories": [],
   "generatedClients": [],
