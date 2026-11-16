@@ -15,6 +15,12 @@ import tarfile
 
 
 assert os.geteuid() == 0 and not Path("/srv").exists()
+node_binary = Path("/runtime/node")
+node_metadata = node_binary.stat()
+assert node_metadata.st_uid == node_metadata.st_gid == 0
+assert stat.S_IMODE(node_metadata.st_mode) == 0o755
+assert hashlib.sha256(node_binary.read_bytes()).hexdigest() == os.environ["FIXTURE_NODE_SHA256"]
+assert subprocess.check_output([str(node_binary), "--version"], text=True).strip() == "v26.13.1"
 SOURCE = Path("/source")
 CANDIDATE_COMMIT = "a" * 40
 PREVIOUS_COMMIT = "b" * 40
