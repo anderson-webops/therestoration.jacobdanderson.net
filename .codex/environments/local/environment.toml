@@ -3,35 +3,35 @@ name = "therestoration.jacobdanderson.net"
 
 [setup]
 script = """
-npm ci --include=optional
+node scripts/build-toolchain.mjs --install -- npm ci --prefix build-toolchain/compat --workspaces=false --ignore-scripts
 """
 
 [[actions]]
 name = "Install"
 icon = "tool"
-command = "npm ci --include=optional"
+command = "node scripts/build-toolchain.mjs --install -- npm ci --prefix build-toolchain/compat --workspaces=false --ignore-scripts"
 
 [[actions]]
 name = "Build"
 icon = "run"
-command = "npm run build"
+command = "node scripts/build-toolchain.mjs -- npm run build"
 
 [[actions]]
 name = "Typecheck"
 icon = "test"
-command = "npm run typecheck"
+command = "node scripts/build-toolchain.mjs -- npm run typecheck"
 
 [[actions]]
 name = "Lint"
 icon = "test"
-command = "npm run lint"
+command = "node scripts/build-toolchain.mjs -- npm run lint"
 
 [[actions]]
 name = "Frontend Dev"
 icon = "debug"
-command = "npm run dev"
+command = "node scripts/build-toolchain.mjs -- npm run dev"
 
 [[actions]]
 name = "Backend Dev"
 icon = "debug"
-command = "npm run server"
+command = "node scripts/build-toolchain.mjs -- npm run server"

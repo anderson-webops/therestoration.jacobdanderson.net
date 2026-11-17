@@ -16,7 +16,14 @@ export default antfu(
 				endOfLine: "lf"
 			}
 		},
-		ignores: ["**/*.d.ts"],
+		ignores: [
+			"**/*.d.ts",
+			"scripts/*build-toolchain*.mjs",
+			"scripts/check-toolchain-package.mjs",
+			"scripts/test-npm-tool-majors.mjs",
+			"scripts/test-picomatch-compat.mjs",
+			"scripts/test-picomatch-install.mjs"
+		],
 		rules: {
 			"no-console": "off",
 			"antfu/if-newline": "off",

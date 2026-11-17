@@ -37,8 +37,13 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
 
-      - name: Pin the reviewed npm release
-        run: npm install --global "npm@${NPM_VERSION}" --allow-scripts=npm
+      - name: Select the independently qualified build tools
+        run: |
+          toolchain_bin="$(node scripts/build-toolchain.mjs --print-bin)"
+          printf '%s\n' "$toolchain_bin" >> "$GITHUB_PATH"
+
+      - name: Verify the selected build tools
+        run: npm run check:build-toolchain
 
       - name: Verify annotated source identity
         run: |

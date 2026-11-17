@@ -1,7 +1,7 @@
 {
 	"name": "therestoration-monorepo",
 	"type": "module",
-	"version": "4.0.23",
+	"version": "4.0.24",
 	"private": true,
 	"packageManager": "npm@12.2.2",
 	"engines": {
@@ -25,10 +25,13 @@
 		"serve": "npm run -w front-end serve",
 		"lint-server": "npm run -w back-end lint-fix && npm run -w back-end server",
 		"lint-serve": "npm run -w front-end lint-fix && npm run -w front-end serve",
-		"lint": "eslint \"scripts/**/*.mjs\" && npm run -w front-end lint && npm run -w back-end lint",
-		"lint-fix": "eslint \"scripts/**/*.mjs\" --fix && npm run -w front-end lint-fix && npm run -w back-end lint-fix",
+		"lint": "eslint \"scripts/**/*.mjs\" eslint.toolchain.config.mjs && npm run lint:toolchain && npm run -w front-end lint && npm run -w back-end lint",
+		"lint:toolchain": "eslint --config eslint.toolchain.config.mjs \"scripts/*build-toolchain*.mjs\" scripts/check-toolchain-package.mjs scripts/test-npm-tool-majors.mjs scripts/test-picomatch-compat.mjs scripts/test-picomatch-install.mjs vendor/picomatch/repeated-output.cjs back-end/scripts/run-typescript.mjs",
+		"lint-fix": "eslint \"scripts/**/*.mjs\" eslint.toolchain.config.mjs --fix && npm run lint:toolchain -- --fix && npm run -w front-end lint-fix && npm run -w back-end lint-fix",
 		"typecheck": "npm run -w front-end typecheck && npm run -w back-end typecheck",
-		"test": "npm run -w front-end test:unit && npm run -w back-end test:unit",
+		"test": "npm run -w front-end test:unit && npm run -w back-end test:unit && npm run test:build-toolchain && npm run test:toolchain-package",
+		"test:build-toolchain": "node --test --test-concurrency=1 scripts/test-build-toolchain.mjs scripts/test-build-toolchain-cache.mjs scripts/test-build-toolchain-seed.mjs scripts/test-npm-tool-majors.mjs scripts/test-picomatch-compat.mjs scripts/test-picomatch-install.mjs",
+		"test:toolchain-package": "python3 -B -m unittest discover -s scripts -p test_build_toolchain.py -v",
 		"test:e2e": "npm run -w front-end test:e2e",
 		"a11y": "node scripts/a11y-smoke.mjs",
 		"check:native-bindings": "node scripts/check-native-bindings.mjs",
@@ -36,14 +39,19 @@
 		"test:runtime-artifact": "python3 -B -m unittest scripts/test_runtime_artifact.py -v",
 		"test:promotion": "bash scripts/test-promotion-recovery.sh",
 		"package:runtime": "bash scripts/build-arm64-release.sh",
-		"audit:all": "npm audit --audit-level=low",
-		"audit:prod": "npm audit --omit=dev --audit-level=low",
+		"audit:all": "npm run audit:toolchain && npm audit --audit-level=low",
+		"audit:prod": "npm run audit:toolchain -- --omit=dev && npm audit --omit=dev --audit-level=low",
+		"audit:toolchain": "node scripts/audit-build-toolchain.mjs",
+		"toolchain:prepare": "node scripts/build-toolchain.mjs --print-bin",
+		"check:build-toolchain": "node scripts/check-build-toolchain.mjs",
+		"check:toolchain-package": "node scripts/check-toolchain-package.mjs",
+		"check:local-archives": "python3 -B scripts/package-picomatch.py --check && python3 -B scripts/package-layouts.py --check",
 		"deps:check": "npm outdated --workspaces --long",
 		"verify:public": "node scripts/verify-public.mjs",
 		"verify:deploy-assets": "node scripts/verify-deploy-assets.mjs",
 		"verify:production-install": "node scripts/verify-production-install.mjs",
 		"test:direct-runtime": "node scripts/direct-runtime-smoke.mjs",
-		"validate": "npm run check:native-bindings && npm run lint && npm run typecheck && npm run test:repo && npm test && npm run test:runtime-artifact && npm run build && npm run verify:deploy-assets && npm run verify:site",
+		"validate": "npm run check:build-toolchain && npm run check:toolchain-package && npm run check:local-archives && npm run check:native-bindings && npm run lint && npm run typecheck && npm run test:repo && npm test && npm run test:runtime-artifact && npm run build && npm run verify:deploy-assets && npm run verify:site",
 		"verify:site": "node scripts/verify-site.mjs"
 	},
 	"devDependencies": {
@@ -58,8 +66,12 @@
 		"globals": "^17.14.0",
 		"jsdom": "^31.0.1",
 		"katex": "^0.19.1",
+		"magic-string": "^1.4.4",
+		"oxc-parser": "^0.159.0",
+		"oxfmt": "^0.79.0",
 		"prettier": "^3.10.1",
-		"puppeteer": "^25.17.0",
+		"picomatch": "file:vendor/picomatch-4.0.7-webops.1.tgz",
+		"puppeteer": "^25.18.1",
 		"supertest": "^7.3.2",
 		"typescript": "^6.0.3",
 		"vitest": "^5.1.0"
@@ -69,13 +81,13 @@
 		"esbuild@0.28.2": true,
 		"vue-demi@0.14.10": true,
 		"fsevents": false,
-		"puppeteer@25.17.0": true
+		"puppeteer@25.18.1": true
 	},
 	"overrides": {
 		"katex": "$katex",
-		"minimatch": "11.0.8",
-		"oxfmt": {
-			"tinypool": "2.2.0"
-		}
+		"minimatch": "11.0.9",
+		"picomatch": "$picomatch",
+		"oxc-parser": "$oxc-parser",
+		"oxfmt": "$oxfmt"
 	}
 }

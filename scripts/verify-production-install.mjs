@@ -32,7 +32,7 @@ for (const packageName of [
 	);
 }
 
-for (const packageName of ["cypress", "eslint", "puppeteer", "tsx", "typescript", "vite", "vitest", "vue"]) {
+for (const packageName of ["corepack", "cypress", "eslint", "npm", "puppeteer", "tsx", "typescript", "typescript-native", "vite", "vitest", "vue", "yarn"]) {
 	try {
 		assert.equal(
 			isInsideRuntime(require.resolve(packageName)),
@@ -47,7 +47,7 @@ for (const packageName of ["cypress", "eslint", "puppeteer", "tsx", "typescript"
 
 for (const manifestPath of ["package.json", "back-end/package.json", "front-end/package.json"]) {
 	const manifest = JSON.parse(await readFile(path.join(repositoryRoot, manifestPath), "utf8"));
-	for (const packageName of ["cypress", "eslint", "puppeteer", "tsx", "typescript", "vite", "vitest"]) {
+	for (const packageName of ["corepack", "cypress", "eslint", "npm", "puppeteer", "tsx", "typescript", "typescript-native", "vite", "vitest", "yarn"]) {
 		assert.equal(
 			Object.hasOwn(manifest.dependencies ?? {}, packageName),
 			false,

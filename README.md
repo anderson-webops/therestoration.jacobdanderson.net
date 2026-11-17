@@ -46,10 +46,12 @@ retaining old transitive versions.
 
 ## Validation
 
-Use Node `26.13.1` and npm `12.2.2`:
+Use Node `26.13.1` and the independently qualified npm `12.2.2` build profile:
 
 ```bash
-npm ci
+export PATH="$(node scripts/build-toolchain.mjs --print-bin):$PATH"
+npm ci --prefix build-toolchain/compat --workspaces=false --ignore-scripts
+npm ci --include=optional --strict-allow-scripts
 npm run audit:all
 npm run audit:prod
 npm run validate

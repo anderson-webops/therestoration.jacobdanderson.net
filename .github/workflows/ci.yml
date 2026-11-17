@@ -33,8 +33,18 @@ jobs:
                   node-version: ${{ env.NODE_VERSION }}
                   cache: npm
 
-            - name: Align npm
-              run: npm install --global "npm@${NPM_VERSION}"
+            - name: Select the independently qualified build tools
+              run: |
+                  toolchain_bin="$(node scripts/build-toolchain.mjs --print-bin)"
+                  printf '%s\n' "$toolchain_bin" >> "$GITHUB_PATH"
+
+            - name: Verify the selected build tools
+              run: npm run check:build-toolchain
+
+            - name: Install original-library compatibility fixtures
+              run: |
+                  npm ci --prefix build-toolchain/compat --workspaces=false --ignore-scripts
+                  npm audit signatures --prefix build-toolchain/compat --workspaces=false
 
             - name: Install locked dependencies
               run: npm ci --include=optional --strict-allow-scripts

@@ -9,6 +9,7 @@ test "$(uname -s)" = Linux
 test "$(uname -m)" = aarch64
 test "$(node --version)" = v26.13.1
 test "$(npm --version)" = 12.2.2
+toolchain_receipt="$(node scripts/check-build-toolchain.mjs)"
 test -z "$(git status --porcelain)"
 git check-ignore -q .ai-work/
 
@@ -37,6 +38,7 @@ for directory in . front-end back-end; do
 done
 
 npm ci --include=dev --include=optional --strict-allow-scripts --no-fund
+npm ci --prefix build-toolchain/compat --workspaces=false --ignore-scripts --no-fund
 npm run audit:all
 npm run audit:prod
 npm audit signatures
@@ -59,6 +61,9 @@ mkdir -p "$stage/back-end" "$stage/front-end" "$unpacked" "$negative"
 install -m 0644 package.json package-lock.json .restoration-release-prepared.json "$stage/"
 install -m 0644 back-end/package.json "$stage/back-end/"
 install -m 0644 front-end/package.json "$stage/front-end/"
+mkdir -p "$stage/vendor"
+install -m 0644 vendor/picomatch-4.0.7-webops.1.tgz "$stage/vendor/"
+install -m 0644 vendor/vite-plugin-vue-layouts-next-3.3.1-webops.1.tgz "$stage/vendor/"
 cp -R back-end/dist "$stage/back-end/"
 cp -R front-end/dist "$stage/front-end/"
 
@@ -66,8 +71,13 @@ cp -R front-end/dist "$stage/front-end/"
 	cd -- "$stage"
 	npm ci --workspace back-end --omit=dev --include=optional --ignore-scripts --no-fund --no-audit
 	npm audit --workspace back-end --omit=dev --audit-level=low
+	npm audit --workspace back-end --audit-level=low
+	npm audit signatures --workspace back-end
 	npm ls --workspace back-end --omit=dev --all > "$output/dependency-tree.txt"
 )
+rm -- "$stage/vendor/picomatch-4.0.7-webops.1.tgz"
+rm -- "$stage/vendor/vite-plugin-vue-layouts-next-3.3.1-webops.1.tgz"
+rmdir -- "$stage/vendor"
 find "$stage/node_modules" -type l -delete
 rm -f -- "$stage/node_modules/.package-lock.json"
 python3 -B scripts/runtime-artifact.py prune "$stage" > "$output/pruned-workspace-peers.json"
@@ -90,9 +100,10 @@ bash scripts/test-unpacked-artifact.sh "$unpacked" complete >> "$output/acceptan
 python3 -B scripts/runtime-artifact.py verify "$unpacked" --archive "$archive" --sha256 "$sha" --commit "$commit"
 cp "$unpacked/runtime-manifest.json" "$archive.manifest.json"
 
-python3 -B - "$archive" "$commit" "$output" <<'PY'
+BUILD_TOOLCHAIN_RECEIPT="$toolchain_receipt" python3 -B - "$archive" "$commit" "$output" <<'PY'
 import hashlib
 import json
+import os
 from pathlib import Path
 import sys
 
@@ -117,11 +128,23 @@ harness = [
     Path("scripts/test-promotion-recovery.sh"),
     Path("scripts/test-retained-v4014.sh"),
     Path("scripts/test-unpacked-artifact.sh"),
+    Path("scripts/build-toolchain.mjs"),
+    Path("scripts/build-toolchain-state.mjs"),
+    Path("scripts/build-toolchain-cache.mjs"),
+    Path("scripts/build-toolchain-seed.mjs"),
+    Path("scripts/check-build-toolchain.mjs"),
+    Path("scripts/package-picomatch.py"),
+    Path("scripts/package-layouts.py"),
+    Path("build-toolchain/UPSTREAM.json"),
+    Path("build-toolchain/PAYLOAD.json"),
+    Path("build-toolchain/package.json"),
+    Path("build-toolchain/package-lock.json"),
 ]
 receipt = {
     "passed": True,
     "commit": commit,
     "archiveSha256": hashlib.sha256(archive.read_bytes()).hexdigest(),
+    "buildToolchain": json.loads(os.environ["BUILD_TOOLCHAIN_RECEIPT"]),
     "records": records,
     "harnessFiles": {str(path): hashlib.sha256(path.read_bytes()).hexdigest() for path in harness},
 }

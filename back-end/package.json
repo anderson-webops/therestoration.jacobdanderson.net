@@ -1,6 +1,6 @@
 {
 	"name": "back-end",
-	"version": "4.0.23",
+	"version": "4.0.24",
 	"private": true,
 	"packageManager": "npm@12.2.2",
 	"engines": {
@@ -18,9 +18,9 @@
 		"test:watch": "vitest",
 		"start": "node dist/server.js",
 		"clean": "node -e \"const fs=require('node:fs');for(const path of ['dist','tsconfig.tsbuildinfo'])fs.rmSync(path,{recursive:true,force:true})\"",
-		"build": "npm run clean && tsc -p tsconfig.json",
-		"typecheck": "tsc -p tsconfig.json --noEmit",
-		"watch": "tsc -w",
+		"build": "npm run clean && node scripts/run-typescript.mjs -p tsconfig.json",
+		"typecheck": "node scripts/run-typescript.mjs -p tsconfig.json --noEmit",
+		"watch": "node scripts/run-typescript.mjs -w",
 		"dev": "tsx watch -r dotenv/config src/server.ts",
 		"lint": "eslint \"src/**/*.{js,ts}\" \"test/**/*.ts\"",
 		"lint-fix": "eslint \"src/**/*.{js,ts}\" \"test/**/*.ts\" --fix"
@@ -44,7 +44,8 @@
 		"supertest": "^7.3.2",
 		"tsx": "^4.23.15",
 		"typescript": "^6.0.3",
-		"typescript-eslint": "^8.72.2",
+		"typescript-native": "npm:typescript@7.0.2",
+		"typescript-eslint": "^8.73.0",
 		"vitest": "^5.1.0"
 	}
 }

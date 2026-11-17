@@ -56,6 +56,9 @@ Shared Sites policy (`../AGENTS.md` when available) applies. These essentials al
 
 - `npm ci` (root) installs the authoritative lockfile using Node `26.13.1` and npm `12.2.2`. Avoid mixing package
   managers or using a nested lockfile.
+- Select the reviewed build-only profile first with `export PATH="$(node scripts/build-toolchain.mjs --print-bin):$PATH"`.
+  Install the independent original-library fixtures with `npm ci --prefix build-toolchain/compat --workspaces=false --ignore-scripts`.
+  Stock npm is a bootstrap seed; source and artifact checks require the qualified profile. Preserve its four shared cache-key helpers byte-for-byte unless changing and qualifying the shared template first.
 - `npm run dev` starts the front-end dev server on port 3333; `npm run serve` runs the same build with `--host` enabled
   for LAN previews.
 - `npm run server` launches the API with live reload via `tsx watch -r dotenv/config` on port 3007.
@@ -63,6 +66,7 @@ Shared Sites policy (`../AGENTS.md` when available) applies. These essentials al
 - `npm run -w front-end test` / `test:unit` run Vitest suites; `npm run -w front-end test:e2e` runs Cypress.
 - `npm run -w back-end test` runs the Vitest + Supertest API security and behavior regression suite.
 - `npm run lint` (or `lint-fix`) runs the shared ESLint configuration across both workspaces.
+- Backend compiler scripts explicitly select TypeScript 7 through `back-end/scripts/run-typescript.mjs`; Vue and ESLint keep their supported TypeScript 6 API. Use the named commands rather than an unqualified compiler executable.
 
 ## Coding Style & Naming Conventions
 
@@ -102,3 +106,4 @@ Shared Sites policy (`../AGENTS.md` when available) applies. These essentials al
 ## Dependency & Lockfile Discipline
 
 - Keep the root `package-lock.json` aligned with every workspace manifest. For dependency changes, review both production and development packages, run a clean root `npm ci` (not an install fallback), full and production audits, and relevant lint, type, test, and build gates. Regenerate and include the lockfile if it drifts.
+- Keep the independent build-toolchain locks, original archives, CLI inventory and provenance aligned. `npm run validate` includes actual npm/npx compatibility, cache/seed guards and packaging checks. The separate toolchain lint configuration preserves the reviewed shared source style while both application configurations retain this repository's style. Exact ARM64 acceptance records build-profile provenance without including those tools in the runtime.
