@@ -50,9 +50,10 @@ assert.match(dependencyStager, /npm ci --workspace back-end --omit=dev --include
 assert.match(dependencyStager, /npm ls --workspace back-end --omit=dev --all/u);
 assert.match(dependencyStager, /npm audit signatures --workspace back-end/u);
 assert.match(dependencyStager, /runtime-artifact\.py prune "\$stage"/u);
+const prunePosition = dependencyStager.indexOf("runtime-artifact.py prune \"$stage\"");
+const dependencyCheckPosition = dependencyStager.indexOf("npm ls --workspace back-end --omit=dev --all");
 assert(
-	dependencyStager.indexOf('runtime-artifact.py prune "$stage"')
-		< dependencyStager.indexOf("npm ls --workspace back-end --omit=dev --all"),
+	prunePosition >= 0 && prunePosition < dependencyCheckPosition,
 	"Strict npm tree verification must inspect the closed production graph after pruning workspace peers."
 );
 assert.match(artifactBuilder, /runtime-artifact\.py pack/u);
