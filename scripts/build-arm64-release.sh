@@ -57,30 +57,12 @@ node scripts/write-release-metadata.mjs
 stage="$output/stage"
 unpacked="$output/unpacked"
 negative="$output/negative"
-mkdir -p "$stage/back-end" "$stage/front-end" "$unpacked" "$negative"
-install -m 0644 package.json package-lock.json .restoration-release-prepared.json "$stage/"
-install -m 0644 back-end/package.json "$stage/back-end/"
-install -m 0644 front-end/package.json "$stage/front-end/"
-mkdir -p "$stage/vendor"
-install -m 0644 vendor/picomatch-4.0.7-webops.1.tgz "$stage/vendor/"
-install -m 0644 vendor/vite-plugin-vue-layouts-next-3.3.1-webops.1.tgz "$stage/vendor/"
+mkdir -p "$stage" "$unpacked" "$negative"
+bash scripts/stage-production-dependencies.sh "$stage" "$output"
+install -m 0644 .restoration-release-prepared.json "$stage/"
 cp -R back-end/dist "$stage/back-end/"
 cp -R front-end/dist "$stage/front-end/"
 
-(
-	cd -- "$stage"
-	npm ci --workspace back-end --omit=dev --include=optional --ignore-scripts --no-fund --no-audit
-	npm audit --workspace back-end --omit=dev --audit-level=low
-	npm audit --workspace back-end --audit-level=low
-	npm audit signatures --workspace back-end
-	npm ls --workspace back-end --omit=dev --all > "$output/dependency-tree.txt"
-)
-rm -- "$stage/vendor/picomatch-4.0.7-webops.1.tgz"
-rm -- "$stage/vendor/vite-plugin-vue-layouts-next-3.3.1-webops.1.tgz"
-rmdir -- "$stage/vendor"
-find "$stage/node_modules" -type l -delete
-rm -f -- "$stage/node_modules/.package-lock.json"
-python3 -B scripts/runtime-artifact.py prune "$stage" > "$output/pruned-workspace-peers.json"
 find "$stage" -type d -exec chmod 0755 {} +
 find "$stage" -type f -exec chmod 0644 {} +
 RESTORATION_RUNTIME_ROOT="$stage" node scripts/verify-production-install.mjs
@@ -122,6 +104,7 @@ harness = [
     Path("deploy/systemd/trusted-paths.py"),
     Path("scripts/artifact-acceptance/runtime.mjs"),
     Path("scripts/build-arm64-release.sh"),
+    Path("scripts/stage-production-dependencies.sh"),
     Path("scripts/runtime-artifact.py"),
     Path("scripts/legacy-runtime.py"),
     Path("scripts/test-promotion-recovery.py"),

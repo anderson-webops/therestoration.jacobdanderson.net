@@ -54,3 +54,9 @@ Runtime contract format, the stateless SMTP service, prior-release contracts
 and genuine retained-artifact recovery remain unchanged. Clean locked installs,
 both dependency audits, source checks and exact ARM64 acceptance qualify a
 release; source publication and protected activation retain separate evidence.
+
+The shared production-dependency stager is exercised in ordinary CI and the
+native artifact build. It removes unused workspace peer packages using the
+existing contract's backend closure, then requires strict npm tree validation,
+full/production audits and signatures on that closed graph. This prevents a
+successful source build from hiding production-staging incompatibilities.

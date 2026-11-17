@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { access, readFile } from "node:fs/promises";
 
 const read = relativePath => readFile(new URL(`../${relativePath}`, import.meta.url), "utf8");
+const dependencyStager = await read("scripts/stage-production-dependencies.sh");
 
 for (const removedPath of ["Dockerfile", ".dockerignore", "docker-compose.yml", "compose.yaml"]) {
 	await assert.rejects(access(new URL(`../${removedPath}`, import.meta.url)), undefined, `${removedPath} must be absent.`);
@@ -43,6 +44,17 @@ assert.match(prepare, /build-arm64-release\.sh/u);
 assert.doesNotMatch(prepare, /npm ci|git fetch|node_modules/u);
 assert.match(artifactBuilder, /npm ci --include=dev --include=optional --strict-allow-scripts/u);
 assert.match(artifactBuilder, /npm audit signatures/u);
+assert.match(artifactBuilder, /bash scripts\/stage-production-dependencies\.sh/u);
+assert.match(mainCi, /bash scripts\/stage-production-dependencies\.sh/u);
+assert.match(dependencyStager, /npm ci --workspace back-end --omit=dev --include=optional --ignore-scripts/u);
+assert.match(dependencyStager, /npm ls --workspace back-end --omit=dev --all/u);
+assert.match(dependencyStager, /npm audit signatures --workspace back-end/u);
+assert.match(dependencyStager, /runtime-artifact\.py prune "\$stage"/u);
+assert(
+	dependencyStager.indexOf('runtime-artifact.py prune "$stage"')
+		< dependencyStager.indexOf("npm ls --workspace back-end --omit=dev --all"),
+	"Strict npm tree verification must inspect the closed production graph after pruning workspace peers."
+);
 assert.match(artifactBuilder, /runtime-artifact\.py pack/u);
 assert.match(artifactBuilder, /test-unpacked-artifact\.sh/u);
 assert.doesNotMatch(artifactBuilder, /test:promotion/u);

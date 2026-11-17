@@ -61,6 +61,12 @@ jobs:
             - name: Verify Linux ARM64 native bindings
               run: npm run check:native-bindings
 
+            - name: Verify the isolated production dependency closure
+              run: |
+                  output="$PWD/.ai-work/runs/production-install"
+                  mkdir -p "$output/stage"
+                  bash scripts/stage-production-dependencies.sh "$output/stage" "$output"
+
             - name: Validate source and unit behavior
               run: npm run validate
 
