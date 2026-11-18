@@ -24,7 +24,8 @@ export default antfu(
 			"scripts/test-picomatch-compat.mjs",
 			"scripts/test-picomatch-install.mjs",
 			"scripts/unimport-build.config.mjs",
-			"scripts/test-unimport-artifact.mjs"
+			"scripts/test-unimport-artifact.mjs",
+			"scripts/fixtures/unimport-runtime.mjs"
 		],
 		rules: {
 			"no-console": "off",

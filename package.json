@@ -26,7 +26,7 @@
 		"lint-server": "npm run -w back-end lint-fix && npm run -w back-end server",
 		"lint-serve": "npm run -w front-end lint-fix && npm run -w front-end serve",
 		"lint": "eslint \"scripts/**/*.mjs\" eslint.toolchain.config.mjs && npm run lint:toolchain && npm run -w front-end lint && npm run -w back-end lint",
-		"lint:toolchain": "eslint --config eslint.toolchain.config.mjs \"scripts/*build-toolchain*.mjs\" scripts/check-toolchain-package.mjs scripts/test-npm-tool-majors.mjs scripts/test-picomatch-compat.mjs scripts/test-picomatch-install.mjs vendor/picomatch/repeated-output.cjs back-end/scripts/run-typescript.mjs scripts/unimport-build.config.mjs scripts/test-unimport-artifact.mjs",
+		"lint:toolchain": "eslint --config eslint.toolchain.config.mjs \"scripts/*build-toolchain*.mjs\" scripts/check-toolchain-package.mjs scripts/test-npm-tool-majors.mjs scripts/test-picomatch-compat.mjs scripts/test-picomatch-install.mjs vendor/picomatch/repeated-output.cjs back-end/scripts/run-typescript.mjs scripts/unimport-build.config.mjs scripts/test-unimport-artifact.mjs scripts/fixtures/unimport-runtime.mjs",
 		"lint-fix": "eslint \"scripts/**/*.mjs\" eslint.toolchain.config.mjs --fix && npm run lint:toolchain -- --fix && npm run -w front-end lint-fix && npm run -w back-end lint-fix",
 		"typecheck": "npm run -w front-end typecheck && npm run -w back-end typecheck",
 		"test": "npm run -w front-end test:unit && npm run -w back-end test:unit && npm run test:build-toolchain && npm run test:toolchain-package && npm run test:auto-import",
