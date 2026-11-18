@@ -1,7 +1,7 @@
 {
 	"name": "therestoration-monorepo",
 	"type": "module",
-	"version": "4.0.26",
+	"version": "4.0.27",
 	"private": true,
 	"packageManager": "npm@12.2.2",
 	"engines": {
@@ -61,7 +61,7 @@
 	"devDependencies": {
 		"@antfu/eslint-config": "^10.0.0",
 		"@unocss/eslint-plugin": "^66.13.0",
-		"axe-core": "^4.14.0",
+		"axe-core": "^4.14.1",
 		"eslint": "^10.15.0",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-format": "^2.0.1",
@@ -70,7 +70,7 @@
 		"globals": "^17.14.0",
 		"jsdom": "^31.0.1",
 		"katex": "^0.19.1",
-		"magic-string": "^1.4.4",
+		"magic-string": "^1.4.5",
 		"oxc-parser": "^0.159.0",
 		"oxfmt": "^0.79.0",
 		"prettier": "^3.10.1",
@@ -78,7 +78,7 @@
 		"puppeteer": "^25.18.1",
 		"supertest": "^7.3.2",
 		"typescript": "^6.0.3",
-		"vitest": "^5.1.0",
+		"vitest": "^5.1.1",
 		"local-pkg": "2.0.0",
 		"unimport": "file:vendor/unimport-7.0.3-webops.2.tgz",
 		"unplugin-auto-import": "file:vendor/unplugin-auto-import-21.1.0-webops.1.tgz"

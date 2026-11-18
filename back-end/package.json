@@ -1,6 +1,6 @@
 {
 	"name": "back-end",
-	"version": "4.0.26",
+	"version": "4.0.27",
 	"private": true,
 	"packageManager": "npm@12.2.2",
 	"engines": {
@@ -46,6 +46,6 @@
 		"typescript": "^6.0.3",
 		"typescript-native": "npm:typescript@7.0.2",
 		"typescript-eslint": "^8.73.0",
-		"vitest": "^5.1.0"
+		"vitest": "^5.1.1"
 	}
 }
