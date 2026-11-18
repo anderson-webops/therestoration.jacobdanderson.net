@@ -22,7 +22,9 @@ export default antfu(
 			"scripts/check-toolchain-package.mjs",
 			"scripts/test-npm-tool-majors.mjs",
 			"scripts/test-picomatch-compat.mjs",
-			"scripts/test-picomatch-install.mjs"
+			"scripts/test-picomatch-install.mjs",
+			"scripts/unimport-build.config.mjs",
+			"scripts/test-unimport-artifact.mjs"
 		],
 		rules: {
 			"no-console": "off",

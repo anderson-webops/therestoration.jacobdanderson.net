@@ -15,7 +15,7 @@ mkdir -p "$stage/back-end" "$stage/front-end" "$stage/vendor"
 install -m 0644 package.json package-lock.json "$stage/"
 install -m 0644 back-end/package.json "$stage/back-end/"
 install -m 0644 front-end/package.json "$stage/front-end/"
-for archive in picomatch-4.0.7-webops.1 vite-plugin-vue-layouts-next-3.3.1-webops.1; do
+for archive in picomatch-4.0.7-webops.1 vite-plugin-vue-layouts-next-3.3.1-webops.1 unimport-7.0.3-webops.2 unplugin-auto-import-21.1.0-webops.1; do
 	install -m 0644 "vendor/$archive.tgz" "$stage/vendor/"
 done
 (
@@ -32,7 +32,7 @@ python3 -B scripts/runtime-artifact.py prune "$stage" > "$output/pruned-workspac
 	npm audit --workspace back-end --audit-level=low
 	npm audit signatures --workspace back-end
 )
-for archive in picomatch-4.0.7-webops.1 vite-plugin-vue-layouts-next-3.3.1-webops.1; do
+for archive in picomatch-4.0.7-webops.1 vite-plugin-vue-layouts-next-3.3.1-webops.1 unimport-7.0.3-webops.2 unplugin-auto-import-21.1.0-webops.1; do
 	rm -- "$stage/vendor/$archive.tgz"
 done
 rmdir -- "$stage/vendor"

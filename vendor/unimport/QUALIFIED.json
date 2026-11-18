@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "repository": "anderson-webops/vitesse-nuxt-template",
+  "tag": "v2.1.40",
+  "commit": "08f3b30e16373ee63e3f40bce86741fc9b97b821",
+  "annotatedTagObject": "6a1f2b229d48871890b1656aabfe6b8b8688af1c",
+  "sourceCI": 44192532331,
+  "nativeCI": 44194528792,
+  "compilerArchive": "vendor/unimport-7.0.3-webops.2.tgz",
+  "compilerArchiveSha256": "4802e76c6c87d990cb804750c6181c018ad61275236b81565b831184980c627a",
+  "inputs": {
+    "scripts/check-unimport-source.py": "82e8eb6b834f1e7f4671911a9710a2c6fc13d0bdac7dfd264275ad92ce69bfe2",
+    "scripts/build-unimport-source.py": "64fda845680b69d9fd9803ee9b37cc0c0608523234edf7c7ca152a3288b601b2",
+    "scripts/unimport-build.config.mjs": "b53877f1a270118fd44f006adfb9e89a7cf5275e4e42d7e496b72a1d019b0d19",
+    "vendor/unimport/build/package.json": "6405815146c8e0a94e180cbf61a91a88c5595af9baecef3c70bc87e58a9dab89",
+    "vendor/unimport/build/package-lock.json": "a3eb41fc3ef43f24307a37993c3b68080f5e32a9cd6eddcfb4b310490f5a815b",
+    "vendor/unimport/runtime/package.json": "0b4514ee438abb1c688bcca3895f248ff21f2e00d4d5a93389d400651724854c",
+    "vendor/unimport/runtime/package-lock.json": "db71847b6ffcf846caa27c3c866fdae0742c83b3dfd8b3f9f9591239c66734ed"
+  },
+  "upstreamSuiteAtCanonicalQualification": 271
+}

@@ -37,12 +37,18 @@ for directory in . front-end back-end; do
 	done < <(find "$directory" -maxdepth 1 -type f \( -name .env -o -name '.env.*' \) -print0)
 done
 
+bash scripts/prepare-unimport-source.sh
+npm ci --prefix vendor/unplugin-auto-import/upstream --workspaces=false --include=optional --strict-allow-scripts --no-fund
+npm audit signatures --prefix vendor/unplugin-auto-import/upstream
 npm ci --include=dev --include=optional --strict-allow-scripts --no-fund
 npm ci --prefix build-toolchain/compat --workspaces=false --ignore-scripts --no-fund
+npm audit signatures --prefix build-toolchain/compat
 npm run audit:all
 npm run audit:prod
 npm audit signatures
 npm run check:native-bindings
+npm run check:auto-import
+npm run test:auto-import
 npm run test:runtime-artifact
 npm run build
 npm run verify:deploy-assets

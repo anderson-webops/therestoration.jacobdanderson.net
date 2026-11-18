@@ -1,0 +1,182 @@
+{
+  "schemaVersion": 1,
+  "package": {
+    "name": "unplugin-auto-import",
+    "type": "module",
+    "version": "21.1.0",
+    "description": "Register global imports on demand for Vite and Webpack",
+    "author": "Anthony Fu <anthonyfu117@hotmail.com>",
+    "license": "MIT",
+    "funding": "https://github.com/sponsors/antfu",
+    "homepage": "https://github.com/unplugin/unplugin-auto-import#readme",
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/unplugin/unplugin-auto-import.git"
+    },
+    "bugs": {
+      "url": "https://github.com/unplugin/unplugin-auto-import/issues"
+    },
+    "keywords": [
+      "unplugin",
+      "vite",
+      "astro",
+      "webpack",
+      "rolldown",
+      "rollup",
+      "rspack",
+      "auto-import",
+      "transform"
+    ],
+    "sideEffects": false,
+    "exports": {
+      ".": "./dist/index.mjs",
+      "./astro": "./dist/astro.mjs",
+      "./esbuild": "./dist/esbuild.mjs",
+      "./nuxt": "./dist/nuxt.mjs",
+      "./rolldown": "./dist/rolldown.mjs",
+      "./rollup": "./dist/rollup.mjs",
+      "./rspack": "./dist/rspack.mjs",
+      "./types": "./dist/types.mjs",
+      "./vite": "./dist/vite.mjs",
+      "./webpack": "./dist/webpack.mjs",
+      "./package.json": "./package.json"
+    },
+    "types": "./dist/index.d.mts",
+    "typesVersions": {
+      "*": {
+        "*": [
+          "./dist/*.d.mts",
+          "./*"
+        ]
+      }
+    },
+    "files": [
+      "dist"
+    ],
+    "engines": {
+      "node": ">=20.19.0"
+    },
+    "peerDependencies": {
+      "@nuxt/kit": "^4.0.0",
+      "@vueuse/core": "*"
+    },
+    "peerDependenciesMeta": {
+      "@nuxt/kit": {
+        "optional": true
+      },
+      "@vueuse/core": {
+        "optional": true
+      }
+    },
+    "dependencies": {
+      "local-pkg": "^1.2.1",
+      "magic-string": "^1.1.0",
+      "picomatch": "^4.0.5",
+      "unimport": "^6.4.0",
+      "unplugin": "^3.3.0",
+      "unplugin-utils": "^0.3.2"
+    },
+    "devDependencies": {
+      "@antfu/eslint-config": "^9.2.0",
+      "@antfu/ni": "^30.3.0",
+      "@antfu/utils": "^9.3.0",
+      "@nuxt/kit": "^4.5.1",
+      "@nuxt/schema": "^4.5.1",
+      "@svgr/plugin-jsx": "^8.1.0",
+      "@types/node": "^26.1.2",
+      "@types/picomatch": "^4.0.3",
+      "@typescript/native-preview": "7.0.0-dev.20260114.1",
+      "@vueuse/metadata": "^14.4.0",
+      "bumpp": "^12.1.1",
+      "eslint": "^10.8.0",
+      "publint": "^0.3.22",
+      "rolldown": "^1.2.1",
+      "rollup": "^4.62.4",
+      "tinyglobby": "^0.2.17",
+      "tsdown": "^0.22.14",
+      "tsx": "^4.23.5",
+      "typescript": "~5.9.3",
+      "unplugin-vue-components": "^32.1.0",
+      "vite": "^8.2.0",
+      "vitest": "^4.1.10",
+      "webpack": "^5.109.2"
+    },
+    "inlinedDependencies": {
+      "@antfu/utils": "9.3.0"
+    },
+    "scripts": {
+      "build": "tsdown",
+      "dev": "tsdown -w",
+      "lint": "eslint .",
+      "lint:fix": "nr lint --fix",
+      "typecheck": "tsgo",
+      "play": "pnpm -C playground run dev",
+      "release": "bumpp",
+      "start": "tsx src/index.ts",
+      "test": "vitest",
+      "test:run": "vitest run"
+    }
+  },
+  "patchedVersion": "21.1.0+webops.1",
+  "archive": "upstream/unplugin-auto-import-21.1.0.tgz",
+  "integrity": "sha512-EzrSqWIBulEqCuP7idADXH+tVKYrbwKlR5+r/lOWik0o+Ksny1kitmtryHGNSv7puzzORlcIwT/x2JStiszlHA==",
+  "archiveSha256": "8da0ce9c5cff743c68580285928e461fa7447315b488314c562672de995e6331",
+  "qualifiedDependencies": {
+    "unimport": "^7.0.3",
+    "local-pkg": "^2.0.0"
+  },
+  "files": {
+    "LICENSE": "b702fad0bff2bd12186b3ce2568284a27c617b0cd16264089b730e98ebd8afa0",
+    "README.md": "d58f310b01c9b7515919285d6a5ddd7b9b277e3472adef12f9606f0aa0cd4c2a",
+    "dist/astro.d.mts": "bb7b208d53cc5a2c911e9ea9245b792a5ca091918feac5edf549dee4464b2c93",
+    "dist/astro.mjs": "e261d9c6e6b5e626d160e65a36757f3754802dae883ceac2b93494a30510a4d1",
+    "dist/esbuild.d.mts": "5aaa72767d6937c420b43991c227236953217bfc7ac6d60fdd8d674359aa2ece",
+    "dist/esbuild.mjs": "22bfcdb62be6e51fa5eec4bebb721ff0263a5e66850f88ec99ce4a50f37886eb",
+    "dist/index.d.mts": "372039a2a41cd25ca3fa8702d9a455e26ac24d64727c469f4fb1b277f23a1bf9",
+    "dist/index.mjs": "3f02190a67bd17ba3dd08c64317bc745465902b868f1b71b2069283456b98b40",
+    "dist/nuxt.d.mts": "67ec950f09235ae0d646890c9540c5f909a759bfb3fcea5f0992cb3a233d4c4e",
+    "dist/nuxt.mjs": "11f426edaa301eaca83ccef9ae91ffb4a58a9086b41363c254cb0fd3701e4337",
+    "dist/rolldown.d.mts": "0c82e7c9d74634dd018adc9009aaee8fe75d814469c8140ce25502cc78110e63",
+    "dist/rolldown.mjs": "78df8b0351622c26c6373d1def6e866ffac99f0e00042cc864eeafe31158b6dc",
+    "dist/rollup.d.mts": "8cdaaad6dee859636df4eb2cb48ec83047ebcf41c18acfc0a695c6b2d0ad439c",
+    "dist/rollup.mjs": "735068de9f138340eab135b30509de371b420fdcbd5e60c13ce3c878d6ac86aa",
+    "dist/rspack.d.mts": "aa911ea7d2bcf1b08de2bed55ddac35655d69a22d72987e06445005535d80772",
+    "dist/rspack.mjs": "dd22ae34fbf1988ca8bb0d6832f6c6bee3255507f713360fadc8d9d99884eb34",
+    "dist/src-C6T5sjAq.mjs": "1fa3382f63c83737bb8dc3a29d05cf76a1dd087ae85f4af18f8134f4be5ac014",
+    "dist/types-BbDO-6wC.d.mts": "1e4ff81a7b7e7448953d8b97ea5c47fcc7db61199ad94d52f1049903d18af6da",
+    "dist/types.d.mts": "5f02a0a4d3c57c49618589bbed770f97fc42f3cd51d3dba32771f4682d05c295",
+    "dist/types.mjs": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
+    "dist/vite.d.mts": "e2bbc1953e659e8a3dc64b8795ca4b6950914fad0aecb36141d85ea7159da906",
+    "dist/vite.mjs": "7a57708274171d6658fd55a12639738577895a4dd9cdd2ddb1bcc860db8eab00",
+    "dist/webpack.d.mts": "608047e65840f335198e1a422c5d2010e5a24b0d5083665c05be20c65f644736",
+    "dist/webpack.mjs": "348f0902f1120ff41a6b56139fcb8f1307ba629d823c66ccb3bf749b431ce823",
+    "package.json": "3256a11e2294ebe05079fc311a8a59af709c278a004d2df7582c85663269ca22"
+  },
+  "modes": {
+    "LICENSE": 420,
+    "package.json": 420,
+    "README.md": 420,
+    "dist/astro.mjs": 420,
+    "dist/esbuild.mjs": 420,
+    "dist/index.mjs": 420,
+    "dist/nuxt.mjs": 420,
+    "dist/rolldown.mjs": 420,
+    "dist/rollup.mjs": 420,
+    "dist/rspack.mjs": 420,
+    "dist/src-C6T5sjAq.mjs": 420,
+    "dist/types.mjs": 420,
+    "dist/vite.mjs": 420,
+    "dist/webpack.mjs": 420,
+    "dist/astro.d.mts": 420,
+    "dist/esbuild.d.mts": 420,
+    "dist/index.d.mts": 420,
+    "dist/nuxt.d.mts": 420,
+    "dist/rolldown.d.mts": 420,
+    "dist/rollup.d.mts": 420,
+    "dist/rspack.d.mts": 420,
+    "dist/types-BbDO-6wC.d.mts": 420,
+    "dist/types.d.mts": 420,
+    "dist/vite.d.mts": 420,
+    "dist/webpack.d.mts": 420
+  }
+}

@@ -44,7 +44,13 @@ jobs:
             - name: Install original-library compatibility fixtures
               run: |
                   npm ci --prefix build-toolchain/compat --workspaces=false --ignore-scripts
-                  npm audit signatures --prefix build-toolchain/compat --workspaces=false
+                  npm audit signatures --prefix build-toolchain/compat
+
+            - name: Qualify the signed-source import compiler and original parent
+              run: |
+                  bash scripts/prepare-unimport-source.sh
+                  npm ci --prefix vendor/unplugin-auto-import/upstream --workspaces=false --include=optional --strict-allow-scripts
+                  npm audit signatures --prefix vendor/unplugin-auto-import/upstream
 
             - name: Install locked dependencies
               run: npm ci --include=optional --strict-allow-scripts
@@ -101,4 +107,6 @@ jobs:
               run: npm run a11y
 
             - name: Cypress browser tests
-              run: npm run test:e2e
+              run: |
+                  npm run test:e2e
+                  npm run test:auto-import-browser

@@ -54,11 +54,14 @@ Shared Sites policy (`../AGENTS.md` when available) applies. These essentials al
 
 ## Build, Test, and Development Commands
 
-- `npm ci` (root) installs the authoritative lockfile using Node `26.13.1` and npm `12.2.2`. Avoid mixing package
-  managers or using a nested lockfile.
+- `npm ci` (root) installs the authoritative workspace lockfile using Node `26.13.1` and npm `12.2.2`. Keep application
+  installations at the root and retain the separately locked compiler, runtime and original-reference graphs.
 - Select the reviewed build-only profile first with `export PATH="$(node scripts/build-toolchain.mjs --print-bin):$PATH"`.
   Install the independent original-library fixtures with `npm ci --prefix build-toolchain/compat --workspaces=false --ignore-scripts`.
   Stock npm is a bootstrap seed; source and artifact checks require the qualified profile. Preserve its four shared cache-key helpers byte-for-byte unless changing and qualifying the shared template first.
+- Full validation also requires `bash scripts/prepare-unimport-source.sh` and
+  `npm ci --prefix vendor/unplugin-auto-import/upstream --workspaces=false --include=optional --strict-allow-scripts`.
+  Keep the canonical compiler recipe byte-identical, verify the actual Vite parent and retain the original comparison.
 - `npm run dev` starts the front-end dev server on port 3333; `npm run serve` runs the same build with `--host` enabled
   for LAN previews.
 - `npm run server` launches the API with live reload via `tsx watch -r dotenv/config` on port 3007.
